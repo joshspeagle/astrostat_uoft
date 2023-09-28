@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'Inclusive Sans';
+    src: url('../ttf/Inclusive_Sans/InclusiveSans-Regular.ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inclusive Sans';
+    src: url('../ttf/Inclusive_Sans/InclusiveSans-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Urbanist';
+    src: url('../ttf/Urbanist/Urbanist-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@mixin font-display {
+  font-family: #{Urbanist, sans-serif};
+  font-weight: 700;
+}
+
+@mixin font-sans-serif {
+  font-family: #{'Inclusive Sans', sans-serif};
+}
+
+// vim: set ft=scss:

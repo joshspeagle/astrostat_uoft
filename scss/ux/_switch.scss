@@ -1,0 +1,29 @@
+@use "sass:map";
+
+.switch {
+  @include switch-size;
+}
+
+.switch-input {
+  @include switch-input;
+}
+
+.switch-paddle {
+  @include switch-paddle;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      background-color: map.get($theme, "switch-background");
+    }
+
+    [data-theme="#{$name}"] &::after {
+      background-color: map.get($theme, "switch-paddle-background");
+    }
+
+    [data-theme="#{$name}"] input:checked ~ & {
+      background-color: map.get($theme, "palette-primary");
+    }
+  }
+}
+
+// vim: set ft=scss:

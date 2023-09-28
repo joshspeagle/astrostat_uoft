@@ -1,0 +1,287 @@
+@use "sass:map";
+@use "sass:color";
+
+@use "lightmode" as light;
+@use "darkmode" as dark;
+
+@import 'global';
+@import 'fonts';
+
+$themes: (
+  "light": light.$theme,
+  "dark": dark.$theme,
+);
+
+@import 'fdn/scss/foundation';
+
+@include foundation-global-styles;
+@include foundation-typography;
+@include foundation-xy-grid-classes;
+@include foundation-visibility-classes;
+@include foundation-media-object;
+@include foundation-sticky;
+@include foundation-breadcrumbs;
+
+@import 'ux/switch';
+
+$-topper-height: 300px;
+
+body {
+  @include font-sans-serif;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      color: map.get($theme, "body-font-color");
+      background-color: map.get($theme, "body-background");
+    }
+  }
+
+  font-size: 110%;
+}
+
+#breadcrumbs-wrapper {
+  margin: 0;
+  padding: 1rem 0 1rem 0;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      color: map.get($theme, "body-font-color");
+      background-color: map.get($theme, "body-background");
+    }
+
+    [data-theme="#{$name}"] & .breadcrumbs li {
+      color: map.get($theme, "body-font-color");
+      background-color: map.get($theme, "body-background");
+    }
+  }
+
+  .breadcrumbs {
+    margin: 0;
+
+    li {
+      font-size: 90%;
+    }
+
+    a:hover, a:active, a:focus {
+      text-decoration: none;
+    }
+  }
+}
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, .h1, .h2, .h3 {
+  display: block;
+  @include font-display;
+}
+
+label {
+  @include font-sans-serif;
+  font-weight: bold;
+  font-variant: all-small-caps;
+}
+
+@each $name, $theme in $themes {
+  [data-theme="#{$name}"] a {
+    color: map.get($theme, "anchor-color");
+    border-color: map.get($theme, "anchor-color");
+  }
+
+  [data-theme="#{$name}"] a:hover {
+    color: map.get($theme, "anchor-color-active");
+    border-color: map.get($theme, "anchor-color-active");
+  }
+
+  [data-theme="#{$name}"] a:active {
+    color: map.get($theme, "anchor-color-active");
+    border-color: map.get($theme, "anchor-color-active");
+  }
+
+  [data-theme="#{$name}"] a:focus {
+    color: map.get($theme, "anchor-color-active");
+    border-color: map.get($theme, "anchor-color-active");
+  }
+}
+
+a {
+  border-bottom: 1px dotted;
+  text-decoration: none;
+
+  &:hover, &:active {
+    border-bottom: 1px solid;
+    text-decoration: none;
+  }
+}
+
+#topper {
+  .h1, .h2, .h3 {
+    @include font-display;
+  }
+
+  .h1 {
+    font-size: 5rem;
+  }
+
+  .h2 {
+    font-size: 3rem;
+  }
+
+  .h3 {
+    font-size: 2rem;
+  }
+
+  width: 100%;
+  max-height: $-topper-height;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  #topper-gradient {
+    position: absolute;
+  }
+
+  #topper-text {
+    z-index: 1;
+    position: relative;
+  }
+
+  #topper-gradient, #topper-text {
+    max-height: $-topper-height;
+  }
+}
+
+@each $name, $theme in $themes {
+  [data-theme="#{$name}"] #topper-text text {
+    fill: map.get($theme, "body-font-color");
+  }
+
+  [data-theme="#{$name}"] #topper-gradient-stop-1 {
+    stop-color: map.get($theme, "palette-primary");
+  }
+
+  [data-theme="#{$name}"] #topper-gradient-stop-2 {
+    stop-color: map.get($theme, "palette-primary");
+  }
+
+  [data-theme="#{$name}"] #topper-gradient-stop-3 {
+    stop-color: map.get($theme, "palette-secondary");
+  }
+}
+
+.card {
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      @include card-container(
+        $background: map.get($theme, "card-background"),
+        $color: map.get($theme, "body-font-color"),
+        $border: none,
+        $shadow: none,
+      );
+    }
+
+    [data-theme="#{$name}"] & img {
+      background-color: map.get($theme, "palette-secondary");
+    }
+  }
+
+  @include breakpoint(small only) {
+    img[data-fillin] {
+      display: none;
+    }
+  }
+
+  padding: 0.5rem;
+}
+
+.media-object {
+  @include breakpoint(medium up) {
+    img {
+      width: 180px;
+    }
+  }
+
+  @include breakpoint(small only) {
+    img[data-fillin] {
+      display: none;
+    }
+  }
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & img {
+      background-color: map.get($theme, "palette-secondary");
+    }
+  }
+
+  .media-object-section:first-of-type {
+    padding: 0 1rem 0 0;
+  }
+
+  &:nth-child(odd) {
+    .media-object-section:first-of-type {
+      order: 2;
+      padding: 0 0 0 1rem;
+    }
+
+    .media-object-section.main-section {
+      order: 1;
+    }
+  }
+}
+
+#nav-drilldown, #controls {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#nav, #controls {
+  margin: 1rem 0;
+}
+
+#nav-drilldown {
+  @include menu-base;
+
+  display: block;
+
+  li a {
+    padding: 0.25rem 0;
+    border-width: 0;
+    text-decoration: none;
+  }
+
+  &, ul, li, a {
+    background-color: #00000000 !important;
+  }
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & a {
+      color: map.get($theme, "anchor-color");
+    }
+
+    [data-theme="#{$name}"] & a:hover {
+      color: map.get($theme, "anchor-color-active");
+    }
+
+    [data-theme="#{$name}"] & a:active {
+      color: map.get($theme, "anchor-color-active");
+    }
+
+    [data-theme="#{$name}"] & a:focus {
+      color: map.get($theme, "anchor-color-active");
+    }
+
+    [data-theme="#{$name}"] & a::after {
+      border-left-color: map.get($theme, "palette-secondary");
+    }
+
+    [data-theme="#{$name}"] & .js-drilldown-back > a::before {
+      border-right-color: map.get($theme, "palette-secondary");
+    }
+  }
+}
+
+// vim: set ft=scss:

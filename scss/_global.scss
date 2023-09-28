@@ -1,0 +1,19 @@
+@use "sass:map";
+@use "sass:color";
+
+// global black, white, and gray
+$black: #0a0a0a;
+$white: #fefefe;
+$light-gray: #eeeeee;
+$medium-gray: #888888;
+$dark-gray: #333333;
+
+@import 'fdn/scss/util/util';
+
+// global foundation settings
+$global-width: rem-calc(1200);
+$body-font-family: #{'Open Sans', sans-serif};
+$breadcrumbs-item-separator-item: '»';
+$breadcrumbs-item-separator-item-rtl: '«'
+
+// vim: set ft=scss:
