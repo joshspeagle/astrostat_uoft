@@ -1,0 +1,36 @@
+@use "sass:map";
+@use "sass:color";
+
+@use "global" as *;
+
+$-body-background: $black;
+$-body-font-color: $white;
+
+$-palette-primary: #2f559d;
+$-palette-secondary: #31767d;
+
+$-card-background: $dark-gray;
+
+$-switch-background: $light-gray;
+$-switch-paddle-background: $-body-background;
+
+$-anchor-color: #91acde;
+$-anchor-color-active: color.scale($-anchor-color, $lightness: -10%);
+
+$theme: (
+  "palette-primary": $-palette-primary,
+  "palette-secondary": $-palette-secondary,
+
+  "body-font-color": $-body-font-color,
+  "body-background": $-body-background,
+
+  "card-background": $-card-background,
+
+  "switch-background": $-switch-background,
+  "switch-paddle-background": $-switch-paddle-background,
+
+  "anchor-color": $-anchor-color,
+  "anchor-color-active": $-anchor-color-active,
+);
+
+// vim: set ft=scss:
