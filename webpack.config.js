@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const pages = [
   {
@@ -162,6 +163,14 @@ module.exports = {
     }),
     new CssoWebpackPlugin(),
     ...htmlPlugins,
+    new CopyPlugin({
+      patterns: [
+        {
+          from: './static',
+          to: 'static',
+        },
+      ],
+    }),
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
