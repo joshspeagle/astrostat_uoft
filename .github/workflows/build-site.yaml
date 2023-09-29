@@ -28,7 +28,7 @@ jobs:
       - name: Build static site
         run: |
           npm install
-          BASE_URL=/ npm run build:bundle
+          npm run build
           touch $GITHUB_WORKSPACE/dist/.nojekyll
           echo "astrostatuoft.com" > dist/CNAME
 
