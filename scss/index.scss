@@ -157,8 +157,14 @@ a {
     fill: map.get($theme, "palette-primary");
   }
 
-  [data-theme="#{$name}"] #sticky-logo path {
-    fill: map.get($theme, "palette-primary");
+  @if $name == "light" {
+    [data-theme="#{$name}"] #sticky-logo path {
+      fill: #001f4e;
+    }
+  } @else {
+    [data-theme="#{$name}"] #sticky-logo path {
+      fill: map.get($theme, "palette-primary");
+    }
   }
 }
 
