@@ -153,11 +153,11 @@ a {
     fill: map.get($theme, "body-font-color");
   }
 
-  [data-theme="#{$name}"] #topper-logo path {
+  [data-theme="#{$name}"] #topper-logo #inverted-logo-path {
     fill: map.get($theme, "palette-primary");
   }
 
-  [data-theme="#{$name}"] #sticky-logo path {
+  [data-theme="#{$name}"] #sticky-logo #logo-rect {
     fill: map.get($theme, "palette-primary");
   }
 }
