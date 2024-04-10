@@ -154,17 +154,11 @@ a {
   }
 
   [data-theme="#{$name}"] #topper-logo #inverted-logo-path {
-    fill: map.get($theme, "palette-primary");
+    fill: map.get($theme, "logo-desaturated");
   }
 
-  @if $name == "light" {
-    [data-theme="#{$name}"] #sticky-logo #logo-rect{
-      fill: #001f4e;
-    }
-  } @else {
-    [data-theme="#{$name}"] #sticky-logo #logo-rect {
-      fill: map.get($theme, "palette-primary");
-    }
+  [data-theme="#{$name}"] #sticky-logo #logo-rect {
+    fill: map.get($theme, "logo-saturated");
   }
 }
 
