@@ -68,11 +68,6 @@ body {
   }
 }
 
-#sidebar {
-  display: flex;
-  flex-direction: column;
-}
-
 h1, h2, h3, .h1, .h2, .h3 {
   display: block;
   @include font-display;
@@ -140,17 +135,16 @@ a {
   flex-direction: column;
   align-items: center;
 
-  #topper-gradient {
+  #topper-logo {
+    z-index: 1;
+    max-height: 100%;
     position: absolute;
   }
 
   #topper-text {
-    z-index: 1;
-    position: relative;
-  }
-
-  #topper-gradient, #topper-text {
+    z-index: 2;
     max-height: $-topper-height;
+    position: relative;
   }
 }
 
@@ -159,16 +153,12 @@ a {
     fill: map.get($theme, "body-font-color");
   }
 
-  [data-theme="#{$name}"] #topper-gradient-stop-1 {
-    stop-color: map.get($theme, "palette-primary");
+  [data-theme="#{$name}"] #topper-logo #inverted-logo-path {
+    fill: map.get($theme, "logo-desaturated");
   }
 
-  [data-theme="#{$name}"] #topper-gradient-stop-2 {
-    stop-color: map.get($theme, "palette-primary");
-  }
-
-  [data-theme="#{$name}"] #topper-gradient-stop-3 {
-    stop-color: map.get($theme, "palette-secondary");
+  [data-theme="#{$name}"] #sticky-logo #logo-rect {
+    fill: map.get($theme, "logo-saturated");
   }
 }
 

@@ -55,6 +55,7 @@ const htmlPlugins = pages.map((page) => {
   return new HtmlWebpackPlugin({
     filename: `${page.name}.html`,
     template: './ejs/main.ejs',
+    favicon: './ico/favicon.ico',
     inject: 'body',
     publicPath: '/',
     base: '/',
@@ -96,6 +97,13 @@ module.exports = {
         type: 'asset/resource',
         generator: {
           filename: 'assets/fonts-[name][ext]',
+        },
+      },
+      {
+        test: /\.ico/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/[name][ext]',
         },
       },
       {
