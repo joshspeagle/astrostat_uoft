@@ -43,3 +43,4 @@ jobs:
           FOLDER: dist
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Build ({sha}): {msg}"
+          GIT_CLONE_PROTECTION_ACTIVE: false
