@@ -247,21 +247,12 @@
           ]
         },
         {
-          "name": "Marta Reina-Campos",
-          "image": "2020-MRC.jpg",
-          "alt": "A picture of Marta Reina-Campos.",
-          "paragraphs": [
-            "<a href=\"https://mreinacampos.github.io\">Personal Website</a>",
-            "Marta is a Global Talent Junior Fellow at the <a href=\"https://igfae.usc.es\">Instituto Galego de Física de Altas Enerxías (IGFAE)</a> at the <a href=\"https://www.usc.gal\">Universidade de Santiago de Compostela</a>. She is interested in learning how stellar clusters form and evolve as galaxies grow and merge, including by developing new physical models of star formation and feedback and testing them using large, complex numerical simulations of galaxy formation. She also tries to use old, massive stellar cluster populations as near-field cosmological tracers, including most recently using data from the <a href=\"https://www.jwst.nasa.gov\">James Webb Space Telescope (JWST)</a>. She was previously a CITA Canada Postdoctoral Fellow at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a> and <a href=\"https://www.mcmaster.ca\">McMaster University</a>."
-          ]
-        },
-        {
           "name": "Andrew Saydjari",
           "image": "andrew_saydjari.jpg",
           "alt": "A picture of Andrew Saydjari.",
           "paragraphs": [
             "<a href=\"https://andrew-saydjari.github.io\">Personal Website</a>",
-            "Andrew is a <a href=\"https://www.stsci.edu/stsci-research/fellowships/nasa-hubble-fellowship-program/2024-nhfp-fellows\">NASA Hubble Postdoctoral Fellow</a> in the <a href=\"https://web.astro.princeton.edu\">Princeton Department of Astrophysical Sciences</a>. His research focuses on combining astrophysics, statistics, and high-performance coding to study the chemical, spatial, and kinematic variations in the dust that permeates the Milky Way. He believes knowledge comes from data, and data comes from instruments - a view that shapes his approach to science. He is also passionate about scientific communication, open source software/data availability, and the replication crisis."
+            "Andrew is an Assistant Professor in the <a href=\"https://astro.nmsu.edu\">Department of Astronomy</a> at <a href=\"https://www.nmsu.edu\">New Mexico State University</a>. His research focuses on combining astrophysics, statistics, and high-performance coding to study the chemical, spatial, and kinematic variations in the dust that permeates the Milky Way. He believes knowledge comes from data, and data comes from instruments - a view that shapes his approach to science. He is also passionate about scientific communication, open source software/data availability, and the replication crisis. He was previously a NASA Hubble Postdoctoral Fellow at <a href=\"https://web.astro.princeton.edu\">Princeton University</a> and received his Ph.D. in Physics from <a href=\"https://www.harvard.edu\">Harvard University</a> in 2024."
           ]
         },
         {
@@ -272,6 +263,16 @@
             "<a href=\"https://pinchen.fan/\">Personal Website</a>",
             "Pinchen is a Ph.D. candidate in the <a href=\"https://science.psu.edu/astro\">Department of Astronomy and Astrophysics</a> at <a href=\"https://www.psu.edu\">Penn State University</a> and a visiting graduate student at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. Her research centres on the search for extraterrestrial intelligence (SETI): as Science PI of a NASA Exoplanets Research Program grant she searches for infrared laser emissions and stellar flares in high-resolution spectra from the Habitable-zone Planet Finder on the Hobby-Eberly Telescope, and she uses the Allen Telescope Array to search for radio technosignatures. She received her undergraduate degree in physics from <a href=\"https://www.carleton.edu\">Carleton College</a> in 2022, where she worked on gravitational-wave research with the <a href=\"https://www.ligo.mit.edu\">MIT LIGO Lab</a>.",
             "Pinchen also works closely with <a href=\"https://sites.psu.edu/astrowright/\">Jason Wright</a> at Penn State and <a href=\"https://www.dunlap.utoronto.ca/~vanderlinde/\">Keith Vanderlinde</a> at the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute</a>."
+          ]
+        },
+        {
+          "name": "Tri Nguyen",
+          "image": "tri_nguyen.jpg",
+          "alt": "A picture of Tri Nguyen.",
+          "paragraphs": [
+            "<a href=\"https://trivnguyen.github.io/\">Personal Website</a>",
+            "Tri is an <a href=\"https://www.nserc-crsng.gc.ca\">NSERC</a> Canada Postdoctoral Research Award Fellow at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. He explores the nature of dark matter and its role in galaxy formation and evolution, especially at the smallest scales, developing machine learning techniques with a focus on simulation-based inference and generative models to analyze cosmological simulations and data from astronomical surveys. He was previously a CIERA Postdoctoral Fellow at <a href=\"https://www.northwestern.edu\">Northwestern University</a> and received his Ph.D. in Physics from the <a href=\"https://www.mit.edu\">Massachusetts Institute of Technology</a> in 2024 under the supervision of <a href=\"https://linanecib.com/\">Lina Necib</a>.",
+            "Tri works closely with <a href=\"https://sazabi4.github.io\">Ting Li</a> at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>."
           ]
         }
       ]
