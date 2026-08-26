@@ -121,6 +121,45 @@ def research_linked_names(research):
     return names
 
 
+# Cues that introduce someone who advises or collaborates with an ART member.
+ADVISOR_CUE = re.compile(
+    r'(co-supervis\w*|co-advis\w*|works closely with|collaborates closely with|'
+    r'supervised by|advised by|working with)', re.I)
+
+# A degree clause names a PAST supervisor, not a current collaborator.
+DEGREE_CLAUSE = re.compile(r'(Ph\.?D|M\.?Sc|B\.?Sc|degree|doctorate)', re.I)
+
+NOT_A_PERSON = ('Department', 'Institute', 'University', 'Fellow', 'Program', 'Survey',
+                'Telescope', 'Sciences', 'College', 'Award', 'Observatory', 'Collaboration',
+                'Centre', 'Center', 'School', 'Array', 'Experiment')
+
+
+def advisors_named(data):
+    """People named as advising or collaborating with a CURRENT member.
+
+    Skips Recent Alumni, whose entries describe where someone went and who they
+    trained under, and skips degree clauses like "received his Ph.D. under the
+    supervision of X", which name a past supervisor rather than a collaborator.
+    """
+    found = {}
+    for section in data['sections']:
+        if section['heading'] in ('Recent Alumni', 'Collaborators'):
+            continue
+        for person in section['people']:
+            for para in person['paragraphs']:
+                for m in ADVISOR_CUE.finditer(para):
+                    before = re.sub(r'<[^>]+>', '', para[max(0, m.start() - 70):m.start()])
+                    if DEGREE_CLAUSE.search(before):
+                        continue
+                    for a in re.finditer(r'<a [^>]*>([^<]+)</a>',
+                                         para[m.start():m.start() + 400]):
+                        nm = re.sub(r'\s+', ' ', a.group(1)).strip()
+                        if (nm and nm[0].isupper() and ' ' in nm and len(nm.split()) <= 4
+                                and not any(w in nm for w in NOT_A_PERSON)):
+                            found.setdefault(nm, set()).add(person['name'])
+    return found
+
+
 def classify_orphan(fname, used_stems, current_tokens):
     """Why a file in static/ might be unreferenced. Several reasons are benign."""
     stem = os.path.splitext(fname)[0].lower()
@@ -216,6 +255,22 @@ def main():
                  and re.search(r"\((?:B\.?A|B\.?Sc|BSc|BA)\b", n)]
     report('5b. Undergraduate-level entries in Recent Alumni', ug_alumni,
            'undergrads are listed while current only; they do not get alumni entries')
+
+    # Collaborators should cover everyone who co-advises a current member.
+    collab = {p['name'] for s_ in data['sections']
+              if s_['heading'] == 'Collaborators' for p in s_['people']}
+    known = {surname(n) for n in list(collab) + list(everyone)}
+    gaps = sorted(f"{nm}  <- advises {', '.join(sorted(who))}"
+                  for nm, who in advisors_named(data).items()
+                  if surname(nm) not in known)
+    report('5c. Advisers of current members missing from Collaborators', gaps,
+           'the section is defined as co-advisers of members plus people the group collaborates with')
+
+    # The file writes & literally inside prose; &amp; is an inconsistency.
+    amps = sorted(p['name'] for s_ in data['sections'] for p in s_['people']
+                  if any('&amp;' in t for t in p['paragraphs']))
+    report('5d. Entries using &amp; instead of a bare &', amps,
+           'paragraphs are emitted verbatim, and the rest of the file writes & directly')
 
     unknown = sorted(n for n in research_linked_names(research_raw)
                      if surname(n) not in known_surnames)

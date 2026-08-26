@@ -96,10 +96,11 @@ python3 scripts/audit_site.py --strict   # exit 1 if anything is flagged
 python3 scripts/audit_site.py --as-of 2026-09-15   # test the seasonal checks
 ```
 
-Stdlib-only, ten checks: stale year-of-study labels, grad entries missing `cohort`, People↔Research
-drift in both directions, unknown names linked on Research, missing image files, entries with no
-photo, group-photo caption names vs the roster, home-page photo recency, and the age of the
-"last updated" line. Plus an informational listing of unreferenced files in `static/`, which is
+Stdlib-only: stale year-of-study labels, grad entries missing `cohort`, People↔Research drift in
+both directions, unknown names linked on Research, advisers of current members missing from
+Collaborators, `&amp;` where the file writes a bare `&`, missing image files, entries with no photo,
+group-photo caption names vs the roster, home-page photo recency, and the age of the "last updated"
+line. Plus an informational listing of unreferenced files in `static/`, which is
 where a member removed outright (rather than moved to Recent Alumni) shows up.
 
 Not wired into CI — a mid-PR roster edit can legitimately trip it; the `art-website-update` skill

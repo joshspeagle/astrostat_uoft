@@ -15,8 +15,8 @@ can lead each affected section with a concrete question instead of an open one:
 python3 scripts/audit_site.py
 ```
 
-It reports stale year-of-study labels, roster/Research drift, missing photos, and how far behind the
-footer date is. Run it again at the end; everything except known-and-accepted items should be clear.
+It reports stale year-of-study labels, roster/Research drift in both directions, advisers of current
+members who are missing from Collaborators, missing photos, and how far behind the footer date is. Run it again at the end; everything except known-and-accepted items should be clear.
 
 ## Before you start
 
@@ -141,6 +141,71 @@ outright when they finish — they do not get alumni entries.
 3. Rewrite the first bio paragraph as "X is now ..." — where they went, not what they studied here.
 4. Remove them from every Research theme list (#10). The audit flags this if you forget.
 
+## Cross-check against Josh's personal site first
+
+`joshspeagle.github.io` carries `sections.mentorship.menteesByStage` in `assets/data/content.json`,
+listing every current mentee with supervision type, co-supervisors, project and awards. It is the
+single best source for who *should* be on the ART page, and it is usually more current than the ART
+site. Read it before asking who joined:
+
+```bash
+python3 - <<'PY'
+import json, re
+c = json.load(open('../joshspeagle.github.io/assets/data/content.json'))
+m = c['sections']['mentorship']['menteesByStage']
+for stage, v in m.items():
+    if stage == 'completed' or not isinstance(v, list):
+        continue
+    for e in v:
+        print(f"{stage:16} {re.sub(r'<[^>]+>', '', e.get('name','')):32} {e.get('timelinePeriod','')}")
+PY
+```
+
+Compare that against `scripts/roster.py` output. Differences run both ways and both are meaningful:
+someone on the personal site but not on ART is usually a missing arrival; someone on ART but not on
+the personal site is usually fine (Josh is not their supervisor). The same file supplies co-supervisor
+names, project descriptions and fellowship names for drafting an entry, and its `news` section often
+explains a departure — an alumni destination is frequently already written there.
+
+Note the reverse direction too: people added to ART may still be missing from the personal site.
+Collect those as you go and hand Josh the list at the end.
+
+## Verify existing bios against their own websites
+
+Ask before spending the tokens, but this reliably finds drift, especially for postdocs and
+affiliated researchers whose fellowships turn over. Dispatch a subagent per section rather than
+checking by hand:
+
+> Fact-check these N biographies against the person's own website, department profile and recent
+> papers. Report only discrepancies, with a source URL for each. Do not rewrite. Flag: position and
+> institution no longer current, a named fellowship that has ended, research description that no
+> longer matches, and any personal website not currently linked. Be careful not to confuse people
+> who share a name.
+
+Tell it explicitly not to flag the year-of-study labels, which you have just deliberately bumped.
+
+**Verify anything it reports before acting on it.** Two of its findings in one session were real
+(a member had moved country; another's listed interest was actually past undergraduate work), but
+it also reported an unlinked personal website that turned out to be an empty JavaScript shell, and
+supplied Ph.D. details that were not on the person's own site.
+
+## Sources go stale, including people's own sites
+
+A personal site is authoritative for what someone claims, not for whether it is current. Seen in a
+single session: a CV listing a finished postdoc as "present"; a student's own site a year behind on
+year-of-study; a departmental profile still listing someone who had moved institutions. When Josh
+contradicts a website about his own group, he is right.
+
+Some sites refuse automated requests. A browser user-agent fixes most:
+
+```bash
+curl -sS -L -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 \
+  (KHTML, like Gecko) Chrome/120 Safari/537.36" "$URL"
+```
+
+That recovers sites returning 403 to a plain fetch. LinkedIn (HTTP 999) and some department pages
+stay blocked regardless.
+
 ## Adding a new person: do the legwork before asking
 
 When the user names an arrival, they will usually give you a name, a rough title and a supervisor.
@@ -214,6 +279,31 @@ public entry; say which parts are inferred and from what.
 
 Existing members get the same treatment when their situation changes: a photo can be refreshed from
 their site the same way, and a fellowship ending should be researched rather than assumed.
+
+## Section conventions worth knowing before you edit
+
+**Collaborators is alphabetical by surname, and the surname is not always the last word.**
+Vianey Leos Barajas files under **Leos Barajas**, not Barajas. Sorting the list by its last token
+silently moves her. Insert new entries at the right position rather than re-sorting the section.
+
+**Only current members carry a trailing "also works closely with ..." paragraph.** Alumni entries
+are a single bio paragraph (plus the website link). When moving someone to alumni, fold any
+collaboration worth keeping into the bio in the past tense — dropping it can leave a collaborator
+with no reference anywhere on the People page.
+
+**A departure orphans a photo.** Remove the file from `static/` too; the audit lists unreferenced
+files, and stale headshots accumulated there for years before this was noticed.
+
+**Paragraphs are emitted verbatim, and the file writes `&` directly, not `&amp;`.** Easy to get
+wrong when drafting; the audit now checks for it.
+
+**Where a visiting or informally-supervised researcher goes.** ART Associates, not Graduate
+Students, even when they are a doctoral student: the precedent is a Ph.D. candidate under informal
+supervision listed there, and the section already carries people registered at other institutions.
+Graduate Students is for students registered at Toronto and supervised within the group. Lead such
+an entry with the home institution so the arrangement is unambiguous.
+
+See **Section scope** above for which career stages belong in which section.
 
 ## Photos (Git LFS)
 
