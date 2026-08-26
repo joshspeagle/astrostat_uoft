@@ -44,6 +44,34 @@ def surname(name):
     return re.sub(r'\s*\([^)]*\)', '', name).strip().split()[-1]
 
 
+def first_name(name):
+    return re.sub(r'\s*\([^)]*\)', '', name).strip().split()[0]
+
+
+def mentioned(name, text):
+    """Is this specific person named in `text`?
+
+    Surname alone is too loose - "Antonio Herrera Martin" collides with
+    collaborator "Peter Martin". So find every "<Word> <Surname>" pair in the
+    text and require the preceding word to be compatible with the person's
+    first name, which lets the short forms the Research page uses through
+    ("Gwen Eadie" for "Gwendolyn Eadie") while rejecting a different person
+    who happens to share a surname.
+    """
+    bare = re.sub(r'\s*\([^)]*\)', '', name).strip()
+    # Exact full name first - handles multi-token surnames ("Rodrigo Barradas Herrera")
+    if re.search(r'\b' + re.escape(bare) + r'\b', text):
+        return True
+    sn, fn = surname(name), first_name(name)
+    pairs = re.findall(r"([A-Z][A-Za-z'\u00C0-\u017F-]+)\s+" + re.escape(sn) + r"\b", text)
+    if not pairs:
+        return False
+    for preceding in pairs:
+        if preceding == fn or fn.startswith(preceding) or preceding.startswith(fn):
+            return True
+    return False
+
+
 def caption_names(home):
     """Names listed in the home page's group-photo caption."""
     m = re.search(r'From left to right:(.*?)</figcaption>', home, re.S)
@@ -98,7 +126,7 @@ def main():
 
     data = json.load(open(PEOPLE, encoding='utf-8'))
     research_raw = open(RESEARCH, encoding='utf-8').read()
-    research_text = re.sub(r'<[^>]+>', ' ', research_raw)
+    research_text = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', research_raw))
     home_raw = open(HOME, encoding='utf-8').read()
     home = re.sub(r'\s+', ' ', home_raw)
     shell = open(SHELL, encoding='utf-8').read()
@@ -127,7 +155,7 @@ def main():
                     if expected != stated:
                         stale.append((name, ordinal(stated), ordinal(expected)))
 
-            seen = re.search(r'\b' + re.escape(surname(name)) + r'\b', research_text)
+            seen = mentioned(name, research_text)
             if section['heading'] in CURRENT and not seen:
                 missing.append(f"{name} ({section['heading']})")
             if section['heading'] == 'Recent Alumni' and seen:
