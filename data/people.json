@@ -165,7 +165,8 @@
           "alt": "A picture of Leo Watson.",
           "cohort": 2024,
           "paragraphs": [
-            "Leo is a 3rd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-advised by <a href=\"https://www.utstat.toronto.edu/craiu\">Radu Craiu</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. He is broadly interested in applications of statistical learning, quantum computing, conformal prediction, and MCMC methods to Bayesian inference problems with astronomical data. He also completed his undergraduate degree at the <a href=\"https://www.utoronto.ca\">University of Toronto</a>."
+            "<a href=\"https://leo-watson.github.io/\">Personal Website</a>",
+            "Leo is a 3rd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> and an Affiliate Researcher at the <a href=\"https://vectorinstitute.ai\">Vector Institute</a>, co-advised by <a href=\"https://www.utstat.toronto.edu/craiu\">Radu Craiu</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. His research centres on uncertainty quantification, particularly distribution-free methods such as conformal prediction, alongside statistical learning and MCMC methods for Bayesian inference problems with astronomical data. He completed his B.S. in Statistics at the <a href=\"https://www.utoronto.ca\">University of Toronto</a> in 2024."
           ]
         },
         {
