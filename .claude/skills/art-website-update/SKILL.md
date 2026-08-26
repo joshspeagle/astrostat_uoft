@@ -58,6 +58,25 @@ roster being settled first — see the notes.
 | 12 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Only rewrite it if the photo changed — a caption describes the photo, not the current roster, so it may legitimately name people who have since left |
 | 13 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav. Then the footer date |
 
+### How to walk a People row: list first, then ask
+
+Do **not** open a People section with "has anything changed?" — that asks the user to recall a
+roster from memory. Print the current section first, then ask for additions and removals against
+that list:
+
+```bash
+python3 scripts/roster.py "Postdoctoral Researchers"   # or: roster.py postdoc
+python3 scripts/roster.py                              # every section
+```
+
+Each entry shows the person's name, a one-line summary of their stated role, their `cohort` if set,
+and a `[NO PHOTO]` marker. Reading the list back is what surfaces the people who quietly need
+moving, and it makes "add these two, drop that one" a much easier answer than an open question.
+
+Work one section at a time and settle it before moving to the next. Sections done earlier feed the
+later ones — Research theme lists (#11) and the group-photo caption (#12) both depend on the final
+roster.
+
 ### Section scope (set June 2025, revised August 2026)
 
 - **Recent Alumni is Ph.D. and postdoc level only.** Undergraduate and Masters-level people are
