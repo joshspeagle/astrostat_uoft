@@ -191,6 +191,20 @@
       ]
     },
     {
+      "heading": "Undergraduate Students",
+      "grid": "small-up-1 medium-up-3",
+      "people": [
+        {
+          "name": "Leo (Hanbang) Wu",
+          "image": null,
+          "alt": "A picture of Leo Wu.",
+          "paragraphs": [
+            "Leo is an undergraduate researcher in the <a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">Summer Undergraduate Research Program (SURP)</a> at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>, co-supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> alongside <a href=\"https://biprateep.de\">Biprateep Dey</a> and <a href=\"https://nolank.ca/\">Nolan Koblischke</a>. He works on alphaUniverse, an AI virtual observatory that uses foundation-model embeddings to make survey data across images, spectra and time series searchable and comparable."
+          ]
+        }
+      ]
+    },
+    {
       "heading": "ART Associates",
       "grid": "small-up-1 medium-up-3",
       "people": [
