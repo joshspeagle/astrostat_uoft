@@ -1,0 +1,48 @@
+name: build-check
+
+# Validates that the site still builds, on branches and pull requests.
+#
+# The publish job (build-site.yaml) only runs on `main`, so without this a
+# broken EJS/SCSS/JSON edit isn't caught until after it's merged - at which
+# point the publish fails and the live site silently stops updating. This
+# catches it first.
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        env:
+          GIT_CLONE_PROTECTION_ACTIVE: false
+        with:
+          lfs: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Validate data/people.json
+        run: node -e "JSON.parse(require('fs').readFileSync('data/people.json','utf8'))"
+
+      - name: Build static site
+        run: |
+          npm install
+          npm run build
+
+      - name: Check expected pages were produced
+        run: |
+          for page in index people research; do
+            if [ ! -s "dist/$page.html" ]; then
+              echo "::error::dist/$page.html is missing or empty"
+              exit 1
+            fi
+          done
+          echo "All pages built. ✓"

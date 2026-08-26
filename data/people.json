@@ -1,0 +1,459 @@
+{
+  "title": "People",
+  "intro": "The ART is made up of researchers across astrophysics, statistics, and data science spanning a wide range of career stages. More information about individual members of the group can be found below.",
+  "sections": [
+    {
+      "heading": "Faculty",
+      "grid": "small-up-1 medium-up-2",
+      "people": [
+        {
+          "name": "Gwendolyn Eadie",
+          "image": "GwendolynEadie_2018.jpg",
+          "alt": "A picture of Gwendolyn Eadie.",
+          "paragraphs": [
+            "<a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Personal Website</a>",
+            "<b>On leave November 2025-2026.</b>",
+            "Gwen is an Assistant Professor of Astrostatistics, jointly appointed between the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> (51%) and the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> (49%). She is also a member of the <a href=\"https://datasciences.utoronto.ca\">Data Sciences Institute</a>. Her research interests includes hierarchical Bayesian inference, generalized linear models, spatial point processes, and time series analysis for the study of the Milky Way Galaxy, ultra-diffuse galaxies, star clusters and globular clusters, stars and stellar flares, and fast radio bursts."
+          ]
+        },
+        {
+          "name": "Joshua S. Speagle (沈佳士)",
+          "image": "NSERC_Speagle_Joshua_thumbnail.jpg",
+          "alt": "A picture of Joshua Speagle.",
+          "paragraphs": [
+            "<a href=\"https://joshspeagle.com\">Personal Website</a>",
+            "Josh is an Assistant Professor of Astrostatistics, jointly appointed between the Department of Statistical Sciences (51%) and the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> (49%). He is also an associate of the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute for Astronomy & Astrophysics</a> and a member of the <a href=\"https://datasciences.utoronto.ca\">Data Sciences Institute</a>. His work focuses on using a combination of astronomy, statistics, data science, and artificial intelligence (AI) to analyze massive datasets containing billions of stars and galaxies to understand how galaxies like our own Milky Way (and the stars within it) form, behave, and evolve over time."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Postdoctoral Researchers",
+      "grid": "small-up-1 medium-up-3",
+      "people": [
+        {
+          "name": "Jacqueline Antwi-Danso",
+          "image": "jacqueline_antwi-danso.jpg",
+          "alt": "A picture of Jacqueline Antwi-Danso.",
+          "paragraphs": [
+            "<a href=\"https://antwi-danso.carrd.co\">Personal Website</a>",
+            "Jacqueline is a <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a> at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> with a joint affiliation at the <a href=\"https://www.umass.edu\">University of Massachusetts, Amherst</a>. She completed her Ph.D. at <a href=\"https://www.tamu.edu\">Texas A&M University</a>, where she worked with <a href=\"https://people.tamu.edu/~papovich\">Casey Papovich</a> on searching for the most massive galaxies in the distant Universe. Jacqueline was born and raised in the beautiful West African country of Ghana and has been involved with organizing outreach events and programs such as <a href=\"https://www.lumamentoring.com\">LUMA</a>.",
+            "Jacqueline also works closely with <a href=\"https://www.yorku.ca/professor/muzzin/\">Adam Muzzin</a> at <a href=\"https://www.yorku.ca\">York University</a>."
+          ]
+        },
+        {
+          "name": "Tanveer Karim",
+          "image": "tanveer_karim.jpg",
+          "alt": "A picture of Tanveer Karim.",
+          "paragraphs": [
+            "<a href=\"https://tanveerkarim.com\">Personal Website</a>",
+            "Tanveer is a <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a> at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> and a member of the <a href=\"https://www.desi.lbl.gov\">DESI</a> and <a href=\"https://lsstdesc.org\">DESC</a> collaborations. His current research interests include developing frameworks to constrain cosmological models by cross-correlating multiple surveys and improving our ability to interpret these constraints in order to address various cosmological tensions. Outside of research, Tanveer loves to learn languages, play board games, and read books.",
+            "Tanveer also works closely with <a href=\"https://www.dunlap.utoronto.ca/dunlap-people/prof-renee-hlozek/\">Renée Hložek </a> at the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute</a>."
+          ]
+        },
+        {
+          "name": "Kevin McKinnon",
+          "image": "KevinMcK_headshot.jpg",
+          "alt": "A picture of Kevin McKinnon.",
+          "paragraphs": [
+            "<a href=\"https://www.kevinmckinnon.com\">Personal Website</a>",
+            "Kevin is an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a> Fellow at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> whose research focuses on understanding how the Milky Way formed and evolved through Galactic Archeology. He combines hierarchical Bayesian models with <a href=\"https://hubblesite.org/home\">Hubble Space Telescope</a> and <a href=\"https://www.esa.int/Science_Exploration/Space_Science/Gaia\">Gaia</a> data to improve astrometry for faint stars, and works with <a href=\"https://www.sdss.org\">SDSS-V</a> to enhance <a href=\"https://www.sdss.org/instruments/apogee-spectrographs\">APOGEE</a> spectral pipelines.",
+            "Kevin also works closely with <a href=\"https://www.aviadlevis.info/\">Aviad Levis</a> in the <a href=\"https://web.cs.toronto.edu/\">Department of Computer Science</a>."
+          ]
+        },
+        {
+          "name": "Biprateep Dey",
+          "image": "biprateep_dey.jpg",
+          "alt": "A picture of Biprateep Dey.",
+          "paragraphs": [
+            "<a href=\"https://biprateep.de\">Personal Website</a>",
+            "Biprateep is an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a>, <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>, & <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a>. His work involves developing novel statistical machine learning tools to study the formation and evolution of galaxies and the Universe as a whole. He is interested in large astronomical surveys and has been deeply involved with the <a href=\"https://www.desi.lbl.gov\">DESI</a> collaboration. He is also passionate about developing a scientific community which is accessible and welcoming to all."
+          ]
+        },
+        {
+          "name": "Duo Xu",
+          "image": "duo_xu.jpg",
+          "alt": "A picture of Duo Xu.",
+          "paragraphs": [
+            "<a href=\"https://sites.google.com/view/xuduo\">Personal Website</a>",
+            "Duo is an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a> and <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a> Postdoctoral Fellow. His research interests focus on trying to use <a href=\"https://ai4astronomy.github.io\">artificial intelligence (AI)</a> to understand star formation, stellar feedback, and turbulence. He is also more broadly interested in developing foundational AI models for use across the sciences. Before joining the University of Toronto, Duo was a <a href=\"https://cosmicorigins.space/vico\">Virginia Initiatives on Cosmic Origins (VICO) Origin Postdoctoral Fellow</a> at the <a href=\"https://www.virginia.edu\">University of Virginia</a>. He received his Ph.D. from the University of Texas at Austin under the supervision of <a href=\"https://sites.google.com/view/stellaoffner/home\">Stella Offner</a>.",
+            "Duo also works closely with <a href=\"https://www.cita.utoronto.ca/~pgmartin/\">Peter Martin</a> at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>."
+          ]
+        },
+        {
+          "name": "Ronan Kerr",
+          "image": "ronan_kerr.jpg",
+          "alt": "A picture of Ronan Kerr.",
+          "paragraphs": [
+            "<a href=\"https://www.rkerrastro.com\">Personal Website</a>",
+            "Ronan is a <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a> who works on novel observational techniques that broaden our knowledge of star formation within our galaxy. He aims to reconstruct recent star formation history using <a href=\"https://www.esa.int/Science_Exploration/Space_Science/Gaia\">Gaia</a> and <a href=\"https://www.sdss.org\">Sloan Digital Sky Survey V (SDSS-V)</a> data of young stars with a goal of creating the time-resolved star formation map in the last 50 Myrs. He received his Ph.D. at the <a href=\"https://www.utexas.edu\">University of Texas at Austin</a> under the supervision of <a href=\"https://www.as.utexas.edu/~alk/Home.html\">Adam Kraus</a>. Outside of research, Ronan is interested in astronomy and science outreach programs. He also enjoys stargazing, amateur astronomy, and astrophotography."
+          ]
+        },
+        {
+          "name": "David (Dayi) Li",
+          "image": "David_Headshot.jpg",
+          "alt": "A picture of David Li.",
+          "paragraphs": [
+            "<a href=\"https://ddavidli.com/\">Personal Website</a>",
+            "David is a postdoctoral fellow and recent Ph.D. graduate working with <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>, <a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/patrick-brown\">Patrick Brown</a>, and <a href=\"https://www.robertoabraham.com\">Roberto Abraham</a>. His research focuses on spatial statistics and Bayesian computation. Specifically, he is developing various spatial point process models to detect and study elusive Ultra-Diffuse Galaxies. He also designs fast, approximate Bayesian computational methods for large and complex statistical models."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Graduate Students",
+      "grid": "small-up-1 medium-up-3",
+      "people": [
+        {
+          "name": "Mairead Heiger",
+          "image": "mairead_heiger.jpg",
+          "alt": "A picture of Mairead Heiger.",
+          "paragraphs": [
+            "Mairead is a 5th-year Ph.D. candidate and a <a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship\">Data Sciences Institute Doctoral Fellow</a> in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>, supervised by <a href=\"https://sazabi4.github.io\">Ting Li</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. She studies galactic chemical evolution using metal-poor stars and dwarf galaxies. Specifically, her research focuses on constraining nucleosynthetic yields (which remain one of the largest sources of uncertainty in chemical evolution models) with hierarchical modelling techniques. She is also interested in science communication and methods in stellar spectroscopy.",
+            "She also collaborates closely with <a href=\"https://alexji.com/\">Alex Ji</a> at the University of Chicago."
+          ]
+        },
+        {
+          "name": "Anika Slizewski",
+          "image": "slizewski.jpg",
+          "alt": "A picture of Anika Slizewski.",
+          "paragraphs": [
+            "Anika is a 4th-year Ph.D. student at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> who works with <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>, <a href=\"https://sazabi4.github.io\">Ting Li</a>, and <a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> on improving statistical methods of estimating masses of astronomical systems. They are interested in uncertainty analysis and have done work with outlier detection and dimensionality reduction of multiwavelength image data. Anika's long-term goal is to develop a consistent and accurate way to combine data from multiple types of populations to estimate properties of the Galaxy."
+          ]
+        },
+        {
+          "name": "Alex Laroche",
+          "image": "Alex_Headshot.jpg",
+          "alt": "A picture of Alex Laroche.",
+          "paragraphs": [
+            "<a href=\"https://alexlaroche7.github.io\">Personal Website</a>",
+            "Alex is a 4th-year Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> and <a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship\">Data Sciences Institute Doctoral Fellow</a> co-supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> and <a href=\"https://www.astro.utoronto.ca/~drout\">Maria Drout</a>. His research combines machine learning and stellar evolution to discover rare stellar populations in large-scale surveys and understand their nature through follow-up observations. He focuses on binary-stripped helium stars and carbon-enhanced metal poor stars, and has developed data-driven models for <a href=\"https://www.esa.int/Science_Exploration/Space_Science/Gaia\">Gaia</a> spectra."
+          ]
+        },
+        {
+          "name": "Phil Van-Lane",
+          "image": "Phil_Headshot.jpg",
+          "alt": "A picture of Phil Van-Lane.",
+          "paragraphs": [
+            "Phil is a 4th-year Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> co-supervised by <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a> as well as <a href=\"https://r-cloutier.github.io\">Ryan Cloutier</a> (<a href=\"https://www.mcmaster.ca\">McMaster</a>). His research focuses on leveraging machine learning and statistical methods to develop stellar dating methods using rotation and magnetic activity data, with a focus on low-mass stars known as M-dwarfs. His long-term goal is to build a catalogue of M-dwarf ages and use these constraints to inform stellar activity and exoplanet evolutionary analyses."
+          ]
+        },
+        {
+          "name": "Rodrigo Barradas Herrera",
+          "image": "rodrigo_herrera.jpg",
+          "alt": "A picture of Rodrigo Barradas Herrera.",
+          "paragraphs": [
+            "Rodrigo is a 3rd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-supervised by <a href=\"https://www.vleosbarajas.com\">Vianey Leos Barajas</a> and <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>. His research interests involve Hidden Markov Models (HMMs), including how they can be used to better understand stellar flares and magnetic activity."
+          ]
+        },
+        {
+          "name": "Leo Watson",
+          "image": "leo_watson.jpg",
+          "alt": "A picture of Leo Watson.",
+          "paragraphs": [
+            "Leo is a 2nd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-advised by <a href=\"https://www.utstat.toronto.edu/craiu\">Radu Craiu</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. He is broadly interested in applications of statistical learning, quantum computing, conformal prediction, and MCMC methods to Bayesian inference problems with astronomical data. He also completed his undergraduate degree at the <a href=\"https://www.utoronto.ca\">University of Toronto</a>."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "ART Associates",
+      "grid": "small-up-1 medium-up-3",
+      "people": [
+        {
+          "name": "Aviad Levis",
+          "image": "aviad_levis.jpg",
+          "alt": "A picture of Aviad Levis.",
+          "paragraphs": [
+            "<a href=\"https://www.aviadlevis.info\">Personal Website</a>",
+            "Aviad is an Assistant Professor in the <a href=\"https://web.cs.toronto.edu\">Department of Computer Science</a> with a cross-appointment to the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> and an associate of the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute for Astronomy & Astrophysics</a>. His research focuses on computational imaging and machine learning in astronomy and the natural sciences. He was previously a postdoctoral scholar at <a href=\"https://www.caltech.edu\">Caltech</a>, where he worked on imaging the supermassive black hole at the center of the Milky Way as part of the <a href=\"https://eventhorizontelescope.org\">Event Horizon Telescope</a> collaboration. He received his Ph.D. from the <a href=\"https://www.technion.ac.il\">Technion-Israel Institute of Technology</a> in 2020."
+          ]
+        },
+        {
+          "name": "Catherine Zucker",
+          "image": "catherine_zucker.jpg",
+          "alt": "A picture of Catherine Zucker.",
+          "paragraphs": [
+            "<a href=\"https://catherinezucker.github.io\">Personal Website</a>",
+            "Catherine is an astrophysicist at the <a href=\"https://www.cfa.harvard.edu\">Center for Astrophysics | Harvard & Smithsonian</a>. Her research focuses on developing novel techniques to map the 3D structure and dynamics of the Milky Way, combining observations, simulations, astrostatistics, and data visualization to study the interstellar medium and its connection to star formation. She is an expert in 3D dust mapping and has done pioneering work on the Local Bubble and large-scale galactic structures. She previously held a <a href=\"https://www.stsci.edu/stsci-research/fellowships/nasa-hubble-fellowship-program\">NASA Hubble Fellowship</a> at the <a href=\"https://www.stsci.edu\">Space Telescope Science Institute</a> and received her Ph.D. from <a href=\"https://www.harvard.edu\">Harvard University</a> in 2020."
+          ]
+        },
+        {
+          "name": "Haowen Zhang",
+          "image": "haowen_zhang.jpg",
+          "alt": "A picture of Haowen Zhang.",
+          "paragraphs": [
+            "<a href=\"https://zhw11387.wixsite.com/mysite\">Personal Website</a>",
+            "Haowen is a Postdoctoral Fellow at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. His research focuses on understanding empirical connections between dark matter halos, galaxies, and supermassive black holes across cosmic time. He developed TRINITY, a framework for inferring black hole masses and growth rates, and collaborates on preparations for next-generation missions including <a href=\"https://www.euclid-ec.org\">Euclid</a>, <a href=\"https://roman.gsfc.nasa.gov\">Roman</a>, and <a href=\"https://www.lsst.org\">LSST</a>. He received his Ph.D. from the <a href=\"https://www.arizona.edu\">University of Arizona</a> in 2024.",
+            "He also collaborates closely with <a href=\"https://pratika24.wixsite.com/pratika-dayal\">Pratika Dayal</a> at CITA."
+          ]
+        },
+        {
+          "name": "Connor Stone",
+          "image": "connor_stone.jpg",
+          "alt": "A picture of Connor Stone.",
+          "paragraphs": [
+            "<a href=\"https://connorjstone.com\">Personal Website</a>",
+            "Connor is a <a href=\"https://rubinobservatory.org\">Rubin</a> Postdoctoral Fellow at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. His research focuses on cosmology using supernovae, approaching the problem in a fully Bayesian framework to address selection functions and the challenges of covariant photometric redshift, classification, and distance measurements. He also develops research software including <a href=\"https://github.com/Autostronomy/AstroPhot\">AstroPhot</a>, a fast and powerful astronomical image photometry solver. He received his Ph.D. from <a href=\"https://www.queensu.ca\">Queen's University</a> in 2022.",
+            "Connor also works closely with <a href=\"https://www.dunlap.utoronto.ca/dunlap-people/prof-renee-hlozek/\">Renée Hložek</a> at the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute</a>."
+          ]
+        },
+        {
+          "name": "Marta Reina-Campos",
+          "image": "2020-MRC.jpg",
+          "alt": "A picture of Marta Reina-Campos.",
+          "paragraphs": [
+            "<a href=\"https://mreinacampos.github.io\">Personal Website</a>",
+            "Marta Reina-Campos is a CITA Canada Postdoctoral Fellow at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a> and <a href=\"https://www.mcmaster.ca\">McMaster University</a>. She is interested in learning how stellar clusters form and evolve as galaxies grow and merge, including by developing new physical models of star formation and feedback and testing them using large, complex numerical simulations of galaxy formation. She also tries to use old, massive stellar cluster populations as near-field cosmological tracers, including most recently using data from the <a href=\"https://www.jwst.nasa.gov\">James Webb Space Telescope (JWST)</a>."
+          ]
+        },
+        {
+          "name": "Andrew Saydjari",
+          "image": "andrew_saydjari.jpg",
+          "alt": "A picture of Andrew Saydjari.",
+          "paragraphs": [
+            "<a href=\"https://andrew-saydjari.github.io\">Personal Website</a>",
+            "Andrew is a <a href=\"https://www.stsci.edu/stsci-research/fellowships/nasa-hubble-fellowship-program/2024-nhfp-fellows\">NASA Hubble Postdoctoral Fellow</a> in the <a href=\"https://web.astro.princeton.edu\">Princeton Department of Astrophysical Sciences</a>. His research focuses on combining astrophysics, statistics, and high-performance coding to study the chemical, spatial, and kinematic variations in the dust that permeates the Milky Way. He believes knowledge comes from data, and data comes from instruments - a view that shapes his approach to science. He is also passionate about scientific communication, open source software/data availability, and the replication crisis."
+          ]
+        },
+        {
+          "name": "Alicia Savelli",
+          "image": "alicia_savelli.jpg",
+          "alt": "A picture of Alicia Savelli.",
+          "paragraphs": [
+            "<a href=\"https://aliciasavelli.github.io\">Personal Website</a>",
+            "Alicia is a 4th-year Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> and at the Canadian <a href=\"https://www.cita.utoronto.ca\">Institute for Theoretical Astrophysics (CITA)</a> working with <a href=\"https://bartripperda.com\">Bart Ripperda</a> and <a href=\"https://www.cita.utoronto.ca/~murray\">Norm Murray</a>. Her research focuses on simulations of hot plasma in accretion disk coronae around active galactic nuclei. Specifically, she is working on incorporating more physics into the simulation code to compare against theory and observations. Along with <a href=\"https://joshspeagle.com\">Josh Speagle</a>, she is also interested in studying galaxy evolution in cosmological simulations, with a focus on Milky Way Analogues."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Collaborators",
+      "grid": "small-up-1 medium-up-4",
+      "people": [
+        {
+          "name": "Bob Abraham",
+          "image": "bob_abraham.jpg",
+          "alt": "A picture of Bob Abraham.",
+          "paragraphs": [
+            "<a href=\"https://www.robertoabraham.com\">Personal Website</a>",
+            "Bob is a Professor in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. His research focuses on galaxy formation and evolution and the development of innovative scientific instruments, including the <a href=\"https://www.dragonflytelescope.org\">Dragonfly Telephoto Array</a>."
+          ]
+        },
+        {
+          "name": "Derek Bingham",
+          "image": "derek_bingham.png",
+          "alt": "A picture of Derek Bingham.",
+          "paragraphs": [
+            "<a href=\"http://people.stat.sfu.ca/~dbingham/\">Personal Website</a>",
+            "Derek is a Professor and Canada Research Chair in Industrial Statistics in the <a href=\"https://www.sfu.ca/stat-actsci.html\">Department of Statistics and Actuarial Science</a> at <a href=\"https://www.sfu.ca\">Simon Fraser University</a>. His research focuses on Bayesian computer model calibration, uncertainty quantification, and experimental design."
+          ]
+        },
+        {
+          "name": "Jo Bovy",
+          "image": "jo_bovy.jpg",
+          "alt": "A picture of Jo Bovy.",
+          "paragraphs": [
+            "<a href=\"https://astro.utoronto.ca/~bovy\">Personal Website</a>",
+            "Jo is a Professor and Chair of the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. His research focuses on understanding the dynamical structure, formation, and evolution of the Milky Way using large-scale astronomical datasets."
+          ]
+        },
+        {
+          "name": "Patrick Brown",
+          "image": "patrick_brown.png",
+          "alt": "A picture of Patrick Brown.",
+          "paragraphs": [
+            "<a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/patrick-brown\">Personal Website</a>",
+            "Patrick is an Associate Professor in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a>. His research focuses on models and inference methodologies for spatio-temporal data, with applications in spatial epidemiology and environmental sciences."
+          ]
+        },
+        {
+          "name": "Ryan Cloutier",
+          "image": "ryan_cloutier.jpg",
+          "alt": "A picture of Ryan Cloutier.",
+          "paragraphs": [
+            "<a href=\"https://r-cloutier.github.io\">Personal Website</a>",
+            "Ryan is an Assistant Professor and Canada Research Chair in Exoplanetary Astronomy in the <a href=\"https://physics.mcmaster.ca\">Department of Physics & Astronomy</a> at <a href=\"https://www.mcmaster.ca\">McMaster University</a>. His research focuses on the detection and characterization of exoplanets."
+          ]
+        },
+        {
+          "name": "Radu Craiu",
+          "image": "radu_craiu.png",
+          "alt": "A picture of Radu Craiu.",
+          "paragraphs": [
+            "<a href=\"https://www.utstat.toronto.edu/craiu\">Personal Website</a>",
+            "Radu is a Professor in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a>. His research focuses on Markov chain Monte Carlo methods, Bayesian computation, model selection, and applications in genetics, ecology, and astronomy."
+          ]
+        },
+        {
+          "name": "Pratika Dayal",
+          "image": "pratika_dayal.jpg",
+          "alt": "A picture of Pratika Dayal.",
+          "paragraphs": [
+            "<a href=\"https://pratika24.wixsite.com/pratika-dayal\">Personal Website</a>",
+            "Pratika is a Professor at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. Her research focuses on understanding how the earliest galaxies formed during the cosmic dark ages and how they drove the Epoch of Reionization. She also uses early galaxies as testbeds for dark matter models."
+          ]
+        },
+        {
+          "name": "Maria Drout",
+          "image": "maria_drout.jpg",
+          "alt": "A picture of Maria Drout.",
+          "paragraphs": [
+            "<a href=\"https://www.astro.utoronto.ca/~drout\">Personal Website</a>",
+            "Maria is an Assistant Professor in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. Her research focuses on understanding the evolution, influence, and ultimate fate of massive stars through observations of supernovae and exotic transients."
+          ]
+        },
+        {
+          "name": "J. Arturo Esquivel",
+          "image": null,
+          "alt": "A picture of J. Arturo Esquivel.",
+          "paragraphs": [
+            "<a href=\"https://www.linkedin.com/in/arturo-esquivel-786318114/\">Personal Website</a>",
+            "Arturo is a researcher in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a>. His research focuses on statistical methods with applications in astronomy."
+          ]
+        },
+        {
+          "name": "Renée Hložek",
+          "image": "renee_hlozek.png",
+          "alt": "A picture of Renée Hložek.",
+          "paragraphs": [
+            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-people/prof-renee-hlozek/\">Personal Website</a>",
+            "Renée is a Professor at the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute for Astronomy & Astrophysics</a> and a <a href=\"https://cifar.ca\">CIFAR</a> Azrieli Global Scholar. Her research focuses on theoretical and observational cosmology, including dark matter, dark energy, and the cosmic microwave background."
+          ]
+        },
+        {
+          "name": "Alex Ji",
+          "image": "alex_ji.jpg",
+          "alt": "A picture of Alex Ji.",
+          "paragraphs": [
+            "<a href=\"https://alexji.com\">Personal Website</a>",
+            "Alex is an Assistant Professor in the <a href=\"https://astrophysics.uchicago.edu\">Department of Astronomy and Astrophysics</a> at the <a href=\"https://www.uchicago.edu\">University of Chicago</a>. His research uses near-field cosmology to study the first stars and galaxies through observations of metal-poor stars."
+          ]
+        },
+        {
+          "name": "Ann B Lee",
+          "image": "ann_lee.jpg",
+          "alt": "A picture of Ann B Lee.",
+          "paragraphs": [
+            "<a href=\"https://www.stat.cmu.edu/~annlee/\">Personal Website</a>",
+            "Ann is a Professor in the <a href=\"https://www.stat.cmu.edu\">Department of Statistics & Data Science</a> at <a href=\"https://www.cmu.edu\">Carnegie Mellon University</a>. Her research focuses on statistical methodology for complex data in the physical sciences, including uncertainty quantification and simulation-based inference."
+          ]
+        },
+        {
+          "name": "Vianey Leos Barajas",
+          "image": "vianey_leos_barajas.jpg",
+          "alt": "A picture of Vianey Leos Barajas.",
+          "paragraphs": [
+            "<a href=\"https://www.vleosbarajas.com\">Personal Website</a>",
+            "Vianey is an Assistant Professor in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> and the <a href=\"https://environment.utoronto.ca\">School of the Environment</a>. Her research focuses on developing statistical methods for ecological and environmental data, including hidden Markov models."
+          ]
+        },
+        {
+          "name": "Ting Li",
+          "image": "ting_li.jpg",
+          "alt": "A picture of Ting Li.",
+          "paragraphs": [
+            "<a href=\"https://sazabi4.github.io\">Personal Website</a>",
+            "Ting is an Assistant Professor in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. Her research focuses on near-field cosmology, studying stars in the Milky Way and nearby dwarf galaxies to understand star formation and dark matter."
+          ]
+        },
+        {
+          "name": "Chris Maddison",
+          "image": "chris_maddison.jpg",
+          "alt": "A picture of Chris Maddison.",
+          "paragraphs": [
+            "<a href=\"https://www.cs.toronto.edu/~cmaddis/\">Personal Website</a>",
+            "Chris is an Assistant Professor in the <a href=\"https://web.cs.toronto.edu\">Department of Computer Science</a> and a <a href=\"https://cifar.ca\">CIFAR</a> AI Chair at the <a href=\"https://vectorinstitute.ai\">Vector Institute</a>. His research focuses on machine learning algorithms, including applications in AI for drug discovery and causal inference."
+          ]
+        },
+        {
+          "name": "Peter Martin",
+          "image": "peter_martin.jpg",
+          "alt": "A picture of Peter Martin.",
+          "paragraphs": [
+            "<a href=\"https://www.cita.utoronto.ca/~pgmartin/\">Personal Website</a>",
+            "Peter is a Professor at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. His research focuses on the interstellar medium, studying the gas and dust that exists between stars in the Milky Way."
+          ]
+        },
+        {
+          "name": "Norm Murray",
+          "image": "norm_murray.jpg",
+          "alt": "A picture of Norm Murray.",
+          "paragraphs": [
+            "<a href=\"https://www.cita.utoronto.ca/~murray\">Personal Website</a>",
+            "Norm is a Professor at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. His research spans nonlinear dynamics, solar system dynamics, solar physics, and active galactic nuclei, including planetary formation and the physics of quasars and black holes."
+          ]
+        },
+        {
+          "name": "Adam Muzzin",
+          "image": "adam_muzzin.jpg",
+          "alt": "A picture of Adam Muzzin.",
+          "paragraphs": [
+            "<a href=\"https://www.yorku.ca/professor/muzzin/\">Personal Website</a>",
+            "Adam is an Associate Professor in the <a href=\"https://physics.yorku.ca\">Department of Physics and Astronomy</a> at <a href=\"https://www.yorku.ca\">York University</a>. His research focuses on understanding how galaxies form and evolve, with particular emphasis on studying distant galaxies from the early universe."
+          ]
+        },
+        {
+          "name": "David Stenning",
+          "image": "david_stenning.png",
+          "alt": "A picture of David Stenning.",
+          "paragraphs": [
+            "<a href=\"https://www.sfu.ca/stat-actsci/department/profiles/dstennin.html\">Personal Website</a>",
+            "David is an Assistant Professor in the <a href=\"https://www.sfu.ca/stat-actsci.html\">Department of Statistics and Actuarial Science</a> at <a href=\"https://www.sfu.ca\">Simon Fraser University</a>. His research focuses on Bayesian statistics, computer model emulation, and statistical methods for the physical sciences."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Recent Alumni",
+      "grid": "small-up-1 medium-up-3",
+      "people": [
+        {
+          "name": "Michael Walmsley (PDF '23-25)",
+          "image": "mike_walmsley.jpg",
+          "alt": "A picture of Michael Walmsley.",
+          "paragraphs": [
+            "<a href=\"https://walmsley.dev/pages/about\">Personal Website</a>",
+            "Mike is now joining <a href=\"https://wayve.ai\">Wayve</a> to work on AI in industry. He was a <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a> from 2023-2025 who worked on building <a href=\"https://github.com/mwalmsley/zoobot\">AI foundation models</a> to interpret astronomical images. He led the team measuring detailed galaxy morphology in <a href=\"https://www.euclid-ec.org\">Euclid</a> and was Technical Lead of citizen science project <a href=\"https://www.zooniverse.org/projects/zookeeper/galaxy-zoo/\">Galaxy Zoo</a>. He did his Ph.D. at <a href=\"https://www.ox.ac.uk\">Oxford University</a> with <a href=\"https://www.physics.ox.ac.uk/our-people/lintott\">Chris Lintott</a> and then a postdoc at the <a href=\"https://www.manchester.ac.uk\">University of Manchester</a> (UK) with <a href=\"https://www.turing.ac.uk/people/researchers/anna-scaife\">Anna Scaife</a>."
+          ]
+        },
+        {
+          "name": "Samantha Berek (Ph.D. '25)",
+          "image": "sam_profile.jpg",
+          "alt": "A picture of Samantha Berek.",
+          "paragraphs": [
+            "<a href=\"https://samberek.github.io/samberek/index.html\">Personal Website</a>",
+            "Sam is now an <a href=\"https://www.nsf.gov/funding/opportunities/aapf-nsf-astronomy-astrophysics-postdoctoral-fellowships\">NSF Astronomy and Astrophysics Postdoctoral Fellow</a> at <a href=\"https://www.umass.edu\">UMass Amherst</a> working with <a href=\"https://www.astrowhit.com\">Kate Whitaker</a>. She completed her Ph.D. in 2025 in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> under the supervision of <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. Her research focuses on using globular cluster populations as a probe of galaxy formation and evolution, employing Bayesian hierarchical modeling techniques."
+          ]
+        },
+        {
+          "name": "Steffani Grondin (Ph.D. '25)",
+          "image": "steffani_grondin.jpg",
+          "alt": "A picture of Steffani Grondin.",
+          "paragraphs": [
+            "<a href=\"https://www.astro.utoronto.ca/~steffani.grondin\">Personal Website</a>",
+            "Steffani is now an <a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pd-np/pdf-bp_eng.asp\">NSERC Postdoctoral Fellow</a> at <a href=\"https://ucsd.edu\">UC San Diego</a> working with <a href=\"https://fbroekgaarden.github.io\">Floor Broekgaarden</a> and <a href=\"https://kremer.northwestern.edu\">Kyle Kremer</a>. She completed her Ph.D. in 2025 in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> working with <a href=\"https://www.astro.utoronto.ca/~drout\">Maria Drout</a> and <a href=\"https://www.yorku.ca/professor/jeremywebb\">Jeremy Webb</a> (<a href=\"https://www.yorku.ca\">York University</a>). Her research focuses on studying the evolution of massive stars in groups, including the evolution of post-common envelope binaries and the outcomes of dynamical interactions in dense stellar environments (such as globular clusters and open clusters). With <a href=\"https://joshspeagle.com\">Josh Speagle</a>, she also developed statistical and machine learning-driven approaches to search for such systems."
+          ]
+        },
+        {
+          "name": "Amanda Cook (Ph.D. '25)",
+          "image": "AmandaCook_Profile.jpg",
+          "alt": "A picture of Amanda Cook.",
+          "paragraphs": [
+            "<a href=\"https://www.astro.utoronto.ca/~cook/\">Personal Website</a>",
+            "Amanda is now a <a href=\"https://banting.fellowships-bourses.gc.ca\">Banting Postdoctoral Fellow</a> at <a href=\"https://www.mcgill.ca\">McGill University</a> and a member of the <a href=\"https://chime-frb.ca\">CHIME/FRB Collaboration</a>. She completed her Ph.D. in 2025 in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> under the joint supervision of <a href=\"https://bryangaensler.net\">Bryan Gaensler</a> (UCSC), <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>, and <a href=\"https://www.yorku.ca/science/profiles/faculty/paul-scholz\">Paul Scholz</a> (<a href=\"https://www.yorku.ca\">York University</a>). Her research interests include fast radio bursts, high-energy follow up, and circumgalactic media, particularly in the context of astrostatistics. She previously obtained an honours BSc in mathematics and physics from <a href=\"https://www.mcgill.ca\">McGill University</a> in 2019."
+          ]
+        },
+        {
+          "name": "Aarya Patil (Ph.D. '23)",
+          "image": "aarya_patil.jpg",
+          "alt": "A picture of Aarya Patil.",
+          "paragraphs": [
+            "<a href=\"https://aaryapatil.github.io\">Personal Website</a>",
+            "Aarya will be starting as an Assistant Professor at <a href=\"https://www.psu.edu\">Penn State University</a>. She is currently a <a href=\"https://rubinobservatory.org\">Legacy Survey of Space and Time (LSST)</a> Discovery Alliance Catalyst Postdoctoral Fellow at the <a href=\"https://www.mpia.de\">Max Planck Institute for Astronomy</a> in Germany. She completed her Ph.D. in 2023 in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> under the joint supervision of <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a> and <a href=\"https://astro.utoronto.ca/~bovy\">Jo Bovy</a>. Her research lies at the intersection of astrophysics and statistics by developing novel data-driven tools that guide mathematical models of the Milky Way Galaxy. She previously obtained her BEng in Computer Engineering from <a href=\"https://www.unipune.ac.in\">S. P. Pune University</a> in India."
+          ]
+        }
+      ]
+    }
+  ]
+}
