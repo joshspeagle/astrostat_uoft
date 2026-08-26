@@ -186,6 +186,12 @@ because academic site templates keep the portrait somewhere else:
 
 When a photo exists only somewhere unreachable, the fastest route is to ask the user to download it
 and hand you the local path, then run `add_headshot.py` on that file — the processing is identical.
+
+A screenshot of a **circular** profile photo can be recovered rather than rejected. Find the circle
+by thresholding away the black surround and the phone's status bar, then crop the largest square
+that fits *inside* the circle (side = radius x sqrt2), inset a few percent so antialiased edge
+pixels do not leave dark wedges in the corners. Check the four corner means before accepting it —
+a corner mean near zero means the square has escaped the circle and needs shrinking or shifting.
 For someone just joining, asking them for a headshot they are happy with is usually better than
 lifting a personal profile picture.
 
