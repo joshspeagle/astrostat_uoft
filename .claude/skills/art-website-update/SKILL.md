@@ -141,7 +141,7 @@ outright when they finish — they do not get alumni entries.
 3. Rewrite the first bio paragraph as "X is now ..." — where they went, not what they studied here.
 4. Remove them from every Research theme list (#10). The audit flags this if you forget.
 
-## Cross-check against Josh's personal site first
+## Cross-check against the faculty members' own sites first
 
 `joshspeagle.github.io` carries `sections.mentorship.menteesByStage` in `assets/data/content.json`,
 listing every current mentee with supervision type, co-supervisors, project and awards. It is the
@@ -169,6 +169,17 @@ explains a departure — an alumni destination is frequently already written the
 
 Note the reverse direction too: people added to ART may still be missing from the personal site.
 Collect those as you go and hand Josh the list at the end.
+
+**Check Gwen Eadie's site as well.** The ART has two faculty members, and a large share of the group
+is co-supervised by Gwen rather than Josh — several members' entries name her and not him. Josh's
+mentorship data only covers his own mentees, so anyone supervised solely by Gwen will not appear
+there at all and is invisible to the check above. Her site is
+<https://www.astro.utoronto.ca/~eadie/>, which carries a students/group listing; it is hand-written
+rather than structured data, so read it rather than parsing it.
+
+Between the two sites you should be able to account for every current member. Anyone on the ART page
+who appears on neither is worth querying — they may be an associate or collaborator rather than a
+supervised member, or they may be stale.
 
 ## Verify existing bios against their own websites
 
