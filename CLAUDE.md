@@ -85,21 +85,25 @@ The People page is generated from **`data/people.json`** by `build/render-people
   file and produces a broken image on the live page — prefer supplying one.
 - Section order in the file is the render order on the page.
 - `"cohort": 2022` (grad students only — the calendar year they started) is **not rendered** — it exists so
-  `scripts/audit_people.py` can compute the correct year-of-study each September and flag prose that
+  `scripts/audit_site.py` can compute the correct year-of-study each September and flag prose that
   has gone stale. Any key the renderer doesn't know about is ignored.
 
-### Roster audit
+### Site audit
 
 ```bash
-python3 scripts/audit_people.py            # report findings, always exit 0
-python3 scripts/audit_people.py --strict   # exit 1 if anything is flagged
-python3 scripts/audit_people.py --as-of 2026-09-15   # test the seasonal checks
+python3 scripts/audit_site.py            # report findings, always exit 0
+python3 scripts/audit_site.py --strict   # exit 1 if anything is flagged
+python3 scripts/audit_site.py --as-of 2026-09-15   # test the seasonal checks
 ```
 
-Stdlib-only. Checks stale year-of-study labels, grad entries missing `cohort`, People↔Research drift
-(current members on no theme, alumni still listed), entries with no photo, and the age of the home
-page's "last updated" line. Not wired into CI — a mid-PR roster edit can legitimately trip it; the
-`art-website-update` skill runs it at the start and end of an update instead.
+Stdlib-only, ten checks: stale year-of-study labels, grad entries missing `cohort`, People↔Research
+drift in both directions, unknown names linked on Research, missing image files, entries with no
+photo, group-photo caption names vs the roster, home-page photo recency, and the age of the
+"last updated" line. Plus an informational listing of unreferenced files in `static/`, which is
+where a member removed outright (rather than moved to Recent Alumni) shows up.
+
+Not wired into CI — a mid-PR roster edit can legitimately trip it; the `art-website-update` skill
+runs it at the start and end of an update instead.
 
 ### Images and Git LFS
 

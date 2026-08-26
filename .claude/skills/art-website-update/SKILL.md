@@ -1,6 +1,6 @@
 ---
 name: art-website-update
-description: Use when the user asks to update the ART website / astrostatuoft.com — walks the 12-section checklist (home blurb, group photo, Statstro, footer date, the five People categories, research themes, nav), asking what changed in each. People edits go in data/people.json; run scripts/audit_people.py first and last.
+description: Use when the user asks to update the ART website / astrostatuoft.com — walks the section checklist (home blurb, Statstro, the six People categories, research themes, deferred group-photo caption, footer date), asking what changed in each. People edits go in data/people.json; run scripts/audit_site.py first and last.
 ---
 
 # ART Website Update Checklist
@@ -12,7 +12,7 @@ Run the audit **before** you start walking — it tells you what's already known
 can lead each affected section with a concrete question instead of an open one:
 
 ```bash
-python3 scripts/audit_people.py
+python3 scripts/audit_site.py
 ```
 
 It reports stale year-of-study labels, roster/Research drift, missing photos, and how far behind the
@@ -39,20 +39,39 @@ Note `data/people.json` only dates from the migration commit; for older People h
 
 ## The checklist
 
+Walk these in order. Two rows are deliberately **out of page order** because they depend on the
+roster being settled first — see the notes.
+
 | # | Section | Where | What to ask about |
 |---|---------|-------|-------------------|
 | 1 | **Home — welcome blurb** | `ejs/pages/home/body.html` | Any change to how the group describes itself; links to Research/People |
-| 2 | **Home — group photo** | `ejs/pages/home/body.html` + `static/` | Is there a newer group photo? The `<figcaption>` names everyone left-to-right — it must match both the photo and the current roster |
+| 2 | **Home — group photo** | `ejs/pages/home/body.html` + `static/` | *Is there a newer group photo?* Swap the image now. **Defer the caption to #11** — it names everyone left-to-right and can't be written until the roster is final |
 | 3 | **Home — Statstro** | `ejs/pages/home/body.html` | Was there a new Statstro? Update the blurb and swap in the latest workshop photo + caption |
-| 4 | **People — Faculty** | `data/people.json` | Title changes, leave notes (e.g. `<b>On leave November 2025-2026.</b>`), new affiliations |
-| 5 | **People — Postdocs** | `data/people.json` | Arrivals; departures (move to Recent Alumni, #8); fellowship name or host changes |
-| 6 | **People — Grad Students** | `data/people.json` | New students (set `cohort`); graduations (→ Recent Alumni); the audit handles year-of-study bumps |
-| 7 | **People — ART Associates / Collaborators** | `data/people.json` | Affiliated researchers and collaborators joining or leaving |
-| 8 | **People — Recent Alumni** | `data/people.json` | Anyone who left since the last update. Rewrite the bio to lead with where they went, and add the credential suffix to the name |
-| 9 | **Research — theme text** | `ejs/pages/research/body.html` | New or retired research directions; any theme blurb that no longer reflects the work |
-| 10 | **Research — member lists** | `ejs/pages/research/body.html` | The three "involved" lists per theme. **Every roster change in #4–8 needs a matching edit here** — this is the most common miss; the audit catches departures but not "should X now be listed on this theme?" |
-| 11 | **Nav / external links** | `ejs/main.ejs` | Sidebar nav (Home / People / Research / Statstro) |
-| 12 | **Home — footer date** | `ejs/pages/home/body.html` | The small-print "It was last updated \<date\>." — **bump this last, every time** |
+| 4 | **People — Faculty** | `data/people.json` | Title changes, leave notes, new affiliations |
+| 5 | **People — Postdocs** | `data/people.json` | Arrivals; departures (→ #9); fellowship or host changes |
+| 6 | **People — Grad Students** | `data/people.json` | New students (set `cohort`); graduations (→ #9). The audit supplies the year-of-study bumps — confirm them rather than asking open-endedly |
+| 7 | **People — ART Associates** | `data/people.json` | Affiliated researchers joining or leaving (7 entries) |
+| 8 | **People — Collaborators** | `data/people.json` | Collaborators joining or leaving (19 entries — the largest section, and the slowest-changing) |
+| 9 | **People — Recent Alumni** | `data/people.json` | Anyone who left since the last update. See "Moving someone to Recent Alumni" |
+| 10 | **Research — themes & member lists** | `ejs/pages/research/body.html` | Theme prose first, then the three "involved" lists. **Propose, don't ask** — see below |
+| 11 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Now that the roster is final, write or verify the left-to-right caption. The audit cross-checks the names |
+| 12 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav (Home / People / Research / Statstro — has never changed in the repo's history). Then the footer date |
+
+### Row 10: propose, don't ask
+
+Each of the 8 themes carries three lists — "ART members involved", "ART associates involved",
+"Collaborators include" — repeating each person's name and link. There is no shared data with
+`data/people.json`; it is hand-written HTML on that side, so every roster change in #4–9 has to be
+mirrored here by hand.
+
+Don't ask the user which themes a person belongs to. Instead:
+
+- For each person **added** in #4–8, read their bio and **propose** the themes that fit, quoting the
+  phrase that motivated each suggestion. Let the user correct rather than recall.
+- For each person **removed** in #9, list the exact themes they currently appear in (the audit
+  reports lingering alumni) and confirm removal from each.
+- Match the surrounding convention: Research uses short/familiar name forms (`Gwen Eadie`,
+  `Josh Speagle`) and links to personal sites where one exists.
 
 ## Person entries (`data/people.json`)
 
@@ -114,7 +133,7 @@ Adding a headshot:
 ## Finishing up
 
 ```bash
-python3 scripts/audit_people.py               # should be clear, bar known exceptions
+python3 scripts/audit_site.py               # should be clear, bar known exceptions
 npm run build                                 # must succeed
 python3 -m http.server 8000 --directory dist  # eyeball the changed pages
 ```
