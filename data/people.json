@@ -167,6 +167,25 @@
           "paragraphs": [
             "Leo is a 3rd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-advised by <a href=\"https://www.utstat.toronto.edu/craiu\">Radu Craiu</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. He is broadly interested in applications of statistical learning, quantum computing, conformal prediction, and MCMC methods to Bayesian inference problems with astronomical data. He also completed his undergraduate degree at the <a href=\"https://www.utoronto.ca\">University of Toronto</a>."
           ]
+        },
+        {
+          "name": "Ian Zhang",
+          "image": null,
+          "alt": "A picture of Ian Zhang.",
+          "cohort": 2026,
+          "paragraphs": [
+            "<a href=\"https://ian-zhang.com/\">Personal Website</a>",
+            "Ian is a 1st-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> and <a href=\"https://thibaultrandrianarisoa.netlify.app/\">Thibault Randrianarisoa</a>. His research develops approximate Bayesian methods for stellar and galactic inference directly from image-based data rather than converted tabular summaries, with the aim of reducing model misspecification in prior-sensitive models. He completed his Honours B.Sc. in Statistics and Mathematics and his M.Sc. in Statistics at the <a href=\"https://www.utoronto.ca\">University of Toronto</a>."
+          ]
+        },
+        {
+          "name": "Isabelle (Liyuan) Huang",
+          "image": null,
+          "alt": "A picture of Isabelle Huang.",
+          "cohort": 2026,
+          "paragraphs": [
+            "Isabelle is a 1st-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> and a <a href=\"https://canssiontario.utoronto.ca/opportunities/uoft-opportunities/mdoc/\">CANSSI Ontario Multidisciplinary Doctoral (Mdoc)</a> trainee, supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> alongside <a href=\"https://www.aviadlevis.info/\">Aviad Levis</a> and <a href=\"https://sfseiji.github.io/\">Seiji Fujimoto</a>. Her research addresses the statistical challenges of gravitationally-lensed galaxy surveys."
+          ]
         }
       ]
     },
