@@ -51,13 +51,27 @@ Conventions actually used across the file:
 
 ## Adding a photo (Git LFS)
 
-`static/` is Git LFS-tracked for `*.jpg`/`*.svg`/`*.ico`/`*.ttf`. Adding a headshot **requires
-`git lfs` locally** — without it the file commits as a text pointer and renders broken.
+`static/` is Git LFS-tracked (`*.jpg`/`*.svg`/`*.ico`/`*.ttf`). **LFS must be active before you
+touch an image** — otherwise a new file commits as a ~130-byte text pointer and renders broken for
+everyone, while the build still reports success.
 
-In a Claude Code web/remote container git-lfs is typically absent, so every `static/` file is a
-pointer stub. Text edits build and preview correctly there; **image work must be done locally**. If
-the user asks for a new headshot in such a session, do the JSON/HTML side and tell them the image
-itself needs a local `git lfs` commit.
+Fresh containers often lack git-lfs. Set up once per container, then confirm:
+
+```bash
+apt-get install -y git-lfs && git lfs install --local && git lfs pull
+find static ico ttf -type f -exec sh -c 'head -c 40 "$1" | grep -q git-lfs.github.com && echo "POINTER: $1"' _ {} \;
+```
+
+The check should print nothing. If it lists files, LFS did not fetch and any preview you look at is
+wrong (broken favicon, fallback fonts, missing headshots).
+
+When adding a headshot:
+
+1. Drop the file in `static/` — a reasonably sized JPG, ideally square, matching the ~144px
+   thumbnails already there.
+2. Set `image` and `alt` in the person's `data/people.json` entry (`alt` reads
+   "A picture of \<Full Name\>.").
+3. `git add static/<file>` and confirm `git lfs ls-files | grep <file>` shows it as LFS-tracked.
 
 ## People ↔ Research cross-check
 

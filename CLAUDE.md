@@ -15,6 +15,7 @@ There is no "stale build" problem and nothing to regenerate before pushing.
 
 ```bash
 npm install                                  # one-time
+git lfs install --local && git lfs pull      # one-time: fetch real images/fonts (see below)
 npm run build                                # webpack -> dist/
 python3 -m http.server 8000 --directory dist # local preview
 ```
@@ -86,15 +87,29 @@ The People page is generated from **`data/people.json`** by `build/render-people
 
 ### Images and Git LFS
 
-`static/` is tracked with **Git LFS** (`*.jpg`, `*.svg`, `*.ico`, `*.ttf` — see `.gitattributes`).
+`static/`, `ico/`, and `ttf/` are tracked with **Git LFS** (`*.jpg`, `*.svg`, `*.ico`, `*.ttf` — see
+`.gitattributes`). Without LFS these files are ~130-byte text pointers, and the site builds
+"successfully" with a broken favicon, fallback fonts, and broken headshots.
 
-- Adding a headshot requires `git lfs` installed locally, or the file lands as a text pointer stub
-  and silently renders broken.
-- **In environments without git-lfs** (including Claude Code web/remote containers) every file in
-  `static/` is a pointer stub, not a real image. Text and layout edits build and preview fine, but
-  anything image-related cannot be visually verified there — do image work locally.
-- Several PNGs in `static/` are large (up to 1.8 MB) and trip webpack's asset size warning. The
-  warnings are pre-existing and harmless; prefer adding new headshots as reasonably sized JPGs.
+Fresh containers (Claude Code web/remote) often lack git-lfs. Set it up first:
+
+```bash
+apt-get install -y git-lfs   # or: brew install git-lfs
+git lfs install --local
+git lfs pull                 # ~15 MB, fetches all 90 binary assets
+```
+
+Verify before trusting a preview or adding an image:
+
+```bash
+find static ico ttf -type f -exec sh -c 'head -c 40 "$1" | grep -q git-lfs.github.com && echo "POINTER: $1"' _ {} \;
+```
+
+Silence means everything is real. Adding a headshot requires LFS active, or the file commits as a
+pointer and renders broken for everyone.
+
+Several PNGs in `static/` are large (up to 1.8 MB) and trip webpack's asset size warning. The
+warnings are pre-existing and harmless; prefer adding new headshots as reasonably sized JPGs.
 
 ### Styling
 
