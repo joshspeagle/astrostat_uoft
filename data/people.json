@@ -108,6 +108,7 @@
           "name": "Mairead Heiger",
           "image": "mairead_heiger.jpg",
           "alt": "A picture of Mairead Heiger.",
+          "cohort": 2021,
           "paragraphs": [
             "Mairead is a 5th-year Ph.D. candidate and a <a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship\">Data Sciences Institute Doctoral Fellow</a> in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>, supervised by <a href=\"https://sazabi4.github.io\">Ting Li</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. She studies galactic chemical evolution using metal-poor stars and dwarf galaxies. Specifically, her research focuses on constraining nucleosynthetic yields (which remain one of the largest sources of uncertainty in chemical evolution models) with hierarchical modelling techniques. She is also interested in science communication and methods in stellar spectroscopy.",
             "She also collaborates closely with <a href=\"https://alexji.com/\">Alex Ji</a> at the University of Chicago."
@@ -117,6 +118,7 @@
           "name": "Anika Slizewski",
           "image": "slizewski.jpg",
           "alt": "A picture of Anika Slizewski.",
+          "cohort": 2022,
           "paragraphs": [
             "Anika is a 4th-year Ph.D. student at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> who works with <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>, <a href=\"https://sazabi4.github.io\">Ting Li</a>, and <a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> on improving statistical methods of estimating masses of astronomical systems. They are interested in uncertainty analysis and have done work with outlier detection and dimensionality reduction of multiwavelength image data. Anika's long-term goal is to develop a consistent and accurate way to combine data from multiple types of populations to estimate properties of the Galaxy."
           ]
@@ -125,6 +127,7 @@
           "name": "Alex Laroche",
           "image": "Alex_Headshot.jpg",
           "alt": "A picture of Alex Laroche.",
+          "cohort": 2022,
           "paragraphs": [
             "<a href=\"https://alexlaroche7.github.io\">Personal Website</a>",
             "Alex is a 4th-year Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> and <a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship\">Data Sciences Institute Doctoral Fellow</a> co-supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> and <a href=\"https://www.astro.utoronto.ca/~drout\">Maria Drout</a>. His research combines machine learning and stellar evolution to discover rare stellar populations in large-scale surveys and understand their nature through follow-up observations. He focuses on binary-stripped helium stars and carbon-enhanced metal poor stars, and has developed data-driven models for <a href=\"https://www.esa.int/Science_Exploration/Space_Science/Gaia\">Gaia</a> spectra."
@@ -134,6 +137,7 @@
           "name": "Phil Van-Lane",
           "image": "Phil_Headshot.jpg",
           "alt": "A picture of Phil Van-Lane.",
+          "cohort": 2022,
           "paragraphs": [
             "Phil is a 4th-year Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> co-supervised by <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a> as well as <a href=\"https://r-cloutier.github.io\">Ryan Cloutier</a> (<a href=\"https://www.mcmaster.ca\">McMaster</a>). His research focuses on leveraging machine learning and statistical methods to develop stellar dating methods using rotation and magnetic activity data, with a focus on low-mass stars known as M-dwarfs. His long-term goal is to build a catalogue of M-dwarf ages and use these constraints to inform stellar activity and exoplanet evolutionary analyses."
           ]
@@ -142,6 +146,7 @@
           "name": "Rodrigo Barradas Herrera",
           "image": "rodrigo_herrera.jpg",
           "alt": "A picture of Rodrigo Barradas Herrera.",
+          "cohort": 2023,
           "paragraphs": [
             "Rodrigo is a 3rd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-supervised by <a href=\"https://www.vleosbarajas.com\">Vianey Leos Barajas</a> and <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>. His research interests involve Hidden Markov Models (HMMs), including how they can be used to better understand stellar flares and magnetic activity."
           ]
@@ -150,6 +155,7 @@
           "name": "Leo Watson",
           "image": "leo_watson.jpg",
           "alt": "A picture of Leo Watson.",
+          "cohort": 2024,
           "paragraphs": [
             "Leo is a 2nd-year Ph.D. student in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a> co-advised by <a href=\"https://www.utstat.toronto.edu/craiu\">Radu Craiu</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. He is broadly interested in applications of statistical learning, quantum computing, conformal prediction, and MCMC methods to Bayesian inference problems with astronomical data. He also completed his undergraduate degree at the <a href=\"https://www.utoronto.ca\">University of Toronto</a>."
           ]
@@ -220,6 +226,7 @@
           "name": "Alicia Savelli",
           "image": "alicia_savelli.jpg",
           "alt": "A picture of Alicia Savelli.",
+          "cohort": 2022,
           "paragraphs": [
             "<a href=\"https://aliciasavelli.github.io\">Personal Website</a>",
             "Alicia is a 4th-year Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> and at the Canadian <a href=\"https://www.cita.utoronto.ca\">Institute for Theoretical Astrophysics (CITA)</a> working with <a href=\"https://bartripperda.com\">Bart Ripperda</a> and <a href=\"https://www.cita.utoronto.ca/~murray\">Norm Murray</a>. Her research focuses on simulations of hot plasma in accretion disk coronae around active galactic nuclei. Specifically, she is working on incorporating more physics into the simulation code to compare against theory and observations. Along with <a href=\"https://joshspeagle.com\">Josh Speagle</a>, she is also interested in studying galaxy evolution in cosmological simulations, with a focus on Milky Way Analogues."
