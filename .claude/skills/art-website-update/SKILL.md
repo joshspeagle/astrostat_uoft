@@ -174,9 +174,21 @@ python3 scripts/add_headshot.py <url-or-path> static/first_last.jpg --anchor 0.1
 top, `0.5` centred, `1.0` bottom. Portraits usually want a low value since faces sit high in frame.
 There is no face detection — **always open the result and look at it** before committing.
 
-Not everyone has a usable photo online. If you cannot find one, set `"image": null` and tell the
-user it needs supplying rather than substituting something unsuitable like a GitHub avatar. The
-audit lists entries with no photo, so it will not be forgotten.
+Finding the image URL is often the fiddly part. Grepping the landing page for `<img>` can miss it,
+because academic site templates keep the portrait somewhere else:
+
+| Template | Where the portrait lives |
+|---|---|
+| Hugo (Wowchemy/Academic) | `/authors/admin/avatar_hu_<hash>.jpg` — note **`authors`**, plural, not `/author/` |
+| Jekyll / plain | usually `/images/…` or `/assets/…`, linked from the landing page |
+| Department profile | often blocks automated requests (Princeton returns 403) |
+
+If a portrait is already square and smaller than 500px, pass `--size <its edge>` rather than
+upscaling — enlarging past the source resolution just softens it.
+
+Not everyone has a usable photo online. If you genuinely cannot find one, set `"image": null` and
+tell the user it needs supplying rather than substituting something unsuitable like a GitHub avatar.
+The audit lists entries with no photo, so it will not be forgotten.
 
 Confirm LFS picked the file up, or it commits as a pointer and renders broken:
 
