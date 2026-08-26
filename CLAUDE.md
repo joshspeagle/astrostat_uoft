@@ -99,8 +99,10 @@ python3 scripts/audit_site.py --as-of 2026-09-15   # test the seasonal checks
 Stdlib-only: stale year-of-study labels, grad entries missing `cohort`, People↔Research drift in
 both directions, unknown names linked on Research, advisers of current members missing from
 Collaborators, `&amp;` where the file writes a bare `&`, missing image files, entries with no photo,
-group-photo caption names vs the roster, home-page photo recency, and the age of the "last updated"
-line. Plus an informational listing of unreferenced files in `static/`, which is
+group-photo caption names vs the roster, home-page photo recency, the age of the "last updated"
+line, and three Research-page consistency checks (names left unlinked despite having a site on file,
+one person written more than one way across themes, and roster blocks out of
+members/associates/collaborators order). Plus an informational listing of unreferenced files in `static/`, which is
 where a member removed outright (rather than moved to Recent Alumni) shows up.
 
 Not wired into CI — a mid-PR roster edit can legitimately trip it; the `art-website-update` skill
@@ -112,8 +114,15 @@ runs it at the start and end of an update instead.
 python3 scripts/roster.py [section]        # list the roster, or one section, for review
 python3 scripts/add_headshot.py <src> static/name.jpg [--anchor 0.1] [--size 500]
 python3 scripts/sort_themes.py [--apply]   # order Research themes by roster size
+python3 scripts/theme_fit.py [theme]       # theme rosters vs what bios actually say
 python3 scripts/test_audit.py              # regression tests for the audit helpers
 ```
+
+`theme_fit.py` cross-checks each Research theme's roster against the People-page bios in both
+directions: `MISSING` (bio uses the theme's vocabulary but the person is not listed) and `THIN`
+(listed, but the bio says nothing on the theme, and is long enough that it had a fair chance to).
+It is a prompt, not a verdict — read the quoted evidence before acting. Update `THEME_WORDS` when a
+theme is renamed or rescoped, or it quietly stops finding anything.
 
 `sort_themes.py` reorders the `<h2>` blocks in `ejs/pages/research/body.html` by
 **total** roster size (members + associates + collaborators), largest first — total

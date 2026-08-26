@@ -169,6 +169,45 @@ def advisors_named(data):
     return found
 
 
+ROSTER_LABELS = ('ART members involved', 'ART associates involved',
+                 'Collaborators include')
+
+
+def theme_rosters(research):
+    """[(title, [(label, [entry, ...])])] for each Research theme, in page order.
+
+    An `entry` is one comma-separated name as written, with a marker showing
+    whether it was wrapped in an <a>. Anchors routinely straddle a line break,
+    so the tags are collapsed first - splitting the raw HTML on commas cuts
+    inside them and reports linked names as bare text.
+    """
+    out = []
+    parts = re.split(r'<h2>(.*?)</h2>', research, flags=re.S)
+    for i in range(1, len(parts), 2):
+        title = re.sub(r'&amp;', '&', parts[i]).strip()
+        rows = []
+        # Sort by where each label actually appears, not by ROSTER_LABELS order -
+        # otherwise the block always looks canonical and the order check is vacuous.
+        found = []
+        for label in ROSTER_LABELS:
+            m = re.search(label + r':</strong>(.*?)(?:<br>|</p>)', parts[i + 1], re.S)
+            if m:
+                found.append((m.start(), label, m))
+        for _, label, m in sorted(found):
+            seg = re.sub(r'<a\b[^>]*>(.*?)</a>', lambda x: '\x01' + x.group(1) + '\x02',
+                         m.group(1), flags=re.S)
+            seg = re.sub(r'<[^>]+>', '', seg)
+            entries = []
+            for chunk in seg.split(','):
+                linked = '\x01' in chunk
+                name = ' '.join(chunk.replace('\x01', '').replace('\x02', '').split())
+                if name:
+                    entries.append((name, linked))
+            rows.append((label, entries))
+        out.append((title, rows))
+    return out
+
+
 def classify_orphan(fname, used_stems, current_tokens):
     """Why a file in static/ might be unreferenced. Several reasons are benign."""
     stem = os.path.splitext(fname)[0].lower()
@@ -358,6 +397,55 @@ def main():
             print(f"      unparseable date: {m.group(1)}")
             findings += 1
     print()
+
+    # --- Research page consistency (added Aug 2026) ---
+    rosters = theme_rosters(research_raw)
+
+    # 11. someone written as bare text on a theme who has a personal site on file
+    sites = {}
+    for s_ in data['sections']:
+        for p_ in s_['people']:
+            m = re.search(r'href="([^"]+)">Personal Website', p_['paragraphs'][0])
+            if m:
+                sites[p_['name']] = m.group(1)
+    unlinked = []
+    for title, rows in rosters:
+        for _, entries in rows:
+            for name, linked in entries:
+                if linked:
+                    continue
+                hit = [n for n in sites if mentioned(n, name) or mentioned(name, n)]
+                if hit:
+                    unlinked.append(f"{name} on {title}  -> {sites[hit[0]]}")
+    report('11. Research names not linked, but with a site on file', sorted(set(unlinked)),
+           'the convention is to link a personal site wherever one exists')
+
+    # 12. the same person written two different ways across themes.
+    # Key against the whole roster, not just people with a personal site: keying
+    # off `sites` silently skips anyone without one, which hid a real drift.
+    forms = {}
+    for title, rows in rosters:
+        for _, entries in rows:
+            for name, _ in entries:
+                hit = [n for n in everyone if mentioned(n, name) or mentioned(name, n)]
+                key = hit[0] if hit else name
+                forms.setdefault(key, set()).add(name)
+    drift = sorted(f"{k}: written as " + ' / '.join(f'"{v}"' for v in sorted(vs))
+                   for k, vs in forms.items() if len(vs) > 1)
+    report('12. One person written more than one way on Research', drift,
+           'pick one form; a mismatched form also breaks the roster checks above')
+
+    # 13. roster blocks that do not read members -> associates -> collaborators
+    order = []
+    for title, rows in rosters:
+        got = [lbl for lbl, _ in rows]
+        want = [lbl for lbl in ROSTER_LABELS if lbl in got]
+        if got != want:
+            order.append(f"{title}: " + ' then '.join(
+               'collaborators' if l.startswith('Collaborators') else l.split()[1]
+               for l in got))
+    report('13. Roster blocks out of members/associates/collaborators order', order,
+           'every theme should read in the same order')
 
     # orphans (informational)
     used_stems = {os.path.splitext(r)[0].lower() for r in refs}

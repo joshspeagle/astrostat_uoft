@@ -23,6 +23,8 @@ exec(_src, _ns)
 mentioned = _ns['mentioned']
 caption_names = _ns['caption_names']
 academic_year = _ns['academic_year']
+theme_rosters = _ns['theme_rosters']
+ROSTER_LABELS = _ns['ROSTER_LABELS']
 
 import datetime
 
@@ -51,6 +53,25 @@ NAME_CASES = [
     ("Muzzin Fujimoto",         False, "stripping '(York)' must not join across the comma"),
 ]
 
+# A theme block with three defects the Research checks exist to catch:
+#   - the roster reads associates BEFORE members (every other theme is members first)
+#   - "Leo Watson" is bare text although he has a personal site
+#   - the same person is written two ways across the two themes
+THEME_HTML = """
+  <h2>Alpha</h2>
+  <p>
+    <strong>ART associates involved:</strong> <a href="https://x.test">Tri Nguyen</a><br>
+    <strong>ART members involved:</strong> Leo Watson, <a
+      href="https://y.test">Christian Kragh Jespersen</a><br>
+    <strong>Collaborators include:</strong> <a href="https://z.test">Jo Bovy</a>
+  </p>
+  <h2>Beta</h2>
+  <p>
+    <strong>ART members involved:</strong> <a href="https://y.test">Christian Jespersen</a><br>
+  </p>
+</section>
+"""
+
 CAPTION = ('<figcaption>ART Group photo (Summer 2025). From left to right: Kevin McKinnon, '
            'Gwen Eadie, and Josh Speagle (with Alejandro Ortega Cruz Prieto featured in the '
            'background).</figcaption>')
@@ -69,6 +90,28 @@ def main():
         if expect not in names:
             failures.append(f"caption_names missed {expect!r}; got {names}")
 
+    # --- Research roster parsing (checks 11-13) ---
+    rosters = theme_rosters(THEME_HTML)
+    if [t for t, _ in rosters] != ['Alpha', 'Beta']:
+        failures.append(f"theme_rosters found {[t for t, _ in rosters]}, expected Alpha and Beta")
+
+    # order must be reported as written, or check 13 passes vacuously
+    alpha = dict(enumerate(l for l, _ in rosters[0][1]))
+    if alpha.get(0) != 'ART associates involved':
+        failures.append(f"theme_rosters normalised block order to {list(alpha.values())}; "
+                        "it must preserve document order or the order check never fires")
+
+    # an <a> split across a newline must still count as linked
+    names = {n: linked for _, entries in rosters[0][1] for n, linked in entries}
+    if names.get('Christian Kragh Jespersen') is not True:
+        failures.append("a name inside a newline-wrapped <a> was not detected as linked")
+    if names.get('Leo Watson') is not False:
+        failures.append("a bare-text name was not detected as unlinked")
+
+    # the two spellings must resolve to one person
+    if not mentioned('Christian Kragh Jespersen', 'Christian Jespersen'):
+        failures.append("short and full name forms did not unify; check 12 would miss real drift")
+
     # academic year rolls over in September, not January
     for date, expected in ((datetime.date(2026, 8, 31), 2025),
                            (datetime.date(2026, 9, 1), 2026),
@@ -77,7 +120,7 @@ def main():
         if got != expected:
             failures.append(f"academic_year({date}) == {got}, expected {expected}")
 
-    total = len(NAME_CASES) + 4 + 3
+    total = len(NAME_CASES) + 4 + 3 + 5
     if failures:
         print(f"{len(failures)} of {total} checks FAILED:\n")
         for f in failures:

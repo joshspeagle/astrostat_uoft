@@ -16,7 +16,20 @@ python3 scripts/audit_site.py
 ```
 
 It reports stale year-of-study labels, roster/Research drift in both directions, advisers of current
-members who are missing from Collaborators, missing photos, and how far behind the footer date is. Run it again at the end; everything except known-and-accepted items should be clear.
+members who are missing from Collaborators, Research names left unlinked or written two different
+ways, roster blocks out of order, missing photos, and how far behind the footer date is. Run it
+again at the end; everything except known-and-accepted items should be clear.
+
+**Use `--as-of` when the update targets the coming academic year.** Year-of-study labels roll over
+in September. Doing an August update means writing labels for the year that has not started, and the
+plain audit will then report all of them as wrong. Pin it to the year you are writing for:
+
+```bash
+python3 scripts/audit_site.py --as-of 2026-09-15
+```
+
+Otherwise you will report a pile of findings that are not findings, and — worse — be tempted to
+"fix" correct labels back to the outgoing year.
 
 ## Before you start
 
@@ -86,21 +99,117 @@ roster.
   August 2026.
 - **Graduate Students covers Ph.D. and Masters students** in one section.
 
-### Row 11: propose, don't ask
+### Row 11: the Research page
 
-Each of the 8 themes carries three lists — "ART members involved", "ART associates involved",
-"Collaborators include" — repeating each person's name and link. There is no shared data with
-`data/people.json`; it is hand-written HTML on that side, so every roster change in #4–10 has to be
-mirrored here by hand.
+Each theme carries three lists — "ART members involved", "ART associates involved", "Collaborators
+include" — repeating each person's name and link. There is **no shared data** with
+`data/people.json`; that side is hand-written HTML, so every roster change in #4-10 has to be
+mirrored here by hand. Two scripts do the mechanical part; the rest is judgment and belongs to the
+user.
 
-Don't ask the user which themes a person belongs to. Instead:
+**Walk one theme at a time, and show the roster and the draft text together.** Josh asked for this
+explicitly: seeing the people and the prose side by side is what makes it possible to say "that
+sentence is too specific to what Duo and Ronan do" or "Maria doesn't belong here". Do not present
+eight themes at once, and do not present rosters and prose in separate passes.
 
-- For each person **added** in #4–9, read their bio and **propose** the themes that fit, quoting the
-  phrase that motivated each suggestion. Let the user correct rather than recall.
-- For each person **removed** in #10, list the exact themes they currently appear in (the audit
-  reports lingering alumni) and confirm removal from each.
-- Match the surrounding convention: Research uses short/familiar name forms (`Gwen Eadie`,
-  `Josh Speagle`) and links to personal sites where one exists.
+**Propose, don't ask.** Never ask which themes a person belongs to. Run the fit scan, read the bio,
+and propose with the evidence quoted:
+
+```bash
+python3 scripts/theme_fit.py                 # every theme, both directions
+python3 scripts/theme_fit.py Galaxies        # just one
+```
+
+It reports `MISSING` (bio uses the theme's vocabulary, person is not listed) and `THIN` (listed, but
+the bio says nothing on the theme). Both directions matter — `MISSING` found Aviad Levis absent from
+the AI theme despite being the most AI-central person on the page, and `THIN` is what exposed Maria
+Drout sitting on Galaxies with a bio entirely about supernovae. **It is a prompt, not a verdict**:
+keyword presence is not membership. Read the quoted phrase, decide, then take it to the user with
+the evidence attached so they can correct rather than recall.
+
+When a theme is renamed or rescoped, update its entry in `THEME_WORDS` in that script — otherwise it
+quietly stops finding anything.
+
+### Theme prose: the house style
+
+This is where the most rework happened in one session, in both directions. Two failure modes, and
+they pull opposite ways:
+
+**Do not fragment the taxonomy.** The themes are deliberately broad and a little non-standard so the
+site reads to astronomers *and* statisticians rather than to one field's specialists. Splitting a
+theme into subfield labels ("Cosmology and Large-Scale Structure", "Dust and the ISM") makes it
+narrower and more astronomy-coded, which is exactly wrong. If anything the pressure should run
+toward **consolidation**. Josh on this: *"the whole point of the category is that this site is
+interdisciplinary... what you seem to have done is just kind of fragmented and sliced them a bit,
+which I think is actually the wrong move."*
+
+**Do not write dense methodology prose.** Theme text is a general overview in plain language, not a
+technical abstract. A paragraph of abstract capability-speak that "doesn't really say very much" is
+an overcorrection, not a fix. Prefer concrete nouns and short sentences. Avoid in-field jargon
+("quenching") unless the sentence explains it.
+
+Titles are **terse** — `Inference`, `Galaxies`, `Transients` — with `AI for Scientists` the one
+deliberate exception, because it states why the theme exists.
+
+**Structural defect to look for: two closers bolted together.** When a theme has been broadened or
+merged, the new material tends to get *appended* with its own "members of the ART do X" sentence,
+leaving the paragraph with two endings and a visible seam ("The same question scales up."). This
+happened on The Milky Way, Dark Matter & Cosmology and Transients. The fix is to **reweave into one
+closer**, not to append. Symptom to grep for: two sentences beginning "Members of the ART" or "We
+use and develop" in one paragraph.
+
+**The text must cover its own roster.** After settling a theme's people, re-read the prose and ask
+whether each person's kind of work is visible in it. Transients failed this badly — the heading said
+Transients, the roster held SETI and supernovae people, and every sentence was about fast radio
+bursts. Two of five people were invisible in their own theme.
+
+**Technical detail outlives the person who did it.** Naming a specific method ties the page to
+whoever ran it. `log-Gaussian Cox Processes and inhomogeneous Poisson Processes` sat in *two* themes
+for a year after the student who used them had left. When someone departs, grep the Research page
+for their **methods and objects**, not just their name.
+
+Broad method families ("hierarchical Bayesian models") age better than specific ones and still
+signal to statisticians, which is the audience half that named methods are there to reach.
+
+### Removing a person is a multi-place edit
+
+Dropping someone is never one deletion. Work the list:
+
+1. Their entry in `data/people.json`.
+2. **Other people's bios** — the trailing "also works closely with ..." lines name them.
+3. **Every Research theme** they appear on (the audit lists these).
+4. Their photo in `static/`.
+
+Removing Pratika Dayal touched all four across five places. And check what the removal *orphans*:
+taking her out left Haowen Zhang with no stated connection to the group at all, since her line was
+his only one. A tie-line is optional — several associates have none — but losing the last one
+silently is a regression worth flagging to the user rather than deciding alone.
+
+### Occasional: reviewing the theme taxonomy itself
+
+**Not part of every update.** The eight themes and their titles are stable; walking rosters and prose
+is the routine job. Reopen the taxonomy only on a real trigger:
+
+- a theme's roster has fallen to two or three people, or grown past about twenty
+- several new arrivals share a research area that no theme names
+- a whole line of work has left with a departing member
+- the user asks
+
+If it is triggered, research first — what has the group actually published recently? — and bring
+evidence, not instinct. A roster-overlap number ("these two themes share seven people, Jaccard 0.50")
+argues a merge far better than an opinion does. Then propose **consolidation or a rename**, not new
+subdivisions, and re-read "Theme prose" above before drafting.
+
+After any roster change, re-order the page by size:
+
+```bash
+python3 scripts/sort_themes.py            # report
+python3 scripts/sort_themes.py --apply    # rewrite
+```
+
+Sorted by **total** roster size (members + associates + collaborators), largest first, so a theme
+with many outside collaborators is not buried for having fewer people inside the group. Ties keep
+their order, so it is idempotent.
 
 ## Person entries (`data/people.json`)
 
@@ -337,13 +446,71 @@ Adding a headshot:
 2. Set `image` and `alt` in the person's entry (`alt` reads "A picture of \<Full Name\>.").
 3. `git add static/<file>`, then confirm `git lfs ls-files | grep <file>` lists it.
 
+## Editing hand-written HTML safely
+
+Both `body.html` files are hand-wrapped at ~120 columns, so a phrase you are certain of will often
+not match the file: the line break lands somewhere you did not predict. Read the exact bytes first
+rather than reconstructing them from memory:
+
+```bash
+sed -n '158,180p' ejs/pages/research/body.html        # and `| cat -A` if whitespace is in doubt
+```
+
+Then make every replacement assert it matched exactly once, and write only after all of them
+succeed, so a bad guess changes nothing instead of applying half an edit:
+
+```python
+for old, new in edits:
+    assert s.count(old) == 1, ('MISS', s.count(old), old[:70])
+    s = s.replace(old, new)
+open(path, 'w').write(s)      # after the loop, never inside it
+```
+
+Two traps worth naming. Splitting a roster line on commas cuts **inside** multi-line `<a>` tags and
+makes linked names look bare — collapse the anchors first. And when replacing text inside a
+paragraph, check for embedded links in the span you are rewriting; several theme paragraphs carry
+`<a>` on ordinary words, and a careless rewrite drops them silently.
+
+## Theme images
+
+One per theme in `static/`, referenced from `ejs/pages/research/body.html`, square and ~500px, LFS
+like every other image. Match the existing 48-88 KB range.
+
+**An image can outlive the work it depicts.** `research_udg.jpg` showed an ultra-diffuse galaxy long
+after the student whose work it illustrated had left. When a theme is rescoped or a line of work
+ends, check the picture too, not just the prose.
+
+Sourcing: NASA and Chandra imagery is public domain and the safest default; ESA/Hubble is CC BY 4.0;
+ESA mission imagery is often CC BY-SA 3.0 IGO, which carries share-alike strings. Take the highest
+resolution available, crop square around the subject, then downsample:
+
+```python
+im = Image.open(src)                       # crop a centred square, then
+im.crop(box).resize((500, 500), Image.LANCZOS).save(dest, quality=88, optimize=True)
+```
+
+Keep the full credit line even when it is long — page credits elsewhere are short, but attribution
+is the one place to be verbose rather than tidy. Confirm the file staged as an LFS pointer:
+
+```bash
+git add static/<file> && git cat-file -p :static/<file> | head -1   # must say git-lfs spec
+```
+
 ## Finishing up
 
 ```bash
-python3 scripts/audit_site.py               # should be clear, bar known exceptions
-npm run build                                 # must succeed
-python3 -m http.server 8000 --directory dist  # eyeball the changed pages
+python3 scripts/audit_site.py --as-of <target>  # clear, bar known exceptions
+python3 scripts/test_audit.py                   # the audit's own regression tests
+python3 scripts/theme_fit.py --quiet            # nothing left unexplained
+python3 scripts/sort_themes.py                  # themes still in size order?
+npm run build                                   # must succeed
+python3 -m http.server 8000 --directory dist    # eyeball the changed pages
 ```
+
+Anything the audit still reports and you have deliberately decided to leave should be recorded
+rather than remembered — `ADVISER_NOT_COLLABORATOR` in `audit_site.py` is the pattern: an explicit
+exemption with a one-line reason and a date, so the finding stops recurring and the decision stays
+visible.
 
 Bump the footer date (#12), then commit and push. CI (`build-check.yaml`) builds every PR and
 non-`main` branch; merging to `main` triggers `build-site.yaml`, which publishes `dist/` to
