@@ -263,6 +263,16 @@
             "<a href=\"https://andrew-saydjari.github.io\">Personal Website</a>",
             "Andrew is a <a href=\"https://www.stsci.edu/stsci-research/fellowships/nasa-hubble-fellowship-program/2024-nhfp-fellows\">NASA Hubble Postdoctoral Fellow</a> in the <a href=\"https://web.astro.princeton.edu\">Princeton Department of Astrophysical Sciences</a>. His research focuses on combining astrophysics, statistics, and high-performance coding to study the chemical, spatial, and kinematic variations in the dust that permeates the Milky Way. He believes knowledge comes from data, and data comes from instruments - a view that shapes his approach to science. He is also passionate about scientific communication, open source software/data availability, and the replication crisis."
           ]
+        },
+        {
+          "name": "Pinchen Fan",
+          "image": "pinchen_fan.jpg",
+          "alt": "A picture of Pinchen Fan.",
+          "paragraphs": [
+            "<a href=\"https://pinchen.fan/\">Personal Website</a>",
+            "Pinchen is a Ph.D. candidate in the <a href=\"https://science.psu.edu/astro\">Department of Astronomy and Astrophysics</a> at <a href=\"https://www.psu.edu\">Penn State University</a> and a visiting graduate student at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. Her research centres on the search for extraterrestrial intelligence (SETI): as Science PI of a NASA Exoplanets Research Program grant she searches for infrared laser emissions and stellar flares in high-resolution spectra from the Habitable-zone Planet Finder on the Hobby-Eberly Telescope, and she uses the Allen Telescope Array to search for radio technosignatures. She received her undergraduate degree in physics from <a href=\"https://www.carleton.edu\">Carleton College</a> in 2022, where she worked on gravitational-wave research with the <a href=\"https://www.ligo.mit.edu\">MIT LIGO Lab</a>.",
+            "Pinchen also works closely with <a href=\"https://sites.psu.edu/astrowright/\">Jason Wright</a> at Penn State and <a href=\"https://www.dunlap.utoronto.ca/~vanderlinde/\">Keith Vanderlinde</a> at the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute</a>."
+          ]
         }
       ]
     },
