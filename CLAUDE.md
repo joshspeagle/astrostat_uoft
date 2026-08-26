@@ -105,6 +105,19 @@ where a member removed outright (rather than moved to Recent Alumni) shows up.
 Not wired into CI — a mid-PR roster edit can legitimately trip it; the `art-website-update` skill
 runs it at the start and end of an update instead.
 
+### Helper scripts
+
+```bash
+python3 scripts/roster.py [section]        # list the roster, or one section, for review
+python3 scripts/add_headshot.py <src> static/name.jpg [--anchor 0.1] [--size 500]
+python3 scripts/test_audit.py              # regression tests for the audit helpers
+```
+
+`add_headshot.py` square-crops, resizes and re-encodes a local file or URL so new headshots match
+the existing thumbnails. `--anchor` places the square vertically (0.0 top, 0.5 centre, 1.0 bottom);
+portraits usually want a low value. There is no face detection - always look at the output.
+Requires Pillow (`pip install Pillow`); everything else here is stdlib.
+
 ### Images and Git LFS
 
 `static/`, `ico/`, and `ttf/` are tracked with **Git LFS** (`*.jpg`, `*.svg`, `*.ico`, `*.ttf` — see

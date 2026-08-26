@@ -18,7 +18,7 @@
         },
         {
           "name": "Joshua S. Speagle (沈佳士)",
-          "image": "NSERC_Speagle_Joshua_thumbnail.jpg",
+          "image": "joshua_speagle.jpg",
           "alt": "A picture of Joshua Speagle.",
           "paragraphs": [
             "<a href=\"https://joshspeagle.com\">Personal Website</a>",
@@ -100,7 +100,7 @@
         },
         {
           "name": "Maryum Sayeed",
-          "image": null,
+          "image": "maryum_sayeed.jpg",
           "alt": "A picture of Maryum Sayeed.",
           "paragraphs": [
             "<a href=\"https://maryumsayeed.github.io/\">Personal Website</a>",
@@ -109,11 +109,11 @@
         },
         {
           "name": "Chloe Cheng",
-          "image": null,
+          "image": "chloe_cheng.jpg",
           "alt": "A picture of Chloe Cheng.",
           "paragraphs": [
             "<a href=\"https://chloe-mt-cheng.github.io/\">Personal Website</a>",
-            "Chloe is a Postdoctoral Fellow co-supervised by <a href=\"https://sfseiji.github.io/\">Seiji Fujimoto</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. Her research uses ultra-deep spectroscopy to measure elemental abundances and stellar population parameters, unravelling the formation and assembly histories of massive quiescent galaxies. She received her Ph.D. from <a href=\"https://www.universiteitleiden.nl/en/science/astronomy\">Leiden Observatory</a> under the supervision of Mariska Kriek, and her M.Sc. from the <a href=\"https://uwaterloo.ca\">University of Waterloo</a>."
+            "Chloe is a <a href=\"https://www.sgs.utoronto.ca/awards/research-excellence-postdoctoral-fellows-program/\">Research Excellence Postdoctoral Fellow</a> co-supervised by <a href=\"https://sfseiji.github.io/\">Seiji Fujimoto</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. Her research uses ultra-deep spectroscopy to measure elemental abundances and stellar population parameters, unravelling the formation and assembly histories of massive quiescent galaxies. She received her Ph.D. from <a href=\"https://www.universiteitleiden.nl/en/science/astronomy\">Leiden Observatory</a> under the supervision of Mariska Kriek, and her M.Sc. from the <a href=\"https://uwaterloo.ca\">University of Waterloo</a>."
           ]
         }
       ]
@@ -422,7 +422,7 @@
           ]
         },
         {
-          "name": "David (Dayi) Li (PDF '24-26)",
+          "name": "David (Dayi) Li (PDF '25-26)",
           "image": "David_Headshot.jpg",
           "alt": "A picture of David Li.",
           "paragraphs": [

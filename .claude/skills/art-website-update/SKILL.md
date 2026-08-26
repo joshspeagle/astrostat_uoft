@@ -141,6 +141,56 @@ outright when they finish — they do not get alumni entries.
 3. Rewrite the first bio paragraph as "X is now ..." — where they went, not what they studied here.
 4. Remove them from every Research theme list (#10). The audit flags this if you forget.
 
+## Adding a new person: do the legwork before asking
+
+When the user names an arrival, they will usually give you a name, a rough title and a supervisor.
+That is the starting point, not the entry. Research the rest yourself and bring back a finished
+draft — a title the user half-remembers is not good enough to publish, because fellowship names are
+official and appear on the live page.
+
+**1. Confirm the official fellowship or position title.** Search for the actual programme. The user
+may hedge ("I believe Research Excellence Fellow?") — verify it. The University of Toronto
+[Research Excellence Postdoctoral Fellows Program](https://www.sgs.utoronto.ca/awards/research-excellence-postdoctoral-fellows-program/),
+[Arts & Science Postdoctoral Fellowship](https://www.artsci.utoronto.ca), Dunlap, CITA (including
+CITA National), and Eric and Wendy Schmidt AI in Science are all distinct, and each has a canonical
+name and URL worth linking.
+
+**2. Find their personal website.** Nearly everyone has one; it is the first paragraph of the entry
+by convention. Search their name plus institution.
+
+**3. Draft the blurb from primary sources.** Their own site, department profile, or Google Scholar.
+Cover: current title and where, who they are co-supervised by, research focus in one or two
+sentences, and prior degrees. Match the length of neighbouring entries — three to five sentences.
+Do not pad.
+
+**4. Get a headshot.** Take it from their personal or department website where one exists, and
+process it to match the existing thumbnails (square, ~500px, well under 244 KB):
+
+```bash
+python3 scripts/add_headshot.py <url-or-path> static/first_last.jpg --anchor 0.1
+```
+
+`--anchor` sets where the square sits vertically in a taller-than-wide image: `0.0` flush to the
+top, `0.5` centred, `1.0` bottom. Portraits usually want a low value since faces sit high in frame.
+There is no face detection — **always open the result and look at it** before committing.
+
+Not everyone has a usable photo online. If you cannot find one, set `"image": null` and tell the
+user it needs supplying rather than substituting something unsuitable like a GitHub avatar. The
+audit lists entries with no photo, so it will not be forgotten.
+
+Confirm LFS picked the file up, or it commits as a pointer and renders broken:
+
+```bash
+git add static/first_last.jpg && git lfs ls-files | grep first_last
+```
+
+**5. Anything still unconfirmed goes back to the user explicitly** — the exact fellowship title, a
+graduation year, a date range. Do not quietly guess a credential that will sit on a real person's
+public entry; say which parts are inferred and from what.
+
+Existing members get the same treatment when their situation changes: a photo can be refreshed from
+their site the same way, and a fellowship ending should be researched rather than assumed.
+
 ## Photos (Git LFS)
 
 `static/` is Git LFS-tracked (`*.jpg`/`*.svg`/`*.ico`/`*.ttf`). **LFS must be active before you
