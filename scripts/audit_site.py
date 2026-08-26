@@ -129,6 +129,12 @@ ADVISOR_CUE = re.compile(
 # A degree clause names a PAST supervisor, not a current collaborator.
 DEGREE_CLAUSE = re.compile(r'(Ph\.?D|M\.?Sc|B\.?Sc|degree|doctorate)', re.I)
 
+# Advisers deliberately left out of Collaborators. The section is for people the
+# group works with on an ongoing basis; a one-off co-supervision does not qualify.
+ADVISER_NOT_COLLABORATOR = {
+    'Nolan Koblischke': 'co-supervises one SURP undergrad only (decided Aug 2026)',
+}
+
 NOT_A_PERSON = ('Department', 'Institute', 'University', 'Fellow', 'Program', 'Survey',
                 'Telescope', 'Sciences', 'College', 'Award', 'Observatory', 'Collaboration',
                 'Centre', 'Center', 'School', 'Array', 'Experiment')
@@ -262,7 +268,8 @@ def main():
     known = {surname(n) for n in list(collab) + list(everyone)}
     gaps = sorted(f"{nm}  <- advises {', '.join(sorted(who))}"
                   for nm, who in advisors_named(data).items()
-                  if surname(nm) not in known)
+                  if surname(nm) not in known
+                  and nm not in ADVISER_NOT_COLLABORATOR)
     report('5c. Advisers of current members missing from Collaborators', gaps,
            'the section is defined as co-advisers of members plus people the group collaborates with')
 
