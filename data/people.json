@@ -67,7 +67,7 @@
           "alt": "A picture of Biprateep Dey.",
           "paragraphs": [
             "<a href=\"https://biprateep.de\">Personal Website</a>",
-            "Biprateep is an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a>, <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>, & <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a>. His work involves developing novel statistical machine learning tools to study the formation and evolution of galaxies and the Universe as a whole. He is interested in large astronomical surveys and has been deeply involved with the <a href=\"https://www.desi.lbl.gov\">DESI</a> collaboration. He is also passionate about developing a scientific community which is accessible and welcoming to all."
+            "Biprateep is a <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a> and <a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Postdoctoral Fellow</a>, having previously held an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a> Fellowship. His work involves developing novel statistical machine learning tools to study the formation and evolution of galaxies and the Universe as a whole. He is interested in large astronomical surveys and has been deeply involved with the <a href=\"https://www.desi.lbl.gov\">DESI</a> collaboration. He is also passionate about developing a scientific community which is accessible and welcoming to all."
           ]
         },
         {
@@ -76,7 +76,7 @@
           "alt": "A picture of Duo Xu.",
           "paragraphs": [
             "<a href=\"https://sites.google.com/view/xuduo\">Personal Website</a>",
-            "Duo is an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a> and <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a> Postdoctoral Fellow. His research interests focus on trying to use <a href=\"https://ai4astronomy.github.io\">artificial intelligence (AI)</a> to understand star formation, stellar feedback, and turbulence. He is also more broadly interested in developing foundational AI models for use across the sciences. Before joining the University of Toronto, Duo was a <a href=\"https://cosmicorigins.space/vico\">Virginia Initiatives on Cosmic Origins (VICO) Origin Postdoctoral Fellow</a> at the <a href=\"https://www.virginia.edu\">University of Virginia</a>. He received his Ph.D. from the University of Texas at Austin under the supervision of <a href=\"https://sites.google.com/view/stellaoffner/home\">Stella Offner</a>.",
+            "Duo is a <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a> Postdoctoral Fellow, having previously held an <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a> Fellowship. His research interests focus on trying to use <a href=\"https://ai4astronomy.github.io\">artificial intelligence (AI)</a> to understand star formation, stellar feedback, and turbulence. He is also more broadly interested in developing foundational AI models for use across the sciences. Before joining the University of Toronto, Duo was a <a href=\"https://cosmicorigins.space/vico\">Virginia Initiatives on Cosmic Origins (VICO) Origin Postdoctoral Fellow</a> at the <a href=\"https://www.virginia.edu\">University of Virginia</a>. He received his Ph.D. from the University of Texas at Austin under the supervision of <a href=\"https://sites.google.com/view/stellaoffner/home\">Stella Offner</a>.",
             "Duo also works closely with <a href=\"https://www.cita.utoronto.ca/~pgmartin/\">Peter Martin</a> at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>."
           ]
         },
@@ -90,12 +90,30 @@
           ]
         },
         {
-          "name": "David (Dayi) Li",
-          "image": "David_Headshot.jpg",
-          "alt": "A picture of David Li.",
+          "name": "Christian Kragh Jespersen",
+          "image": null,
+          "alt": "A picture of Christian Kragh Jespersen.",
           "paragraphs": [
-            "<a href=\"https://ddavidli.com/\">Personal Website</a>",
-            "David is a postdoctoral fellow and recent Ph.D. graduate working with <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>, <a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/patrick-brown\">Patrick Brown</a>, and <a href=\"https://www.robertoabraham.com\">Roberto Abraham</a>. His research focuses on spatial statistics and Bayesian computation. Specifically, he is developing various spatial point process models to detect and study elusive Ultra-Diffuse Galaxies. He also designs fast, approximate Bayesian computational methods for large and complex statistical models."
+            "<a href=\"https://astrockragh.github.io/\">Personal Website</a>",
+            "Christian is a joint <a href=\"https://schmidtfellows.utoronto.ca\">Eric and Wendy Schmidt AI in Science</a> and <a href=\"https://www.cita.utoronto.ca/people/national-fellows/\">CITA National</a> Fellow, spending his first two years at the University of Toronto co-supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> and <a href=\"https://www.aviadlevis.info/\">Aviad Levis</a>, followed by two years in Montréal with <a href=\"https://www.astro.umontreal.ca/~lpl/\">Laurence Perreault-Levasseur</a>. His research integrates inductive biases and geometric and physical constraints into well-calibrated Bayesian and machine learning models, with a focus on galaxy formation and cosmology. He received his Ph.D. from <a href=\"https://www.princeton.edu\">Princeton University</a> under the supervision of Peter Melchior and David Spergel."
+          ]
+        },
+        {
+          "name": "Maryum Sayeed",
+          "image": null,
+          "alt": "A picture of Maryum Sayeed.",
+          "paragraphs": [
+            "<a href=\"https://maryumsayeed.github.io/\">Personal Website</a>",
+            "Maryum is an <a href=\"https://www.artsci.utoronto.ca\">Arts & Science</a> Postdoctoral Fellow co-supervised by <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. Her research uses large photometric and spectroscopic surveys, and asteroseismology in particular, to probe the formation and evolution of the Milky Way and the stars within it. She is the lead developer of <a href=\"https://github.com/maryumsayeed/The-Swan\">The Swan</a>, a data-driven method for predicting stellar surface gravities. She received her Ph.D. from <a href=\"https://www.columbia.edu\">Columbia University</a> and her B.Sc. from the <a href=\"https://www.ubc.ca\">University of British Columbia</a>."
+          ]
+        },
+        {
+          "name": "Chloe Cheng",
+          "image": null,
+          "alt": "A picture of Chloe Cheng.",
+          "paragraphs": [
+            "<a href=\"https://chloe-mt-cheng.github.io/\">Personal Website</a>",
+            "Chloe is a Postdoctoral Fellow co-supervised by <a href=\"https://sfseiji.github.io/\">Seiji Fujimoto</a> and <a href=\"https://joshspeagle.com\">Josh Speagle</a>. Her research uses ultra-deep spectroscopy to measure elemental abundances and stellar population parameters, unravelling the formation and assembly histories of massive quiescent galaxies. She received her Ph.D. from <a href=\"https://www.universiteitleiden.nl/en/science/astronomy\">Leiden Observatory</a> under the supervision of Mariska Kriek, and her M.Sc. from the <a href=\"https://uwaterloo.ca\">University of Waterloo</a>."
           ]
         }
       ]
@@ -401,6 +419,15 @@
           "alt": "A picture of Mairead Heiger.",
           "paragraphs": [
             "Mairead is now a joint <a href=\"https://astronomy.as.virginia.edu/\">GECO</a> and <a href=\"https://www.cosmicai.org/\">CosmicAI</a> Postdoctoral Fellow at the <a href=\"https://www.virginia.edu\">University of Virginia</a>. She completed her Ph.D. in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>, where she was a <a href=\"https://datasciences.utoronto.ca\">Data Sciences Institute</a> Doctoral Fellow co-supervised by <a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a>, working on galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling."
+          ]
+        },
+        {
+          "name": "David (Dayi) Li (PDF '24-26)",
+          "image": "David_Headshot.jpg",
+          "alt": "A picture of David Li.",
+          "paragraphs": [
+            "<a href=\"https://ddavidli.com/\">Personal Website</a>",
+            "David is now an <a href=\"https://www.nserc-crsng.gc.ca\">NSERC</a> Canada Postdoctoral Research Award Fellow at the <a href=\"https://uwaterloo.ca\">University of Waterloo</a>. He completed his Ph.D. at the University of Toronto working with <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>, <a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/patrick-brown\">Patrick Brown</a>, and <a href=\"https://www.robertoabraham.com\">Roberto Abraham</a>, developing spatial point process models to detect and study elusive Ultra-Diffuse Galaxies alongside fast, approximate Bayesian computational methods for large and complex statistical models."
           ]
         },
         {
