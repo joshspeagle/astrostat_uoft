@@ -75,6 +75,9 @@ def mentioned(name, text):
     toks = name_tokens(name)
     if not toks:
         return False
+    # A parenthetical inside the *text* ("Isabelle (Liyuan) Huang") splits an
+    # otherwise adjacent pair, so match against a paren-stripped copy as well.
+    text = text + '\n' + re.sub(r'\s*\([^)]*\)', '', text)
     if re.search(r'\b' + re.escape(' '.join(toks)) + r'\b', text):
         return True
     # any adjacent pair from the name, e.g. "Barradas Herrera"

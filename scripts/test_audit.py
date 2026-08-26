@@ -27,7 +27,8 @@ academic_year = _ns['academic_year']
 import datetime
 
 ROSTER = ("Gwen Eadie, Josh Speagle, Rodrigo Barradas Herrera, Peter Martin, "
-          "Maria Garcia, David Li, Ann B Lee, Renee Hlozek")
+          "Maria Garcia, David Li, Ann B Lee, Renee Hlozek, "
+          "Isabelle (Liyuan) Huang, Adam Muzzin (York), Seiji Fujimoto")
 
 NAME_CASES = [
     # (name, expected, why)
@@ -42,6 +43,12 @@ NAME_CASES = [
     ("Renee Hlozek",             True,  "exact match"),
     ("Someone Entirely Absent",  False, "genuinely not present"),
     ("Martin Peterson",          False, "token overlap in the wrong order is not a match"),
+    # the parenthetical here is in the TEXT, not the name: "Isabelle (Liyuan) Huang"
+    # splits the adjacent pair the matcher looks for, which silently hid her from the
+    # "on no research theme" check until the text was normalised too.
+    ("Isabelle (Liyuan) Huang", True,  "parenthetical in the text, name carries it too"),
+    ("Isabelle Huang",          True,  "bare name against a parenthetical form in the text"),
+    ("Muzzin Fujimoto",         False, "stripping '(York)' must not join across the comma"),
 ]
 
 CAPTION = ('<figcaption>ART Group photo (Summer 2025). From left to right: Kevin McKinnon, '
