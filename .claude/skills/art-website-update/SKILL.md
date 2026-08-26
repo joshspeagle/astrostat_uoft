@@ -182,6 +182,12 @@ because academic site templates keep the portrait somewhere else:
 | Hugo (Wowchemy/Academic) | `/authors/admin/avatar_hu_<hash>.jpg` — note **`authors`**, plural, not `/author/` |
 | Jekyll / plain | usually `/images/…` or `/assets/…`, linked from the landing page |
 | Department profile | often blocks automated requests (Princeton returns 403) |
+| LinkedIn | **not retrievable** — returns HTTP 999 to any unauthenticated client, so the photo cannot be fetched here even though it loads in a logged-in browser |
+
+When a photo exists only somewhere unreachable, the fastest route is to ask the user to download it
+and hand you the local path, then run `add_headshot.py` on that file — the processing is identical.
+For someone just joining, asking them for a headshot they are happy with is usually better than
+lifting a personal profile picture.
 
 If a portrait is already square and smaller than 500px, pass `--size <its edge>` rather than
 upscaling — enlarging past the source resolution just softens it.
