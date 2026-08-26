@@ -45,30 +45,40 @@ roster being settled first — see the notes.
 | # | Section | Where | What to ask about |
 |---|---------|-------|-------------------|
 | 1 | **Home — welcome blurb** | `ejs/pages/home/body.html` | Any change to how the group describes itself; links to Research/People |
-| 2 | **Home — group photo** | `ejs/pages/home/body.html` + `static/` | *Is there a newer group photo?* Swap the image now. **Defer the caption to #11** — it names everyone left-to-right and can't be written until the roster is final |
+| 2 | **Home — group photo** | `ejs/pages/home/body.html` + `static/` | *Is there a newer group photo?* Swap the image now. **Defer the caption to #12** |
 | 3 | **Home — Statstro** | `ejs/pages/home/body.html` | Was there a new Statstro? Update the blurb and swap in the latest workshop photo + caption |
 | 4 | **People — Faculty** | `data/people.json` | Title changes, leave notes, new affiliations |
-| 5 | **People — Postdocs** | `data/people.json` | Arrivals; departures (→ #9); fellowship or host changes |
-| 6 | **People — Grad Students** | `data/people.json` | New students (set `cohort`); graduations (→ #9). The audit supplies the year-of-study bumps — confirm them rather than asking open-endedly |
-| 7 | **People — ART Associates** | `data/people.json` | Affiliated researchers joining or leaving (7 entries) |
-| 8 | **People — Collaborators** | `data/people.json` | Collaborators joining or leaving (19 entries — the largest section, and the slowest-changing) |
-| 9 | **People — Recent Alumni** | `data/people.json` | Anyone who left since the last update. See "Moving someone to Recent Alumni" |
-| 10 | **Research — themes & member lists** | `ejs/pages/research/body.html` | Theme prose first, then the three "involved" lists. **Propose, don't ask** — see below |
-| 11 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Now that the roster is final, write or verify the left-to-right caption. The audit cross-checks the names |
-| 12 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav (Home / People / Research / Statstro — has never changed in the repo's history). Then the footer date |
+| 5 | **People — Postdocs** | `data/people.json` | Arrivals; departures (→ #10); fellowship or host changes |
+| 6 | **People — Graduate Students** | `data/people.json` | **Ph.D. *and* Masters students.** New students (set `cohort`); graduations (→ #10). The audit supplies the year-of-study bumps — confirm them rather than asking |
+| 7 | **People — Undergraduates** | `data/people.json` | Current undergraduate students. **Listed while current only** — when they finish they are removed, *not* moved to Recent Alumni |
+| 8 | **People — ART Associates** | `data/people.json` | Affiliated researchers joining or leaving |
+| 9 | **People — Collaborators** | `data/people.json` | Collaborators joining or leaving (the largest section, and the slowest-changing) |
+| 10 | **People — Recent Alumni** | `data/people.json` | Ph.D. and postdoc departures since the last update. See "Moving someone to Recent Alumni" |
+| 11 | **Research — themes & member lists** | `ejs/pages/research/body.html` | Theme prose first, then the three "involved" lists. **Propose, don't ask** — see below |
+| 12 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Only rewrite it if the photo changed — a caption describes the photo, not the current roster, so it may legitimately name people who have since left |
+| 13 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav. Then the footer date |
 
-### Row 10: propose, don't ask
+### Section scope (set June 2025, revised August 2026)
+
+- **Recent Alumni is Ph.D. and postdoc level only.** Undergraduate and Masters-level people are
+  never given alumni entries — when they finish, their entry is simply removed. The audit flags any
+  `(B.Sc. ...)` / `(BA ...)` entry that appears in Recent Alumni.
+- **Undergraduates are listed while current.** The section was dropped in June 2025 and restored in
+  August 2026.
+- **Graduate Students covers Ph.D. and Masters students** in one section.
+
+### Row 11: propose, don't ask
 
 Each of the 8 themes carries three lists — "ART members involved", "ART associates involved",
 "Collaborators include" — repeating each person's name and link. There is no shared data with
-`data/people.json`; it is hand-written HTML on that side, so every roster change in #4–9 has to be
+`data/people.json`; it is hand-written HTML on that side, so every roster change in #4–10 has to be
 mirrored here by hand.
 
 Don't ask the user which themes a person belongs to. Instead:
 
-- For each person **added** in #4–8, read their bio and **propose** the themes that fit, quoting the
+- For each person **added** in #4–9, read their bio and **propose** the themes that fit, quoting the
   phrase that motivated each suggestion. Let the user correct rather than recall.
-- For each person **removed** in #9, list the exact themes they currently appear in (the audit
+- For each person **removed** in #10, list the exact themes they currently appear in (the audit
   reports lingering alumni) and confirm removal from each.
 - Match the surrounding convention: Research uses short/familiar name forms (`Gwen Eadie`,
   `Josh Speagle`) and links to personal sites where one exists.
@@ -103,6 +113,9 @@ Conventions used throughout the file:
   to lead with their destination ("Sam is now an NSF Fellow at ...").
 
 ### Moving someone to Recent Alumni
+
+Applies to **Ph.D. students and postdocs only**. Masters and undergraduate students are removed
+outright when they finish — they do not get alumni entries.
 
 1. Cut the entry from its current section and append it to the `Recent Alumni` section.
 2. Add the credential suffix to `name`; drop `cohort`.

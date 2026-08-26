@@ -162,6 +162,12 @@ def main():
     report('4. Alumni still listed on Research', lingering,
            'remove them from the theme lists')
 
+    ug_alumni = [n for n, sec in everyone.items()
+                 if sec == 'Recent Alumni'
+                 and re.search(r"\((?:B\.?A|B\.?Sc|BSc|BA)\b", n)]
+    report('5b. Undergraduate-level entries in Recent Alumni', ug_alumni,
+           'undergrads are listed while current only; they do not get alumni entries')
+
     unknown = sorted(n for n in research_linked_names(research_raw)
                      if surname(n) not in known_surnames)
     report('5. Names linked on Research matching nobody on People', unknown,
@@ -191,16 +197,18 @@ def main():
             match = next((k for k in everyone if surname(k) == surname(n)), None)
             if match and everyone[match] == 'Recent Alumni':
                 cap_alumni.append(f"{n} (now in Recent Alumni)")
-    print(f"[8. Group-photo caption] ({len(cap)} names parsed)")
+    print(f"[ii. Group-photo caption] ({len(cap)} names parsed) - informational")
     if not cap:
         print("      could not parse the caption -- has the wording changed?")
         findings += 1
     else:
+        print("      A caption describes the photo, not the current roster, so names")
+        print("      that have since left are expected. Only rewrite it when the photo")
+        print("      itself changes.")
         for n in cap_unknown:
-            print(f"      {n}  -- matches nobody on the People page")
-        findings += len(cap_unknown)
+            print(f"      {n}  -- no longer anywhere on the People page")
         for n in cap_alumni:
-            print(f"      {n}  -- expected if the photo predates their departure")
+            print(f"      {n}")
         if not cap_unknown and not cap_alumni:
             print("      all names match current members")
     print()
