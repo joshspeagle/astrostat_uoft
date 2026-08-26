@@ -232,8 +232,7 @@
           "alt": "A picture of Haowen Zhang.",
           "paragraphs": [
             "<a href=\"https://zhw11387.wixsite.com/mysite\">Personal Website</a>",
-            "Haowen is a Postdoctoral Fellow at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. His research focuses on understanding empirical connections between dark matter halos, galaxies, and supermassive black holes across cosmic time. He developed TRINITY, a framework for inferring black hole masses and growth rates, and collaborates on preparations for next-generation missions including <a href=\"https://www.euclid-ec.org\">Euclid</a>, <a href=\"https://roman.gsfc.nasa.gov\">Roman</a>, and <a href=\"https://www.lsst.org\">LSST</a>. He received his Ph.D. from the <a href=\"https://www.arizona.edu\">University of Arizona</a> in 2024.",
-            "He also collaborates closely with <a href=\"https://pratika24.wixsite.com/pratika-dayal\">Pratika Dayal</a> at CITA."
+            "Haowen is a Postdoctoral Fellow at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. His research focuses on understanding empirical connections between dark matter halos, galaxies, and supermassive black holes across cosmic time. He developed TRINITY, a framework for inferring black hole masses and growth rates, and collaborates on preparations for next-generation missions including <a href=\"https://www.euclid-ec.org\">Euclid</a>, <a href=\"https://roman.gsfc.nasa.gov\">Roman</a>, and <a href=\"https://www.lsst.org\">LSST</a>. He received his Ph.D. from the <a href=\"https://www.arizona.edu\">University of Arizona</a> in 2024."
           ]
         },
         {
@@ -306,15 +305,6 @@
           "paragraphs": [
             "<a href=\"https://www.utstat.toronto.edu/craiu\">Personal Website</a>",
             "Radu is a Professor in the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a>. His research focuses on Markov chain Monte Carlo methods, Bayesian computation, model selection, and applications in genetics, ecology, and astronomy."
-          ]
-        },
-        {
-          "name": "Pratika Dayal",
-          "image": "pratika_dayal.jpg",
-          "alt": "A picture of Pratika Dayal.",
-          "paragraphs": [
-            "<a href=\"https://pratika24.wixsite.com/pratika-dayal\">Personal Website</a>",
-            "Pratika is a Professor at the <a href=\"https://www.cita.utoronto.ca\">Canadian Institute for Theoretical Astrophysics (CITA)</a>. Her research focuses on understanding how the earliest galaxies formed during the cosmic dark ages and how they drove the Epoch of Reionization. She also uses early galaxies as testbeds for dark matter models."
           ]
         },
         {
