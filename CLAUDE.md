@@ -111,8 +111,15 @@ runs it at the start and end of an update instead.
 ```bash
 python3 scripts/roster.py [section]        # list the roster, or one section, for review
 python3 scripts/add_headshot.py <src> static/name.jpg [--anchor 0.1] [--size 500]
+python3 scripts/sort_themes.py [--apply]   # order Research themes by roster size
 python3 scripts/test_audit.py              # regression tests for the audit helpers
 ```
+
+`sort_themes.py` reorders the `<h2>` blocks in `ejs/pages/research/body.html` by
+**total** roster size (members + associates + collaborators), largest first — total
+rather than members-only so a theme with many outside collaborators is not pushed down
+for having fewer people inside the group. Ties keep their existing order, so it is
+idempotent. Without `--apply` it only reports. Run it after any roster change.
 
 `add_headshot.py` square-crops, resizes and re-encodes a local file or URL so new headshots match
 the existing thumbnails. `--anchor` places the square vertically (0.0 top, 0.5 centre, 1.0 bottom);
