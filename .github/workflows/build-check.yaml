@@ -32,6 +32,9 @@ jobs:
       - name: Validate data/people.json
         run: node -e "JSON.parse(require('fs').readFileSync('data/people.json','utf8'))"
 
+      - name: Audit helper tests
+        run: python3 scripts/test_audit.py
+
       - name: Build static site
         run: |
           npm install

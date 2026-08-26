@@ -44,31 +44,52 @@ def surname(name):
     return re.sub(r'\s*\([^)]*\)', '', name).strip().split()[-1]
 
 
-def first_name(name):
-    return re.sub(r'\s*\([^)]*\)', '', name).strip().split()[0]
+def name_tokens(name):
+    """Name split into word tokens, ignoring any parenthetical suffix."""
+    bare = re.sub(r'\s*\([^)]*\)', '', name).strip()
+    return [t for t in re.split(r'\s+', bare) if t and t != '-']
+
+
+def _compatible(a, b):
+    """Same given name allowing for a short form (Gwen/Gwendolyn, Josh/Joshua)."""
+    a, b = a.rstrip('.'), b.rstrip('.')
+    if not a or not b:
+        return False
+    return a == b or a.startswith(b) or b.startswith(a)
 
 
 def mentioned(name, text):
     """Is this specific person named in `text`?
 
-    Surname alone is too loose - "Antonio Herrera Martin" collides with
-    collaborator "Peter Martin". So find every "<Word> <Surname>" pair in the
-    text and require the preceding word to be compatible with the person's
-    first name, which lets the short forms the Research page uses through
-    ("Gwen Eadie" for "Gwendolyn Eadie") while rejecting a different person
-    who happens to share a surname.
+    Deliberately does not assume one given name and one surname. Dual
+    surnames (common in Spanish- and Portuguese-speaking naming, among
+    others) and dual given names both break that assumption, in opposite
+    directions: matching on the last token alone conflated "Antonio Herrera
+    Martin" with a different "Peter Martin", while requiring the full name
+    missed "Rodrigo Barradas Herrera" wherever a shorter form was used.
+
+    So: accept an exact full-name match, or any two adjacent tokens of the
+    name appearing adjacently in the text, or a "<given> <later-token>" pair
+    whose given name is compatible with one of the person's earlier tokens.
     """
-    bare = re.sub(r'\s*\([^)]*\)', '', name).strip()
-    # Exact full name first - handles multi-token surnames ("Rodrigo Barradas Herrera")
-    if re.search(r'\b' + re.escape(bare) + r'\b', text):
-        return True
-    sn, fn = surname(name), first_name(name)
-    pairs = re.findall(r"([A-Z][A-Za-z'\u00C0-\u017F-]+)\s+" + re.escape(sn) + r"\b", text)
-    if not pairs:
+    toks = name_tokens(name)
+    if not toks:
         return False
-    for preceding in pairs:
-        if preceding == fn or fn.startswith(preceding) or preceding.startswith(fn):
+    if re.search(r'\b' + re.escape(' '.join(toks)) + r'\b', text):
+        return True
+    # any adjacent pair from the name, e.g. "Barradas Herrera"
+    for i in range(len(toks) - 1):
+        pair = toks[i] + ' ' + toks[i + 1]
+        if re.search(r'\b' + re.escape(pair) + r'\b', text):
             return True
+    # a shortened given name in front of any later token of the name
+    for i in range(1, len(toks)):
+        anchor = toks[i]
+        if len(anchor.rstrip('.')) < 2:
+            continue
+        for preceding in re.findall(r"([A-Za-z'\u00C0-\u017F-]+)\.?\s+" + re.escape(anchor) + r'\b', text):
+            if any(_compatible(preceding, earlier) for earlier in toks[:i]):
+                return True
     return False
 
 
