@@ -363,6 +363,15 @@
           ]
         },
         {
+          "name": "Seiji Fujimoto",
+          "image": "seiji_fujimoto.jpg",
+          "alt": "A picture of Seiji Fujimoto.",
+          "paragraphs": [
+            "<a href=\"https://sfseiji.github.io/\">Personal Website</a>",
+            "Seiji is an Assistant Professor in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. His research studies the earliest galaxies, black holes, and stars with <a href=\"https://www.jwst.nasa.gov\">JWST</a> and <a href=\"https://www.almaobservatory.org\">ALMA</a>, focusing on cosmic dawn and the first billion years of the Universe."
+          ]
+        },
+        {
           "name": "Renée Hložek",
           "image": "renee_hlozek.png",
           "alt": "A picture of Renée Hložek.",
@@ -444,12 +453,48 @@
           ]
         },
         {
+          "name": "Laurence Perreault-Levasseur",
+          "image": "laurence_perreault-levasseur.jpg",
+          "alt": "A picture of Laurence Perreault-Levasseur.",
+          "paragraphs": [
+            "<a href=\"https://ciela.science/team/laurence-perreault-levasseur/\">Personal Website</a>",
+            "Laurence is an Assistant Professor at the <a href=\"https://www.umontreal.ca\">Université de Montréal</a> and Canada Research Chair in Computational Cosmology and Artificial Intelligence, a member of the <a href=\"https://ciela.science\">Ciela Institute</a> and an associate academic member of <a href=\"https://mila.quebec\">Mila</a>. Her research develops and applies machine learning methods to cosmology."
+          ]
+        },
+        {
+          "name": "Thibault Randrianarisoa",
+          "image": "thibault_randrianarisoa.jpg",
+          "alt": "A picture of Thibault Randrianarisoa.",
+          "paragraphs": [
+            "<a href=\"https://thibaultrandrianarisoa.netlify.app/\">Personal Website</a>",
+            "Thibault is an Assistant Professor in Statistics in the <a href=\"https://www.utsc.utoronto.ca/cms/\">Department of Computer & Mathematical Sciences</a> at the University of Toronto Scarborough and the <a href=\"https://www.statistics.utoronto.ca\">Department of Statistical Sciences</a>. His research focuses on high-dimensional and nonparametric statistics, including statistical machine learning, Bayesian nonparametrics, uncertainty quantification, and inverse problems."
+          ]
+        },
+        {
           "name": "David Stenning",
           "image": "david_stenning.png",
           "alt": "A picture of David Stenning.",
           "paragraphs": [
             "<a href=\"https://www.sfu.ca/stat-actsci/department/profiles/dstennin.html\">Personal Website</a>",
             "David is an Assistant Professor in the <a href=\"https://www.sfu.ca/stat-actsci.html\">Department of Statistics and Actuarial Science</a> at <a href=\"https://www.sfu.ca\">Simon Fraser University</a>. His research focuses on Bayesian statistics, computer model emulation, and statistical methods for the physical sciences."
+          ]
+        },
+        {
+          "name": "Keith Vanderlinde",
+          "image": "keith_vanderlinde.jpg",
+          "alt": "A picture of Keith Vanderlinde.",
+          "paragraphs": [
+            "<a href=\"https://www.dunlap.utoronto.ca/~vanderlinde/\">Personal Website</a>",
+            "Keith is a Professor at the <a href=\"https://www.dunlap.utoronto.ca\">Dunlap Institute for Astronomy & Astrophysics</a> and the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. An experimental cosmologist and long-wavelength radio instrumentalist, he designs, builds, and operates large radio telescopes including <a href=\"https://chime-experiment.ca/en\">CHIME</a> and <a href=\"https://www.chord-observatory.ca\">CHORD</a> that map the Universe on its largest scales and catch transient signals from across it."
+          ]
+        },
+        {
+          "name": "Jason Wright",
+          "image": "jason_wright.jpg",
+          "alt": "A picture of Jason Wright.",
+          "paragraphs": [
+            "<a href=\"https://sites.psu.edu/astrowright/\">Personal Website</a>",
+            "Jason is a Professor in the <a href=\"https://science.psu.edu/astro\">Department of Astronomy and Astrophysics</a> at <a href=\"https://www.psu.edu\">Penn State University</a>. His research spans stellar astrophysics, exoplanets, and the search for extraterrestrial intelligence (SETI)."
           ]
         }
       ]
