@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const { renderPeople } = require('./build/render-people');
 
 const pages = [
   {
@@ -26,8 +27,9 @@ const pages = [
     title: 'Astrostat@UofT | People',
     partials: [
       {
+        // Generated from data/people.json - see build/render-people.js
         name: 'body',
-        filename: './ejs/pages/people/body.html',
+        content: renderPeople,
       },
       {
         name: 'crumbs',
@@ -68,7 +70,7 @@ const htmlPlugins = pages.map((page) => {
       partials: (page.partials || []).reduce((acc, cur) => {
         return {
           ...acc,
-          [cur.name]: fs.readFileSync(cur.filename),
+          [cur.name]: cur.content ? cur.content() : fs.readFileSync(cur.filename),
         };
       }, {}),
     },
