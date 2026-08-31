@@ -188,9 +188,11 @@ a {
 
     // Bios run to a dozen links apiece, and a full-strength dotted rule under
     // every one turns the card into a field of blue. Keep the colour (which
-    // carries the affordance) and let the underline recede until hover.
+    // carries the affordance) and let the underline recede until hover, mixed
+    // toward the card behind it rather than washed out with alpha.
     [data-theme="#{$name}"] & .card-section a:not(:hover):not(:active) {
-      border-bottom-color: rgba(map.get($theme, "anchor-color"), 0.4);
+      border-bottom-color: color.mix(map.get($theme, "anchor-color"),
+                                     map.get($theme, "card-background"), 45%);
     }
   }
 
@@ -237,12 +239,12 @@ a {
   }
 
   // The convention is website link first, then any status note, then the bio.
-  // Setting the link line apart reads as a label rather than a stray sentence.
+  // Set as a label in the same idiom as the sidebar's NAVIGATE / DARK MODE
+  // rather than left to read as a stray sentence.
   p:first-of-type {
     margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+    font-weight: bold;
     font-variant: all-small-caps;
-    letter-spacing: 0.02em;
   }
 }
 
@@ -355,29 +357,19 @@ a {
 //
 // These used to be a single paragraph carrying all three roles, separated by
 // <br> and running the full width of the column - a wall of comma-separated
-// links in which the role labels disappeared. Each role now gets its own row:
-// the label sits in a fixed left column so the three line up, and the names
-// flow beside it.
+// links in which the role labels disappeared. Each role now gets its own row,
+// with the label in a fixed left column so the three line up.
+//
+// Three treatments are defined here so they can be compared on the real page;
+// one of them stays. All of them keep to the site's vocabulary: no borders, no
+// rules, no rounded corners, and labels in the same bold all-small-caps idiom
+// as the sidebar's NAVIGATE and DARK MODE.
 .theme-roster {
   margin: 0 0 1rem;
-  padding: 0.75rem 0 0.75rem 1rem;
-
-  @each $name, $theme in $themes {
-    [data-theme="#{$name}"] & {
-      border-left: 3px solid map.get($theme, "palette-primary");
-      background-color: rgba(map.get($theme, "palette-primary"), 0.07);
-    }
-
-    // The rosters are pure link lists, so the dotted rule under every name adds
-    // texture without adding information. Hover still confirms the target.
-    [data-theme="#{$name}"] & a:not(:hover):not(:active) {
-      border-bottom-color: rgba(map.get($theme, "anchor-color"), 0.35);
-    }
-  }
 
   .roster-row {
     margin: 0;
-    padding: 0.3rem 0;
+    padding: 0.25rem 0;
     font-size: 0.92rem;
     line-height: 1.55;
 
@@ -387,30 +379,18 @@ a {
       column-gap: 0.75rem;
       align-items: baseline;
     }
-
-    + .roster-row {
-      @each $name, $theme in $themes {
-        [data-theme="#{$name}"] & {
-          border-top: 1px solid rgba(map.get($theme, "body-font-color"), 0.1);
-        }
-      }
-    }
   }
 
+  // The label idiom, matched to `label` in the sidebar.
   strong {
+    @include font-sans-serif;
+    font-weight: bold;
     font-variant: all-small-caps;
-    letter-spacing: 0.03em;
     white-space: nowrap;
-
-    @each $name, $theme in $themes {
-      [data-theme="#{$name}"] & {
-        color: rgba(map.get($theme, "body-font-color"), 0.75);
-      }
-    }
   }
 
-  // On small screens the label stacks above its names instead of squeezing the
-  // list into a narrow gutter.
+  // On small screens the label stacks above its names instead of being squeezed
+  // into a narrow gutter.
   @include breakpoint(small only) {
     .roster-names {
       display: block;
@@ -418,62 +398,57 @@ a {
   }
 }
 
-// Page prose. The content column is ~970px wide, which at the body size ran
-// well past 100 characters a line - comfortable to fit, tiring to read. Capping
-// the measure leaves the wide column for figures and grids, which use it well.
-section > p {
-  max-width: 68ch;
-  text-wrap: pretty;
-}
+// A. Flat block - the same card treatment the People page uses, so a roster
+// reads as "these are people" on sight. No border, no shadow, square corners.
+.roster-a {
+  padding: 0.75rem 1rem;
 
-section > h2 {
-  margin-top: 2.5rem;
-}
-
-// Body text is already 110% of 1rem, so the lede is sized in em to actually
-// sit a step above it.
-.lede {
-  font-size: 1.12em;
-  line-height: 1.6;
-}
-
-// Group photos are 2.5:1 and wider, so they earn the full column. Their captions
-// do not - a caption set to the same width as a panorama is a very long line of
-// small text.
-figure {
-  margin: 2rem 0;
-
-  img {
-    width: 100%;
-  }
-
-  figcaption {
-    max-width: 68ch;
-    margin-top: 0.6rem;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    text-wrap: pretty;
-
-    @each $name, $theme in $themes {
-      [data-theme="#{$name}"] & {
-        color: rgba(map.get($theme, "body-font-color"), 0.72);
-      }
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      background-color: map.get($theme, "card-background");
     }
   }
 }
 
-// The affiliations-and-credits footer. It was set at 60% of the body size, which
-// is below the point where the link text stays comfortably legible.
-.site-note {
-  margin-top: 3rem;
-  padding-top: 1rem;
-  font-size: 0.8rem;
-  line-height: 1.6;
+// B. Bare - no block at all. The site separates with whitespace everywhere
+// else, and this leans on the label column alone to carry the structure.
+.roster-b {
+  padding: 0;
 
-  @each $name, $theme in $themes {
-    [data-theme="#{$name}"] & {
-      color: rgba(map.get($theme, "body-font-color"), 0.7);
-      border-top: 1px solid rgba(map.get($theme, "body-font-color"), 0.15);
+  strong {
+    color: $medium-gray;
+  }
+}
+
+// C. Solid label - the label becomes a filled rectangle with the text knocked
+// out of it, echoing the logo block in the sidebar, which is the site's one
+// piece of real ornament.
+.roster-c {
+  padding: 0;
+
+  .roster-row {
+    padding: 0.2rem 0;
+  }
+
+  strong {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+
+    @each $name, $theme in $themes {
+      [data-theme="#{$name}"] & {
+        color: map.get($theme, "body-background");
+        background-color: map.get($theme, "logo-saturated");
+      }
+    }
+  }
+
+  @include breakpoint(medium up) {
+    .roster-row {
+      grid-template-columns: 12rem 1fr;
+    }
+
+    strong {
+      justify-self: start;
     }
   }
 }
