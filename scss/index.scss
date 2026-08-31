@@ -162,6 +162,15 @@ a {
   }
 }
 
+// People-page roster grids. Each `.cell` is stretched by the grid's default
+// `align-items: stretch`, but a plain block `.card` inside only grows to fit its
+// own text - so bios of different lengths left every card in a row ending at a
+// different height. Making the cell a flex column and letting the card grow into
+// it squares the bottom edges off per row.
+.grid-x > .cell {
+  display: flex;
+}
+
 .card {
   @each $name, $theme in $themes {
     [data-theme="#{$name}"] & {
@@ -176,6 +185,13 @@ a {
     [data-theme="#{$name}"] & img {
       background-color: map.get($theme, "palette-secondary");
     }
+
+    // Bios run to a dozen links apiece, and a full-strength dotted rule under
+    // every one turns the card into a field of blue. Keep the colour (which
+    // carries the affordance) and let the underline recede until hover.
+    [data-theme="#{$name}"] & .card-section a:not(:hover):not(:active) {
+      border-bottom-color: rgba(map.get($theme, "anchor-color"), 0.4);
+    }
   }
 
   @include breakpoint(small only) {
@@ -184,14 +200,75 @@ a {
     }
   }
 
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   padding: 0.5rem;
+
+  // Every headshot in static/ is square bar two that are a few percent off.
+  // Pinning the ratio keeps the name baselines across a row aligned instead of
+  // letting those two shunt their card's text up by a few pixels.
+  > img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  .card-section {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0.5rem 0.25rem;
+  }
+
+  // A name that wraps to two lines ("Jacqueline Antwi-Danso") otherwise pushes
+  // its whole bio down relative to the one-line names beside it.
+  .h3 {
+    font-size: 1.35rem;
+    line-height: 1.15;
+    min-height: 2.3em;
+    margin-bottom: 0.35rem;
+  }
+
+  p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+    text-wrap: pretty;
+  }
+
+  // The convention is website link first, then any status note, then the bio.
+  // Setting the link line apart reads as a label rather than a stray sentence.
+  p:first-of-type {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    font-variant: all-small-caps;
+    letter-spacing: 0.02em;
+  }
 }
 
 .media-object {
+  align-items: flex-start;
+
+  // The thumbnails were 180px against a ~775px column of prose, so a long theme
+  // blurb left a tall column of dead space beside it. Every research_*.jpg is
+  // square and at least 384px, so they can carry a lot more weight than that.
   @include breakpoint(medium up) {
     img {
-      width: 180px;
+      width: 260px;
     }
+  }
+
+  @include breakpoint(large up) {
+    img {
+      width: 300px;
+    }
+  }
+
+  // ~85 characters was a long way for the eye to track back. Capping the measure
+  // shortens the lines without leaving the wide layout looking empty.
+  .main-section p {
+    max-width: 68ch;
+    text-wrap: pretty;
   }
 
   @include breakpoint(small only) {
@@ -270,6 +347,133 @@ a {
 
     [data-theme="#{$name}"] & .js-drilldown-back > a::before {
       border-right-color: map.get($theme, "palette-secondary");
+    }
+  }
+}
+
+// Research-page theme rosters.
+//
+// These used to be a single paragraph carrying all three roles, separated by
+// <br> and running the full width of the column - a wall of comma-separated
+// links in which the role labels disappeared. Each role now gets its own row:
+// the label sits in a fixed left column so the three line up, and the names
+// flow beside it.
+.theme-roster {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0 0.75rem 1rem;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      border-left: 3px solid map.get($theme, "palette-primary");
+      background-color: rgba(map.get($theme, "palette-primary"), 0.07);
+    }
+
+    // The rosters are pure link lists, so the dotted rule under every name adds
+    // texture without adding information. Hover still confirms the target.
+    [data-theme="#{$name}"] & a:not(:hover):not(:active) {
+      border-bottom-color: rgba(map.get($theme, "anchor-color"), 0.35);
+    }
+  }
+
+  .roster-row {
+    margin: 0;
+    padding: 0.3rem 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+
+    @include breakpoint(medium up) {
+      display: grid;
+      grid-template-columns: 11.5rem 1fr;
+      column-gap: 0.75rem;
+      align-items: baseline;
+    }
+
+    + .roster-row {
+      @each $name, $theme in $themes {
+        [data-theme="#{$name}"] & {
+          border-top: 1px solid rgba(map.get($theme, "body-font-color"), 0.1);
+        }
+      }
+    }
+  }
+
+  strong {
+    font-variant: all-small-caps;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+
+    @each $name, $theme in $themes {
+      [data-theme="#{$name}"] & {
+        color: rgba(map.get($theme, "body-font-color"), 0.75);
+      }
+    }
+  }
+
+  // On small screens the label stacks above its names instead of squeezing the
+  // list into a narrow gutter.
+  @include breakpoint(small only) {
+    .roster-names {
+      display: block;
+    }
+  }
+}
+
+// Page prose. The content column is ~970px wide, which at the body size ran
+// well past 100 characters a line - comfortable to fit, tiring to read. Capping
+// the measure leaves the wide column for figures and grids, which use it well.
+section > p {
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+section > h2 {
+  margin-top: 2.5rem;
+}
+
+// Body text is already 110% of 1rem, so the lede is sized in em to actually
+// sit a step above it.
+.lede {
+  font-size: 1.12em;
+  line-height: 1.6;
+}
+
+// Group photos are 2.5:1 and wider, so they earn the full column. Their captions
+// do not - a caption set to the same width as a panorama is a very long line of
+// small text.
+figure {
+  margin: 2rem 0;
+
+  img {
+    width: 100%;
+  }
+
+  figcaption {
+    max-width: 68ch;
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+
+    @each $name, $theme in $themes {
+      [data-theme="#{$name}"] & {
+        color: rgba(map.get($theme, "body-font-color"), 0.72);
+      }
+    }
+  }
+}
+
+// The affiliations-and-credits footer. It was set at 60% of the body size, which
+// is below the point where the link text stays comfortably legible.
+.site-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      color: rgba(map.get($theme, "body-font-color"), 0.7);
+      border-top: 1px solid rgba(map.get($theme, "body-font-color"), 0.15);
     }
   }
 }
