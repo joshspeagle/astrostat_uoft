@@ -360,12 +360,18 @@ a {
 // links in which the role labels disappeared. Each role now gets its own row,
 // with the label in a fixed left column so the three line up.
 //
-// Three treatments are defined here so they can be compared on the real page;
-// one of them stays. All of them keep to the site's vocabulary: no borders, no
-// rules, no rounded corners, and labels in the same bold all-small-caps idiom
-// as the sidebar's NAVIGATE and DARK MODE.
+// The block itself reuses the People page's card treatment, so a roster reads
+// as "these are people" on sight: the same flat fill, and like everything else
+// here no border, no shadow and no rounded corners.
 .theme-roster {
   margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      background-color: map.get($theme, "card-background");
+    }
+  }
 
   .roster-row {
     margin: 0;
@@ -394,61 +400,6 @@ a {
   @include breakpoint(small only) {
     .roster-names {
       display: block;
-    }
-  }
-}
-
-// A. Flat block - the same card treatment the People page uses, so a roster
-// reads as "these are people" on sight. No border, no shadow, square corners.
-.roster-a {
-  padding: 0.75rem 1rem;
-
-  @each $name, $theme in $themes {
-    [data-theme="#{$name}"] & {
-      background-color: map.get($theme, "card-background");
-    }
-  }
-}
-
-// B. Bare - no block at all. The site separates with whitespace everywhere
-// else, and this leans on the label column alone to carry the structure.
-.roster-b {
-  padding: 0;
-
-  strong {
-    color: $medium-gray;
-  }
-}
-
-// C. Solid label - the label becomes a filled rectangle with the text knocked
-// out of it, echoing the logo block in the sidebar, which is the site's one
-// piece of real ornament.
-.roster-c {
-  padding: 0;
-
-  .roster-row {
-    padding: 0.2rem 0;
-  }
-
-  strong {
-    display: inline-block;
-    padding: 0.1rem 0.5rem;
-
-    @each $name, $theme in $themes {
-      [data-theme="#{$name}"] & {
-        color: map.get($theme, "body-background");
-        background-color: map.get($theme, "logo-saturated");
-      }
-    }
-  }
-
-  @include breakpoint(medium up) {
-    .roster-row {
-      grid-template-columns: 12rem 1fr;
-    }
-
-    strong {
-      justify-self: start;
     }
   }
 }
