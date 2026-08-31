@@ -404,4 +404,56 @@ a {
   }
 }
 
+// Page prose. The content column is ~970px wide, which at the body size ran
+// well past 100 characters a line - comfortable to fit, tiring to read. Capping
+// the measure leaves the wide column for figures and grids, which use it well.
+section > p {
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+// The home page used stacked <br> tags to separate its sections; these replace
+// that with real margins.
+section > h2 {
+  margin-top: 2.5rem;
+}
+
+// Body text is already 110% of 1rem, so the lede is sized in em to actually sit
+// a step above it.
+.lede {
+  font-size: 1.12em;
+  line-height: 1.6;
+}
+
+// Group photos are 2.5:1 and wider, so they earn the full column. Their captions
+// do not - a caption set to the same width as a panorama is a very long line of
+// small text. $medium-gray is already defined in _global and reads correctly on
+// both the white and the black ground, so it needs no per-theme handling.
+figure {
+  margin: 2rem 0;
+
+  img {
+    width: 100%;
+  }
+
+  figcaption {
+    max-width: 68ch;
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+    color: $medium-gray;
+  }
+}
+
+// The affiliations-and-credits footer. It was set at 60% of the body size, which
+// is below the point where its link text stays comfortably legible. Separated by
+// whitespace rather than a rule, as everything else here is.
+.site-note {
+  margin-top: 3.5rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: $medium-gray;
+}
+
 // vim: set ft=scss:
