@@ -162,6 +162,15 @@ a {
   }
 }
 
+// People-page roster grids. Each `.cell` is stretched by the grid's default
+// `align-items: stretch`, but a plain block `.card` inside only grows to fit its
+// own text - so bios of different lengths left every card in a row ending at a
+// different height. Making the cell a flex column and letting the card grow into
+// it squares the bottom edges off per row.
+.grid-x > .cell {
+  display: flex;
+}
+
 .card {
   @each $name, $theme in $themes {
     [data-theme="#{$name}"] & {
@@ -176,6 +185,15 @@ a {
     [data-theme="#{$name}"] & img {
       background-color: map.get($theme, "palette-secondary");
     }
+
+    // Bios run to a dozen links apiece, and a full-strength dotted rule under
+    // every one turns the card into a field of blue. Keep the colour (which
+    // carries the affordance) and let the underline recede until hover, mixed
+    // toward the card behind it rather than washed out with alpha.
+    [data-theme="#{$name}"] & .card-section a:not(:hover):not(:active) {
+      border-bottom-color: color.mix(map.get($theme, "anchor-color"),
+                                     map.get($theme, "card-background"), 45%);
+    }
   }
 
   @include breakpoint(small only) {
@@ -184,14 +202,75 @@ a {
     }
   }
 
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   padding: 0.5rem;
+
+  // Every headshot in static/ is square bar two that are a few percent off.
+  // Pinning the ratio keeps the name baselines across a row aligned instead of
+  // letting those two shunt their card's text up by a few pixels.
+  > img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  .card-section {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0.5rem 0.25rem;
+  }
+
+  // A name that wraps to two lines ("Jacqueline Antwi-Danso") otherwise pushes
+  // its whole bio down relative to the one-line names beside it.
+  .h3 {
+    font-size: 1.35rem;
+    line-height: 1.15;
+    min-height: 2.3em;
+    margin-bottom: 0.35rem;
+  }
+
+  p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+    text-wrap: pretty;
+  }
+
+  // The convention is website link first, then any status note, then the bio.
+  // Set as a label in the same idiom as the sidebar's NAVIGATE / DARK MODE
+  // rather than left to read as a stray sentence.
+  p:first-of-type {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-variant: all-small-caps;
+  }
 }
 
 .media-object {
+  align-items: flex-start;
+
+  // The thumbnails were 180px against a ~775px column of prose, so a long theme
+  // blurb left a tall column of dead space beside it. Every research_*.jpg is
+  // square and at least 384px, so they can carry a lot more weight than that.
   @include breakpoint(medium up) {
     img {
-      width: 180px;
+      width: 260px;
     }
+  }
+
+  @include breakpoint(large up) {
+    img {
+      width: 300px;
+    }
+  }
+
+  // ~85 characters was a long way for the eye to track back. Capping the measure
+  // shortens the lines without leaving the wide layout looking empty.
+  .main-section p {
+    max-width: 68ch;
+    text-wrap: pretty;
   }
 
   @include breakpoint(small only) {
@@ -270,6 +349,57 @@ a {
 
     [data-theme="#{$name}"] & .js-drilldown-back > a::before {
       border-right-color: map.get($theme, "palette-secondary");
+    }
+  }
+}
+
+// Research-page theme rosters.
+//
+// These used to be a single paragraph carrying all three roles, separated by
+// <br> and running the full width of the column - a wall of comma-separated
+// links in which the role labels disappeared. Each role now gets its own row,
+// with the label in a fixed left column so the three line up.
+//
+// The block itself reuses the People page's card treatment, so a roster reads
+// as "these are people" on sight: the same flat fill, and like everything else
+// here no border, no shadow and no rounded corners.
+.theme-roster {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+
+  @each $name, $theme in $themes {
+    [data-theme="#{$name}"] & {
+      background-color: map.get($theme, "card-background");
+    }
+  }
+
+  .roster-row {
+    margin: 0;
+    padding: 0.25rem 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+
+    @include breakpoint(medium up) {
+      display: grid;
+      grid-template-columns: 11.5rem 1fr;
+      column-gap: 0.75rem;
+      align-items: baseline;
+    }
+  }
+
+  // The label idiom, matched to `label` in the sidebar.
+  strong {
+    @include font-sans-serif;
+    font-weight: bold;
+    font-variant: all-small-caps;
+    white-space: nowrap;
+  }
+
+  // On small screens the label stacks above its names instead of being squeezed
+  // into a narrow gutter.
+  @include breakpoint(small only) {
+    .roster-names {
+      display: block;
     }
   }
 }
