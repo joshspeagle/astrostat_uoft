@@ -274,6 +274,16 @@
             "Tri is an <a href=\"https://www.nserc-crsng.gc.ca\">NSERC</a> Canada Postdoctoral Research Award Fellow at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>. He explores the nature of dark matter and its role in galaxy formation and evolution, especially at the smallest scales, developing machine learning techniques with a focus on simulation-based inference and generative models to analyze cosmological simulations and data from astronomical surveys. He was previously a CIERA Postdoctoral Fellow at <a href=\"https://www.northwestern.edu\">Northwestern University</a> and received his Ph.D. in Physics from the <a href=\"https://www.mit.edu\">Massachusetts Institute of Technology</a> in 2024 under the supervision of <a href=\"https://linanecib.com/\">Lina Necib</a>.",
             "Tri works closely with <a href=\"https://sazabi4.github.io\">Ting Li</a> at the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a>."
           ]
+        },
+        {
+          "name": "Nolan Koblischke",
+          "image": "nolan_koblischke.jpg",
+          "alt": "A picture of Nolan Koblischke.",
+          "paragraphs": [
+            "<a href=\"https://nolank.ca/\">Personal Website</a>",
+            "Nolan is a Ph.D. candidate in the <a href=\"https://www.astro.utoronto.ca\">David A. Dunlap Department of Astronomy & Astrophysics</a> working with <a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> on foundation models for search and discovery in survey astronomy. He builds tools that let astronomers query large datasets in plain language, including AION-Search, a semantic search engine over 100 million galaxy images, and ChatGaia, a conversational interface to the <a href=\"https://www.esa.int/Science_Exploration/Space_Science/Gaia\">Gaia</a> archive. He also asks how well AI agents can do science on their own, and led Gravity-Bench, a benchmark of physics discovery. He was previously a junior research scientist at <a href=\"https://polymathic-ai.org\">Polymathic AI</a> and completed his B.Sc. in Physics at the <a href=\"https://www.ubc.ca\">University of British Columbia</a> in 2023.",
+            "Nolan also works closely with <a href=\"https://joshspeagle.com\">Josh Speagle</a>, co-supervising undergraduate work on alphaUniverse, an AI virtual observatory."
+          ]
         }
       ]
     },
