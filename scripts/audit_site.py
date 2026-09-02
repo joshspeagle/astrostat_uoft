@@ -136,6 +136,8 @@ DEGREE_CLAUSE = re.compile(r'(Ph\.?D|M\.?Sc|B\.?Sc|degree|doctorate)', re.I)
 # group works with on an ongoing basis; a one-off co-supervision does not qualify.
 ADVISER_NOT_COLLABORATOR = {
     'Nolan Koblischke': 'co-supervises one SURP undergrad only (decided Aug 2026)',
+    'Chris Maddison': "co-supervises an associate's Ph.D. via the DSI fellowship, "
+                      'not otherwise involved with the group (decided Sep 2026)',
 }
 
 NOT_A_PERSON = ('Department', 'Institute', 'University', 'Fellow', 'Program', 'Survey',
