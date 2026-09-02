@@ -240,8 +240,11 @@ a {
 
   // The convention is website link first, then any status note, then the bio.
   // Set as a label in the same idiom as the sidebar's NAVIGATE / DARK MODE
-  // rather than left to read as a stray sentence.
-  p:first-of-type {
+  // rather than left to read as a stray sentence. Keyed off the class that
+  // build/render-people.js puts on a paragraph holding nothing but a link, not
+  // off :first-of-type: the six entries with no website to lead with had their
+  // whole bio rendered bold and in small caps.
+  p.person-link {
     margin-bottom: 0.5rem;
     font-weight: bold;
     font-variant: all-small-caps;
