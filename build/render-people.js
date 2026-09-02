@@ -9,6 +9,13 @@ const path = require('path');
  * html-webpack-plugin minifies the final page — but it is kept readable so
  * that `npx webpack` output stays diffable during review.
  */
+// A paragraph that is nothing but a link — by convention the person's website,
+// the first paragraph of an entry. It is tagged so the stylesheet can set it as
+// a label (see `.card p.person-link` in scss/index.scss). Styling the first
+// paragraph by position instead put the whole bio in small caps for the entries
+// that have no website to lead with.
+const LINK_ONLY = /^<a\b[^>]*>[^<]*<\/a>$/;
+
 function renderPeople(dataFile) {
   const file = dataFile || path.resolve(__dirname, '..', 'data', 'people.json');
   const data = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -42,7 +49,8 @@ function renderPeople(dataFile) {
       out.push('        <div class="card-section">');
       out.push(`          <span class="h3">${person.name}</span>`);
       for (const p of person.paragraphs) {
-        out.push(`          <p>${p}</p>`);
+        const cls = LINK_ONLY.test(p.trim()) ? ' class="person-link"' : '';
+        out.push(`          <p${cls}>${p}</p>`);
       }
       out.push('        </div>');
       out.push('      </div>');
