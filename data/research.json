@@ -1,14 +1,14 @@
 {
   "title": "Research",
   "intro": [
-    "Statistics and data are integral parts of many areas of modern astronomy, and so the ART is conducting research in a broad range of areas across astrophysics, statistics, data science, and artificial intelligence (AI). Information on some of the areas and topics we are currently investigating, along with the <a href=\"/people.html\"><strong>awesome people</strong></a> involved, can be found below."
+    "Statistics and data are integral to many areas of modern astronomy, and the ART works across astrophysics, statistics, data science, and artificial intelligence (AI). The eight themes below cover what we are currently working on, together with the <a href=\"/people.html\">people</a> involved in each."
   ],
   "themes": [
     {
       "id": "inference",
       "title": "Inference",
       "image": "research_sampling.jpg",
-      "alt": "A picture of a random snapshot of a Markov Chain Monte Carlo (MCMC) sampling algorithm exploring a distribution.",
+      "alt": "A random snapshot of a Markov Chain Monte Carlo (MCMC) sampling algorithm exploring a distribution.",
       "credit": "Simeon Carstens.",
       "paragraphs": [
         "Modern astronomical surveys produce data at a volume that breaks the usual tools. The methods best suited to drawing careful conclusions from complex data, such as hierarchical inference, struggle to keep up as datasets grow. Machine learning methods scale to that volume with ease, but often cannot say how confident they are, or why. Reconciling the two remains a central challenge for getting reliable insight out of the current and upcoming era of overwhelmingly large surveys. People in the ART work on new sampling techniques, data-driven approaches, and data integration strategies to help close that gap. That work runs from Markov chain Monte Carlo and Bayesian computation through to simulation-based inference and generative models, applied to problems where selection effects and measurement error matter as much as the model itself."
@@ -43,7 +43,7 @@
       "id": "stellar-evolution",
       "title": "Stellar Evolution",
       "image": "research_stars.jpg",
-      "alt": "A picture of a solar flare erupting from the surface of the Sun in the shape of a loop.",
+      "alt": "A solar flare erupting from the surface of the Sun in the shape of a loop.",
       "credit": "NASA.",
       "paragraphs": [
         "While we like to think of our Sun as a \"typical\" star that we understand well, many observations suggest otherwise. Stars turn out to have complex interior structures, chemical mixing, magnetic activity, and evolutionary pathways...and that's before considering that most stars have companions they will interact with during their lifetimes. The recent advent of <a href=\"https://www.ligo.caltech.edu/page/what-are-gw\">gravitational wave</a> detectors such as <a href=\"https://www.ligo.caltech.edu/page/about\">LIGO</a> has also revealed a complicated picture of the deaths of stars (as black holes, neutron stars, white dwarfs, etc.). This has led to a renaissance in the study of stellar evolution. The ART tackles this from multiple angles, using statistical and machine learning methods across large datasets to identify and characterize a variety of stellar populations including magnetically-active stars, ancient metal-poor stars, rare binary stellar systems, and variable stars."
@@ -80,7 +80,7 @@
       "alt": "A composite image of the Bullet Cluster, where two blue clumps of dark matter flank the pink X-ray gas left behind after two galaxy clusters collided.",
       "credit": "X-ray NASA/CXC/CfA/M. Markevitch et al.; optical and lensing map NASA/STScI, Magellan/U.Arizona/D. Clowe et al., ESO WFI.",
       "paragraphs": [
-        "One of the biggest mysteries in physics and astronomy is <a href=https://www.britannica.com/science/dark-matter>dark matter</a>. Almost every galaxy in the universe is thought to sit in a halo of it, and those halos play an important part in how galaxies form and change. In the ART we ask questions such as: how much dark matter is there in the <a href=https://www.amnh.org/explore/ology/astronomy/the-milky-way-galaxy2>Milky Way</a>, in elliptical galaxies, and in <a href=https://en.wikipedia.org/wiki/Ultra_diffuse_galaxy>ultra-diffuse galaxies</a>, and how is it distributed? How well do our formation theories for these systems hold up against exciting new data sets from <a href=https://www.esa.int/Science_Exploration/Space_Science/Gaia>Gaia</a>, <a href=https://webb.nasa.gov>JWST</a>, <a href=https://www.desi.lbl.gov>DESI</a>, and <a href=https://www.lsst.org>LSST</a>? The same questions scale up to the universe as a whole, where the pattern galaxies trace across the sky records how structure grew over cosmic history and how much matter there was to grow it. We use and develop a variety of statistical methods, including hierarchical Bayesian models, to analyze data at all of these scales, working on both the measurements themselves and the machinery that makes them trustworthy."
+        "One of the biggest mysteries in physics and astronomy is <a href=https://www.britannica.com/science/dark-matter>dark matter</a>. Almost every galaxy in the Universe is thought to sit in a halo of it, and those halos play an important part in how galaxies form and change. In the ART we ask questions such as: how much dark matter is there in the <a href=https://www.amnh.org/explore/ology/astronomy/the-milky-way-galaxy2>Milky Way</a>, in elliptical galaxies, and in <a href=https://en.wikipedia.org/wiki/Ultra_diffuse_galaxy>ultra-diffuse galaxies</a>, and how is it distributed? How well do our formation theories for these systems hold up against new data from <a href=https://www.esa.int/Science_Exploration/Space_Science/Gaia>Gaia</a>, <a href=https://science.nasa.gov/mission/webb/>JWST</a>, <a href=https://www.desi.lbl.gov>DESI</a>, and <a href=https://www.lsst.org>LSST</a>? The same questions scale up to the Universe as a whole, where the pattern galaxies trace across the sky records how structure grew over cosmic history and how much matter there was to grow it. We use and develop a variety of statistical methods, including hierarchical Bayesian models, to analyze data at all of these scales, working on both the measurements themselves and the machinery that makes them trustworthy."
       ],
       "members": [
         "gwendolyn-eadie",
@@ -108,7 +108,7 @@
       "id": "ai-for-scientists",
       "title": "AI for Scientists",
       "image": "research_ml.jpg",
-      "alt": "A picture of a fully-connected neural network, with neurons represented by circles and connections represented by overlapping lines.",
+      "alt": "A fully-connected neural network, with neurons represented by circles and connections represented by overlapping lines.",
       "credit": "3blue1brown.",
       "paragraphs": [
         "AI has become a standard tool in astronomy. We rely on it to classify millions of galaxies, pick out the strangest objects in the sky, find gravitational lenses, and much more. But a model that returns an answer is not the same as a model a scientist can rely on: most give a measurement without saying how confident they are, without explaining what led them there, and without any built-in sense of the physics involved. Members of the ART work on AI that is designed for science from the start. That means building models that carry physical knowledge and honest uncertainties, developing tools that let us ask why a model reached the conclusion it did, and making it easier to search and compare the enormous datasets modern surveys produce."
@@ -139,10 +139,10 @@
       "id": "the-milky-way",
       "title": "The Milky Way",
       "image": "research_mw.jpg",
-      "alt": "A picture of the Milky Way streaking diagonally upwards from the bottom-right to the upper-left as seen from the Black Rock Desert in Nevada.",
+      "alt": "The Milky Way streaking diagonally upwards from the bottom-right to the upper-left as seen from the Black Rock Desert in Nevada.",
       "credit": "Steve Jurvetson.",
       "paragraphs": [
-        "The <a href=\"https://www.skyatnightmagazine.com/space-science/local-group-guide-galaxy-neighbourhood\">Local Group</a> of galaxies, which consists of the Milky Way (MW), Andromeda (M31), and their satellite dwarfs, contains some of the only galaxies we are able to study on both the smallest and largest scales. This allows us to connect the properties of individual stars (such as their positions, motion, and chemistry) to the properties of galaxies as a whole. The Galaxy is also not empty between its stars: it is threaded with gas and dust that dims and reddens everything we observe through it and supplies the raw material for the next generation of stars. Using chemodynamical and other statistical modelling techniques, members of the ART reconstruct how a galaxy formed and what it looks like today, map that gas and dust in three dimensions using stars as background probes, and place the Local Group in its cosmological context through comparisons with other galaxies, theory, and simulations."
+        "The <a href=\"https://www.skyatnightmagazine.com/space-science/local-group-guide-galaxy-neighbourhood\">Local Group</a> of galaxies, which consists of the Milky Way, Andromeda, and their satellite dwarfs, contains some of the only galaxies we are able to study on both the smallest and largest scales. This allows us to connect the properties of individual stars (such as their positions, motion, and chemistry) to the properties of galaxies as a whole. The Milky Way is also not empty between its stars: it is threaded with gas and dust that dims and reddens everything we observe through it and supplies the raw material for the next generation of stars. Using chemodynamical modelling, which treats the chemistry and the motions of stars together, along with other statistical techniques, members of the ART reconstruct how a galaxy formed and what it looks like today, and map that gas and dust in three dimensions using stars as background probes. They also place the Local Group in its cosmological context through comparisons with other galaxies, theory, and simulations."
       ],
       "members": [
         "gwendolyn-eadie",
@@ -168,10 +168,10 @@
       "id": "galaxies",
       "title": "Galaxies",
       "image": "research_galaxy.jpg",
-      "alt": "A picture of Stephan's Quintet from NASA's James Webb Space Telescope, which contains five galaxies interacting with each other.",
+      "alt": "Stephan's Quintet from NASA's James Webb Space Telescope, which contains five galaxies interacting with each other.",
       "credit": "NASA, ESA, CSA, and STScI.",
       "paragraphs": [
-        "The messiness of how galaxies actually form, grow, and evolve can be seen in data as varied as nearby <a href=\"https://skyandtelescope.org/astronomy-news/stellar-streams-are-revealing-their-secrets\">stellar streams</a> (i.e. tidal debris) in the local Universe through to the most distant observable galaxies with <a href=\"https://webb.nasa.gov\">JWST</a>. Because each galaxy is only observed once, unpicking the relationships between each variable that drives evolution (star formation, gas accretion, mergers, <a href=\"https://webbtelescope.org/contents/articles/what-are-active-galactic-nuclei\">supermassive black holes</a>, etc.) requires large statistical samples and careful treatment of confounding effects. The first galaxies are largely beyond direct reach, so we study the early Universe through what we can observe instead: nearby <a href=\"https://en.wikipedia.org/wiki/Globular_cluster\">globular clusters</a>, and the brightest and oldest galaxies still visible at <a href=\"https://nz.news.yahoo.com/nasa-webb-telescope-spots-impossible-105514938.html\">high redshift</a>. Members of the ART bring Bayesian hierarchical modelling and spatial statistics to bear on both, identifying where theory and simulations diverge from what the data actually show."
+        "The messiness of how galaxies actually form, grow, and evolve can be seen in data as varied as nearby <a href=\"https://skyandtelescope.org/astronomy-news/stellar-streams-are-revealing-their-secrets\">stellar streams</a> (i.e. tidal debris) in the local Universe through to the most distant observable galaxies with <a href=\"https://science.nasa.gov/mission/webb/\">JWST</a>. Because each galaxy is only observed once, unpicking the relationships between each variable that drives evolution (star formation, gas accretion, mergers, <a href=\"https://science.nasa.gov/mission/webb/science-overview/science-explainers/what-are-active-galactic-nuclei/\">supermassive black holes</a>, etc.) requires large statistical samples and careful treatment of confounding effects. The first galaxies are largely beyond direct reach, so we study the early Universe through what we can observe instead: nearby <a href=\"https://en.wikipedia.org/wiki/Globular_cluster\">globular clusters</a>, and the brightest and oldest galaxies still visible at <a href=\"https://en.wikipedia.org/wiki/Redshift\">high redshift</a>. Members of the ART bring Bayesian hierarchical modelling and spatial statistics to bear on both, identifying where theory and simulations diverge from what the data actually show."
       ],
       "members": [
         "gwendolyn-eadie",
@@ -196,10 +196,10 @@
       "id": "transients",
       "title": "Transients",
       "image": "research_frb.jpg",
-      "alt": "A picture of the night sky showing a number of radio dishes pointed up at the night sky obsering a burst of radio waves coming from a bright dot located in a large purple galaxy.",
+      "alt": "A number of radio dishes pointed up at the night sky, observing a burst of radio waves coming from a bright dot located in a large purple galaxy.",
       "credit": "Danielle Futselaar/artsource.nl.",
       "paragraphs": [
-        "The sky is not static. Stars explode, objects flare, and brief pulses of radio energy arrive from across the Universe, and in most cases we get one chance to catch them. <a href=https://www.space.com/fast-radio-bursts>Fast radio bursts (FRBs)</a> are among the most puzzling: short, enormously energetic radio pulses lasting only milliseconds, whose origin is still unknown, though magnetars in distant galaxies are a leading suspect. Some repeat and others appear only once, and telling those populations apart is a genuinely statistical problem. Members of the ART are part of the <a href=https://chime-experiment.ca/en>Canadian Hydrogen Intensity Mapping Experiment (CHIME)</a> FRB Collaboration, and work on fleeting signals of several kinds, from bursts and explosions to stellar flares and searches for signals that might not be natural at all, developing the statistical methods needed to draw conclusions from events that are rare, brief, and rarely seen twice."
+        "The sky is not static. Stars explode, objects flare, and brief pulses of radio energy arrive from across the Universe, and in most cases we get one chance to catch them. <a href=https://www.space.com/fast-radio-bursts>Fast radio bursts (FRBs)</a> are among the most puzzling: short, enormously energetic radio pulses lasting only milliseconds, whose origin is still unknown, though magnetars in distant galaxies are a leading suspect. Some repeat and others appear only once, and telling those populations apart is a genuinely statistical problem. Members of the ART are part of the <a href=https://chime-experiment.ca/en>Canadian Hydrogen Intensity Mapping Experiment (CHIME)</a> FRB Collaboration, and work on fleeting signals of several kinds, from bursts and explosions to stellar flares and searches for signals that might not be natural at all. The methods have to draw conclusions from events that are brief, rare, and seldom seen twice."
       ],
       "members": [
         "gwendolyn-eadie"
