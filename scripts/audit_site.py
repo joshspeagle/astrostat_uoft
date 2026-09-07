@@ -435,7 +435,9 @@ def main():
         if theme.get('image'):
             refs.setdefault(theme['image'], set()).add(RESEARCH)
     for path, text in {HOME: home_raw, SHELL: shell}.items():
-        for m in re.finditer(r'src="/static/([^"]+)"', text):
+        # `src`, and every candidate in a `srcset` - the panoramas ship at
+        # several widths and only the fallback appears in `src`.
+        for m in re.finditer(r'/static/([^"\s,]+)', text):
             refs.setdefault(m.group(1), set()).add(path)
     for section in data['sections']:
         for person in section['people']:
@@ -475,7 +477,7 @@ def main():
 
     # photo recency
     print("[9. Home-page photo recency]")
-    figures = set(re.findall(r'<figure>.*?src="/static/([^"]+)".*?</figure>', home, re.S))
+    figures = set(re.findall(r'<figure[^>]*>.*?src="/static/([^"]+)".*?</figure>', home, re.S))
     dated = [(fn, int(re.search(r'(20\d\d)', fn).group(1)))
              for fn in figures if re.search(r'(20\d\d)', fn)]
     stalest = [f for f in dated if ay - f[1] >= 1]
@@ -488,15 +490,16 @@ def main():
 
     # footer date - built from the last commit date (see webpack.config.js),
     # so the only thing left to check is that the placeholder is still there.
-    print("[10. Home page 'last updated' line]")
-    if '{{LAST_UPDATED}}' in home:
+    # It lives in the shared footer in main.ejs, which every page renders.
+    print("[10. Site note 'last updated' line]")
+    if '{{LAST_UPDATED}}' in shell:
         print("      generated at build time from the last commit touching "
-              "data/ or ejs/pages/")
+              "data/ or ejs/")
         print("      (on CI's shallow checkout that degrades to the build's own "
               "commit -- see webpack.config.js)")
     else:
         print("      the {{LAST_UPDATED}} placeholder is gone from "
-              f"{HOME} -- has someone typed a literal date back in?")
+              f"{SHELL} -- has someone typed a literal date back in?")
         findings += 1
     print()
 

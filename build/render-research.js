@@ -1,33 +1,24 @@
 const fs = require('fs');
 const path = require('path');
+const { escapeHtml } = require('./shell');
 
 /**
- * Renders the Research page body from data/research.json.
+ * Renders the Research page from data/research.json.
  *
- * Like the People page (see build/render-people.js) this is wired into
- * webpack.config.js as a `content` generator rather than a `filename`; the
- * output is a plain HTML string injected into main.ejs as the `body` partial.
+ * Returns `{ body, index }` like build/render-people.js: the page's HTML, and
+ * the rows the "On this page" index is built from - here each carrying the
+ * theme's icon, since eight recurring identities is the one case the canon
+ * says iconography earns.
  *
  * Theme rosters are lists of *ids* into data/people.json, so a name, a short
  * form or a personal-site URL is written once, on the People page, and a
  * roster entry that names nobody fails the build instead of quietly drifting.
  */
 
-// Prose (`intro`, a theme's `paragraphs`) is raw HTML, exactly as on the People
-// page. Everything else - titles, alt text, credits, names - is plain text.
-function escapeHtml(value) {
-  return String(value == null ? '' : value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 const ROWS = [
-  ['members', 'ART members involved'],
-  ['associates', 'ART associates involved'],
-  ['collaborators', 'Collaborators include'],
+  ['members', 'Members', 'members'],
+  ['associates', 'Associates', 'associates'],
+  ['collaborators', 'Collaborators', 'collaborators'],
 ];
 
 /** id -> { id, name, short } for everyone on the People page. */
@@ -35,23 +26,21 @@ function loadPeople(peopleFile) {
   const data = JSON.parse(fs.readFileSync(peopleFile, 'utf8'));
   const index = new Map();
   for (const section of data.sections) {
-    for (const person of section.people) {
-      index.set(person.id, person);
-    }
+    for (const person of section.people) index.set(person.id, person);
   }
   return index;
 }
 
 /**
  * How a person is written in a roster: their `short` form if the data file
- * gives one, otherwise their name with any parenthetical dropped — a card
+ * gives one, otherwise their name with any parenthetical dropped - a card
  * headed "Mairead Heiger (Ph.D. '26)" is just "Mairead Heiger" in a list.
  */
 function rosterName(person) {
   return person.short || person.name.replace(/\s*\([^)]*\)/g, '').trim();
 }
 
-function renderRoster(entries, label, people, theme) {
+function renderRoster(entries, label, role, people, theme) {
   const names = entries.map((entry) => {
     const id = typeof entry === 'string' ? entry : entry.id;
     const person = people.get(id);
@@ -67,9 +56,13 @@ function renderRoster(entries, label, people, theme) {
     return note ? `${link} <span class="roster-note">(${escapeHtml(note)})</span>` : link;
   });
 
+  // The second channel is fill, not hue: filled is inside the group, open is
+  // affiliated, absent is outside - an order, drawn as one. The words never go
+  // away; the square is never the only channel.
   return [
-    '    <p class="roster-row">',
-    `      <strong>${label}:</strong>`,
+    `    <p class="roster-row ${role}">`,
+    `      <span class="roster-label label"><span class="roster-mark" aria-hidden="true">`
+    + `</span>${label}</span>`,
     `      <span class="roster-names">${names.join(', ')}</span>`,
     '    </p>',
   ];
@@ -81,70 +74,55 @@ function renderResearch(dataFile, peopleFile) {
   const people = loadPeople(peopleFile || path.join(dir, 'people.json'));
 
   const out = [];
-  out.push('<section class="small-12">');
-  out.push('');
-  out.push(`  <h1>${escapeHtml(data.title)}</h1>`);
-  for (const para of data.intro) {
-    out.push('');
-    out.push('  <p>');
-    out.push(`    ${para}`);
-    out.push('  </p>');
-  }
+  const index = [];
+  out.push(`<h1>${escapeHtml(data.title)}</h1>`);
+  out.push('<div class="intro">');
+  for (const para of data.intro) out.push(`  <p>${para}</p>`);
+  out.push('</div>');
 
   const seen = new Set();
 
-  data.themes.forEach((theme, i) => {
+  for (const theme of data.themes) {
     if (!theme.id) throw new Error(`data/research.json: theme "${theme.title}" has no "id"`);
     if (seen.has(theme.id)) throw new Error(`data/research.json: duplicate theme id "${theme.id}"`);
     seen.add(theme.id);
-
-    // The images alternate sides. That used to fall out of an :nth-child(odd)
-    // rule counting headings, spacer <br>s and roster blocks, which meant the
-    // side a theme landed on depended on how many siblings happened to precede
-    // it. It is stated here instead, so it survives a theme being added or moved.
-    const flip = i % 2 === 1 ? ' media-flip' : '';
-
-    out.push('');
     const id = escapeHtml(theme.id);
-    out.push(`  <h2 id="${id}" data-icon="${id}">${escapeHtml(theme.title)}</h2>`);
+    index.push({ id: theme.id, title: theme.title, icon: theme.id });
+
+    // One fixed image side, always the right-hand column. The page used to
+    // alternate, which made the reader re-find the text column eight times.
     out.push('');
-    out.push(`  <div class="media-object stack-for-small${flip}">`);
-    out.push('    <div class="media-object-section">');
-    out.push('      <figure class="theme-figure">');
-    // A theme with no image on file renders src-less, exactly as a person with
-    // no headshot does (build/render-people.js). js/index.js fills those in with
-    // the palette placeholder; `src="/static/null"` would instead ask the server
-    // for a file that cannot exist and show a broken image.
-    const attrs = ['class="research-thumbnail"'];
-    if (theme.image) attrs.push(`src="/static/${escapeHtml(theme.image)}"`);
-    attrs.push(`alt="${escapeHtml(theme.alt)}"`, 'width="500"', 'height="500"', 'loading="lazy"');
-    out.push(`        <img ${attrs.join(' ')}>`);
-    if (theme.credit) {
-      out.push(`        <figcaption class="credit">Image credit: ${escapeHtml(theme.credit)}</figcaption>`);
-    }
-    out.push('      </figure>');
-    out.push('    </div>');
-    out.push('    <div class="media-object-section main-section">');
-    for (const para of theme.paragraphs) {
-      out.push('      <p>');
-      out.push(`        ${para}`);
-      out.push('      </p>');
-    }
-    out.push('    </div>');
+    out.push(`<section class="theme${theme.image ? '' : ' no-figure'}" id="${id}" data-spy>`);
+    out.push(`  <h2><svg class="icon" aria-hidden="true" focusable="false">`
+      + `<use href="#icon-${id}"></use></svg>${escapeHtml(theme.title)}</h2>`);
+    out.push('  <div class="theme-prose">');
+    for (const para of theme.paragraphs) out.push(`    <p>${para}</p>`);
     out.push('  </div>');
-    out.push('');
-    out.push('  <div class="theme-roster">');
-    for (const [key, label] of ROWS) {
+
+    if (theme.image) {
+      out.push('  <figure class="theme-figure">');
+      out.push(`    <img src="/static/${escapeHtml(theme.image)}" `
+        + `alt="${escapeHtml(theme.alt)}" width="500" height="500" `
+        + 'loading="lazy" decoding="async">');
+      if (theme.credit) {
+        // The credit is a caption, not prose: quiet, small, and not italic.
+        out.push(`    <figcaption class="quiet">Image credit: ${escapeHtml(theme.credit)}`
+          + '</figcaption>');
+      }
+      out.push('  </figure>');
+    }
+
+    out.push('  <div class="roster quiet-links">');
+    for (const [key, label, role] of ROWS) {
       const entries = theme[key] || [];
       if (!entries.length) continue;   // a row with nobody in it says nothing
-      out.push(...renderRoster(entries, label, people, theme.title));
+      out.push(...renderRoster(entries, label, role, people, theme.title));
     }
     out.push('  </div>');
-  });
+    out.push('</section>');
+  }
 
-  out.push('');
-  out.push('</section>');
-  return out.join('\n');
+  return { body: out.join('\n'), index };
 }
 
 module.exports = { renderResearch, rosterName };

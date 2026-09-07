@@ -1,0 +1,183 @@
+// The page frame: one grid, two shapes.
+//
+// At 768px and up the navigation region is a sticky left rail beside the
+// content column. Below that the same element becomes a sticky two-row bar -
+// row 1 mark, wordmark and the labelled switch, row 2 the four destinations.
+// There is only ever one of it in the DOM, so there is only ever one "Site"
+// landmark and one copy of the nav to keep in step.
+
+$bar-up: 48em;    // 768px: the rail becomes a column
+$wide-up: 64em;   // 1024px: the rail can afford its full width
+
+.shell {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding: 0 0 var(--s8);
+}
+
+// In bar mode the rail is full-bleed, so the gutter lives on the content
+// blocks rather than on the shell.
+.hero,
+.masthead,
+main,
+.site-footer {
+  padding-inline: var(--s4);
+}
+
+main {
+  min-width: 0;
+}
+
+// Clear of the bar's hairline. In rail mode the rail is a column and the shell's
+// own padding does this instead.
+.hero,
+main {
+  margin-top: var(--s5);
+}
+
+// --------------------------------------------------------------------------
+// Bar mode (the default, below 768px)
+// --------------------------------------------------------------------------
+
+:root {
+  --sticky: 5rem;
+}
+
+.rail {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--page);
+  border-bottom: var(--hair) solid var(--quiet);
+  padding: var(--s2) var(--s4) 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'mark word theme'
+    'nav  nav  nav';
+  align-items: center;
+  column-gap: var(--s3);
+}
+
+.rail-mark {
+  grid-area: mark;
+}
+
+.rail-wordmark {
+  grid-area: word;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rail-theme {
+  grid-area: theme;
+}
+
+.rail-nav {
+  grid-area: nav;
+}
+
+// NAVIGATE and ON THIS PAGE are rail furniture; the bar has no room for them
+// and no need of them - four words in a row explain themselves.
+.rail-nav > .label,
+.rail-index {
+  display: none;
+}
+
+// --------------------------------------------------------------------------
+// Rail mode (768px and up)
+// --------------------------------------------------------------------------
+
+@media (min-width: $bar-up) {
+  :root {
+    --sticky: 0px;
+    --rail: 11.5rem;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    column-gap: var(--s5);
+    align-items: start;
+    padding: var(--s5) var(--s4) var(--s9);
+  }
+
+  .hero,
+  .masthead,
+  main,
+  .site-footer {
+    padding-inline: 0;
+  }
+
+  .hero,
+  main {
+    margin-top: 0;
+  }
+
+  // The hero (Home) spans the full shell; the masthead (People, Research) sits
+  // at the top of the content column. Placement is stated rather than left to
+  // auto-flow, because the rail comes first in the DOM - it has to, to be the
+  // first thing on the page once it collapses into a bar.
+  .hero {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .masthead {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .rail {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    // Content height, not stretched: a sticky box as tall as its grid area has
+    // nowhere to travel, so the rail would scroll away with the page.
+    align-self: start;
+    position: sticky;
+    top: var(--s5);
+    z-index: auto;
+    max-height: calc(100vh - var(--s6));
+    overflow-y: auto;
+    background: none;
+    border: 0;
+    padding: 0 var(--s2) 0 0;
+    display: block;
+  }
+
+  main {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .site-footer {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .rail-wordmark {
+    display: none;
+  }
+
+  .rail-nav > .label,
+  .rail-index {
+    display: block;
+  }
+}
+
+@media (min-width: $wide-up) {
+  :root {
+    --rail: 15rem;
+  }
+
+  .shell {
+    column-gap: var(--s6);
+  }
+}
+
+// Every anchor target clears the sticky bar. --sticky is 0 in rail mode, where
+// nothing overlays the content, and the bar's height below it.
+[id] {
+  scroll-margin-top: calc(var(--sticky) + var(--s4));
+}

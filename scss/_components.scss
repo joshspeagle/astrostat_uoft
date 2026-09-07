@@ -1,0 +1,778 @@
+// Every drawn thing on the site, in the order a page meets it: skip link,
+// hero, masthead, rail furniture (nav, switch, index), the mobile disclosure,
+// prose, cards, compact rows, rosters, figures, footer.
+
+$bar-up: 48em;    // 768px
+$wide-up: 64em;   // 1024px
+$row-down: 35em;  // 560px: a People card becomes a media row
+
+// --------------------------------------------------------------------------
+// Skip link
+// --------------------------------------------------------------------------
+
+.skip-link {
+  position: fixed;
+  top: var(--s2);
+  left: var(--s2);
+  z-index: 100;
+  background: var(--card);
+  color: var(--link);
+  padding: var(--s2) var(--s3);
+  transform: translateY(-300%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+// --------------------------------------------------------------------------
+// The mark. One <symbol> per page, drawn wherever a <use> asks for it, in the
+// mark token, positive - no knockout, no mask.
+// --------------------------------------------------------------------------
+
+// The page's symbol library: present, referenced, never drawn itself.
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.mark {
+  color: var(--mark);
+  fill: currentcolor;
+}
+
+// The drawing itself: one <use> of the page's single <symbol>, sized by the
+// box it sits in. Its viewBox gives it the ratio, so height follows width.
+.mark-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+// --------------------------------------------------------------------------
+// Hero (Home only): the mark in the wash token as the backdrop, the wordmark
+// as real HTML text over it. Not a heading - the page keeps its own h1.
+// --------------------------------------------------------------------------
+
+.hero {
+  position: relative;
+}
+
+.hero-inner {
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--s6) 0;
+}
+
+.hero-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--wash);
+  fill: currentcolor;
+}
+
+.hero-mark svg {
+  width: min(430px, 80%);
+  height: auto;
+}
+
+.hero-words {
+  position: relative;
+}
+
+.hero-name {
+  font-size: var(--display);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.hero-sub1 {
+  font-size: var(--h2);
+  line-height: 1.2;
+  margin-top: var(--s2);
+}
+
+.hero-sub2 {
+  font-size: var(--h3);
+  line-height: 1.2;
+  margin-top: var(--s1);
+}
+
+@media (max-width: $bar-up - 0.01) {
+  .hero-inner {
+    min-height: 0;
+    padding: 0 0 var(--s6);
+  }
+
+  // On a phone the block is only three short lines, so a mark behind them sits
+  // squarely on the words instead of washing behind them. It goes above the
+  // wordmark instead - same mark, same token, still decoration.
+  .hero-mark {
+    position: static;
+    margin-bottom: var(--s4);
+  }
+
+  .hero-mark svg {
+    width: 120px;
+  }
+
+  .hero-name {
+    font-size: var(--h1);
+  }
+
+  .hero-sub1 {
+    font-size: var(--h3);
+  }
+
+  .hero-sub2 {
+    font-size: var(--body);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Masthead (People and Research)
+// --------------------------------------------------------------------------
+
+.masthead {
+  display: none;
+}
+
+@media (min-width: $bar-up) {
+  .masthead {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    min-height: 56px;
+    padding-bottom: var(--s4);
+    border-bottom: var(--hair) solid var(--quiet);
+    margin-bottom: var(--s6);
+  }
+
+  .masthead-mark {
+    display: block;
+    width: 44px;
+    flex: none;
+  }
+
+  .masthead-name {
+    font-size: var(--h2);
+    line-height: 1;
+  }
+
+  .masthead-sub {
+    margin-top: var(--s1);
+  }
+}
+
+// --------------------------------------------------------------------------
+// The rail's contents
+// --------------------------------------------------------------------------
+
+.rail-mark {
+  display: block;
+  width: 28px;
+  text-decoration: none;
+}
+
+// While Home's hero is on screen the rail mark stands down, so the mark and the
+// wash are never drawn together. In the bar it leaves no gap behind it; in the
+// rail its box is kept, so nothing below it moves when it returns.
+.hero-on .rail-mark {
+  display: none;
+}
+
+@media (min-width: $bar-up) {
+  .rail-mark {
+    width: 56px;
+    margin-bottom: var(--s5);
+  }
+
+  .hero-on .rail-mark {
+    display: block;
+    visibility: hidden;
+  }
+}
+
+.rail-wordmark {
+  font-family: Urbanist, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: var(--body);
+  line-height: 1;
+}
+
+.rail-theme {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.rail-theme .label {
+  color: var(--quiet);
+}
+
+.rail .label {
+  color: var(--quiet);
+  margin: 0 0 var(--s3);
+}
+
+// Navigate
+
+.rail-nav li {
+  position: relative;
+}
+
+.rail-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  min-height: 44px;
+}
+
+.rail-nav a[aria-current='page'] {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+// In the bar the current-page rule sits under the word; in the rail it stands
+// on the leading edge. Same role, same token; the edge follows the axis.
+.rail-nav .is-current a[aria-current='page'] {
+  box-shadow: inset 0 -2px 0 0 var(--quiet);
+}
+
+@media (min-width: $bar-up) {
+  .rail-group + .rail-group {
+    margin-top: var(--s6);
+  }
+
+  .rail-nav ul {
+    margin-top: calc(var(--s2) * -1);
+  }
+
+  .rail-nav li {
+    padding-left: var(--s3);
+  }
+
+  .rail-nav li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    bottom: 0.5em;
+    width: 2px;
+    background: transparent;
+  }
+
+  .rail-nav .is-current::before {
+    background: var(--quiet);
+  }
+
+  .rail-nav .is-current a[aria-current='page'] {
+    box-shadow: none;
+  }
+}
+
+@media (max-width: $bar-up - 0.01) {
+  .rail-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--s4);
+  }
+
+  .rail-nav a {
+    font-size: var(--small);
+  }
+}
+
+// The theme switch: track quiet (off) / link (on), paddle the page surface,
+// position and colour and a visible label that is also its accessible name.
+.switch {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  display: block;
+  flex: none;
+  width: 44px;
+  height: 24px;
+  background: var(--quiet);
+  position: relative;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--page);
+  transition: transform 0.12s linear;
+}
+
+.switch[aria-checked='true'] {
+  background: var(--link);
+}
+
+.switch[aria-checked='true']::after {
+  transform: translateX(20px);
+}
+
+// On this page
+
+.index li + li {
+  margin-top: var(--s2);
+}
+
+.index a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  font-size: var(--small);
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.index a .index-name {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.index a:hover .index-name,
+.index a:focus .index-name,
+.index a:active .index-name {
+  text-decoration-style: solid;
+}
+
+.index a[aria-current='true'] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.index a[aria-current='true'] .index-name {
+  text-decoration: none;
+}
+
+.index-count {
+  margin-left: auto;
+  padding-left: 0.5em;
+  color: var(--quiet);
+  font-variant-numeric: tabular-nums;
+}
+
+// Icons: 24px grid, 2px stroke, no fill, currentColor - stated on the sprite's
+// symbols, so nothing here may set fill or stroke.
+.icon {
+  width: 1.5em;
+  height: 1.5em;
+  flex: none;
+  align-self: flex-start;
+  margin-top: 0.08em;
+}
+
+// The external mark, set beside its word rather than above it.
+.icon-inline {
+  width: 1em;
+  height: 1em;
+  align-self: center;
+  margin: 0 0 0 0.15em;
+}
+
+// --------------------------------------------------------------------------
+// The narrow-width "On this page" disclosure
+// --------------------------------------------------------------------------
+
+.otp {
+  background: var(--card);
+  padding: var(--s3) var(--s4);
+  margin: 0 0 var(--s6);
+}
+
+.otp summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--link);
+  min-height: 24px;
+}
+
+.otp summary::-webkit-details-marker {
+  display: none;
+}
+
+.otp summary .chevron {
+  width: 1em;
+  height: 1em;
+  transition: transform 0.12s linear;
+}
+
+.otp[open] summary .chevron {
+  transform: rotate(180deg);
+}
+
+.otp ol {
+  margin-top: var(--s3);
+}
+
+@media (min-width: $bar-up) {
+  .otp {
+    display: none;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Prose
+// --------------------------------------------------------------------------
+
+main h1 {
+  margin-bottom: var(--s4);
+}
+
+.lede,
+.intro p,
+.prose p {
+  max-width: var(--measure);
+}
+
+.intro p:last-child,
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+figcaption {
+  max-width: var(--measure);
+  margin-top: var(--s3);
+}
+
+.figure {
+  margin: var(--s6) 0;
+}
+
+// --------------------------------------------------------------------------
+// People
+// --------------------------------------------------------------------------
+
+.people-section {
+  margin-top: var(--s8);
+}
+
+.people-section > h2 {
+  margin: 0 0 var(--s4);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--s5);
+}
+
+// A grid item stretches by default, so cards in a row square off at the bottom
+// with no rule reaching outside this module.
+.card {
+  background: var(--card);
+  padding: var(--s3);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-photo,
+.no-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+// An image that has not loaded, or was never taken, shows its surface and
+// nothing else - no fill, no spinner, no icon.
+.no-photo {
+  background: var(--card);
+}
+
+.card-text {
+  padding-top: var(--s3);
+}
+
+.card-name {
+  margin: 0;
+}
+
+.card-site {
+  margin: var(--s2) 0 0;
+}
+
+.card-site a {
+  font-family: 'Inclusive Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: var(--label);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card-note {
+  margin: var(--s3) 0 0;
+  font-weight: 700;
+}
+
+.card-bio {
+  margin: var(--s3) 0 0;
+  font-size: var(--small);
+  line-height: 1.6;
+}
+
+// A card whose column is narrow enough that a full-width square photo would
+// dominate it becomes a media row instead: an 88px photo beside the name, the
+// website line and the status note, with the bio wrapping to full width below.
+// Two faculty cards 2-up at 390px give 15-18 characters to the line; this gives
+// about 40, and costs the page about a third of its height.
+@mixin media-row {
+  .card {
+    display: block;
+  }
+
+  .card::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+
+  .card-photo,
+  .no-photo {
+    float: left;
+    width: 88px;
+    height: 88px;
+    aspect-ratio: auto;
+    margin: 0 var(--s3) var(--s2) 0;
+  }
+
+  .card-text {
+    padding-top: 0;
+  }
+
+  .card-site {
+    margin-top: var(--s1);
+  }
+
+  .card-note,
+  .card-bio {
+    margin-top: var(--s2);
+  }
+}
+
+// The condition is the column's width, not the window's: at a 768px window the
+// content column is 528px, which auto-fill makes one very wide card. The
+// viewport query below is the same rule for anything without container queries.
+.card-grid {
+  container: cards / inline-size;
+}
+
+@container cards (max-width: 34rem) {
+  @include media-row;
+}
+
+@media (max-width: $row-down) {
+  @include media-row;
+}
+
+// Compact rows: Collaborators and Recent Alumni. One row per person, single
+// column, on the card surface, separated by space and never by a rule.
+.compact-list {
+  background: var(--card);
+  padding: var(--s3) var(--s4);
+}
+
+.compact-row {
+  display: flex;
+  gap: var(--s4);
+  padding: var(--s2) 0;
+}
+
+.compact-photo {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  object-fit: cover;
+}
+
+.compact-text {
+  min-width: 0;
+}
+
+.compact-name {
+  display: block;
+  font-weight: 700;
+}
+
+.compact-bio {
+  margin: var(--s1) 0 0;
+  font-size: var(--small);
+  line-height: 1.6;
+  max-width: var(--measure);
+}
+
+.compact-bio + .compact-bio {
+  margin-top: var(--s2);
+}
+
+// --------------------------------------------------------------------------
+// Research
+// --------------------------------------------------------------------------
+
+.theme {
+  margin-top: var(--s8);
+}
+
+.theme > h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin: 0 0 var(--s4);
+}
+
+.theme > h2 .icon {
+  width: 1.05em;
+  height: 1.05em;
+  align-self: center;
+  margin-top: 0;
+}
+
+.theme-prose p {
+  max-width: var(--measure);
+}
+
+.theme-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.theme-figure {
+  margin: var(--s5) 0 0;
+}
+
+.theme-figure img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+@media (min-width: $bar-up) {
+  .theme {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px;
+    column-gap: var(--s5);
+  }
+
+  .theme.no-figure {
+    display: block;
+  }
+
+  .theme > h2 {
+    grid-column: 1 / -1;
+  }
+
+  .theme-prose,
+  .theme .roster {
+    grid-column: 1;
+  }
+
+  // The empty column earns its keep: the figure rides alongside the prose and
+  // the roster instead of leaving a tall hole beside them.
+  .theme-figure {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    align-self: start;
+    position: sticky;
+    top: var(--s5);
+    margin: 0;
+  }
+}
+
+@media (min-width: $wide-up) {
+  .theme {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    column-gap: var(--s6);
+  }
+}
+
+// The roster block: one row per role, the label in a fixed column so the three
+// rows align, with the filled / open / absent square as the second channel.
+.roster {
+  background: var(--card);
+  padding: var(--s4);
+  margin-top: var(--s5);
+  display: grid;
+  gap: var(--s3);
+}
+
+.roster-row {
+  margin: 0;
+  display: grid;
+  grid-template-columns: var(--roster-label) minmax(0, 1fr);
+  gap: var(--s3);
+  align-items: baseline;
+}
+
+.roster-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  color: var(--ink);
+}
+
+.roster-mark {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  display: inline-block;
+  transform: translateY(-1px);
+}
+
+.members .roster-mark {
+  background: var(--ink);
+}
+
+.associates .roster-mark {
+  border: 1.5px solid var(--ink);
+}
+
+.roster-names {
+  font-size: var(--small);
+  line-height: 1.7;
+}
+
+@media (max-width: $bar-up - 0.01) {
+  .roster-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s1);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Footer
+// --------------------------------------------------------------------------
+
+.site-footer {
+  margin-top: var(--s8);
+  padding-top: var(--s5);
+  border-top: var(--hair) solid var(--quiet);
+}
+
+.site-note {
+  margin: 0;
+}

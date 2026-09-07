@@ -71,7 +71,7 @@ roster being settled first — see the notes.
 | 10 | **People — Recent Alumni** | `data/people.json` | Ph.D. and postdoc departures since the last update. See "Moving someone to Recent Alumni" |
 | 11 | **Research — themes & member lists** | `data/research.json` | Theme prose first, then the three roster lists (`members` / `associates` / `collaborators`, ids into `data/people.json`). **Propose, don't ask** — see below |
 | 12 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Only rewrite it if the photo changed — a caption describes the photo, not the current roster, so it may legitimately name people who have since left |
-| 13 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav. The footer date now builds itself from the last commit — nothing to type |
+| 13 | **Wrap-up** | `webpack.config.js` | Any new page (the `pages` array carries the title, description, canonical URL and nav key; the nav, sitemap and 404 all follow from it) or changed external link. The site note lives in `ejs/main.ejs`'s footer and its date builds itself from the last commit — nothing to type |
 
 ### How to walk a People row: list first, then ask
 
@@ -487,24 +487,20 @@ for old, new in edits:
 open(path, 'w').write(s)      # after the loop, never inside it
 ```
 
-One trap that is not about bytes: **adding or removing a paragraph in `data/research.json`'s
-`intro` array flips every theme image to the other side of the page.** The stylesheet still decides
-that by counting the section's children, so the parity of the intro paragraph count decides where
-theme 1's picture sits. Rewording an intro paragraph is safe; changing how many there are is not.
-Run `python3 scripts/audit_site.py` (check 13) and look at the page before and after. This goes away
-once `scss/index.scss` keys the flip off the `media-flip` class the renderer already emits.
-
 One trap worth naming: when replacing text inside a paragraph, check for embedded links in the span
 you are rewriting; several theme paragraphs carry `<a>` on ordinary words, and a careless rewrite
-drops them silently. `ejs/pages/home/body.html` is still hand-written HTML wrapped at ~120 columns,
-so a phrase you are certain of will often not match — read the exact bytes (`sed -n '40,50p' … | cat -A`)
-rather than reconstructing them from memory.
+drops them silently. `ejs/pages/home/body.html` is still hand-written HTML, so a phrase you are certain of will often
+not match — read the exact bytes (`sed -n '40,50p' … | cat -A`) rather than reconstructing them
+from memory. The two group photos there are `srcset` sets with several widths: swap **every**
+candidate and the `width`/`height` when a photo changes, and regenerate the variants rather than
+pointing all of them at one file.
 
 ## Theme images
 
 One per theme in `static/`, named by a theme's `image` key in `data/research.json`, square and
 ~500px, LFS like every other image. Match the existing 48-88 KB range. The `credit` key beside it
-carries the attribution, which renders as a caption under the picture.
+carries the attribution, which renders as the quiet caption under the picture. Every theme image
+sits in the right-hand column, on the same side on every theme — nothing alternates any more.
 
 **An image can outlive the work it depicts.** `research_udg.jpg` showed an ultra-diffuse galaxy long
 after the student whose work it illustrated had left. When a theme is rescoped or a line of work
@@ -533,8 +529,9 @@ python3 scripts/audit_site.py --as-of <target>  # clear, bar known exceptions
 python3 scripts/test_audit.py                   # the audit's own regression tests
 python3 scripts/theme_fit.py --quiet            # nothing left unexplained
 python3 scripts/sort_themes.py                  # themes still in size order?
+python3 docs/check_tokens.py                    # only if you touched colour
 npm run build                                   # must succeed
-python3 -m http.server 8000 --directory dist    # eyeball the changed pages
+python3 -m http.server 8000 --directory dist    # eyeball the changed pages, in both themes
 ```
 
 Anything the audit still reports and you have deliberately decided to leave should be recorded
