@@ -297,6 +297,12 @@ $row-down: 35em;  // 560px: a People card becomes a media row
   }
 }
 
+// Without script the switch would be an inert control announcing a state it
+// cannot know; the media query still sets the theme, so it is simply not drawn.
+html:not(.js) .rail-theme {
+  display: none;
+}
+
 // The theme switch: track quiet (off) / link (on), paddle the page surface,
 // position and colour and a visible label that is also its accessible name.
 .switch {
@@ -454,7 +460,8 @@ main h1 {
 
 .lede,
 .intro p,
-.prose p {
+.prose p,
+main > p {
   max-width: var(--measure);
 }
 

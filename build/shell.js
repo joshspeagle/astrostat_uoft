@@ -197,6 +197,76 @@ function pageIndex(items) {
     + `<ol class="index">${items.map(indexRow).join('')}</ol></details>`;
 }
 
+/**
+ * A hand-written partial indexes itself: every h1/h2 that carries an id and
+ * data-spy is a section the rail can point at. Titles come from the heading
+ * text with any markup stripped.
+ */
+function indexFromMarkup(html) {
+  const out = [];
+  const re = /<h([12])\b([^>]*)>([\s\S]*?)<\/h\1>/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const attrs = m[2];
+    const id = (attrs.match(/\bid="([^"]+)"/) || [])[1];
+    if (!id || !/\bdata-spy\b/.test(attrs)) continue;
+    const title = m[3].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    out.push({ id, title });
+  }
+  return out;
+}
+
+/**
+ * schema.org structured data. Every page carries the group as an Organization;
+ * the People page adds its current members as Person entries whose @id is the
+ * card anchor, so search engines can tie a name to this site. Generated from
+ * data/people.json, the same source the page is built from.
+ */
+const CURRENT_SECTIONS = new Set([
+  'Faculty', 'Postdoctoral Researchers', 'Graduate Students',
+  'Undergraduate Students', 'ART Associates',
+]);
+const LINK_ONLY = /^<a\s+href="([^"]+)"[^>]*>[^<]*<\/a>$/;
+
+function jsonld(page, origin) {
+  const org = {
+    '@type': 'Organization',
+    '@id': `${origin}/#organization`,
+    name: 'Astrostatistics Research Team',
+    alternateName: ['ART', 'Astrostat@UofT'],
+    url: `${origin}/`,
+    logo: `${origin}/icon-512.png`,
+    parentOrganization: {
+      '@type': 'CollegeOrUniversity',
+      name: 'University of Toronto',
+      url: 'https://www.utoronto.ca/',
+    },
+  };
+  const graph = [org];
+  if (page.name === 'people') {
+    const people = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'data', 'people.json'), 'utf8'));
+    for (const section of people.sections) {
+      if (!CURRENT_SECTIONS.has(section.heading)) continue;
+      for (const person of section.people) {
+        const entry = {
+          '@type': 'Person',
+          '@id': `${origin}/people.html#${person.id}`,
+          name: person.name.replace(/\s*\([^)]*\)\s*$/, ''),
+          affiliation: { '@id': org['@id'] },
+        };
+        const first = (person.paragraphs || [])[0] || '';
+        const link = first.trim().match(LINK_ONLY);
+        if (link) entry.url = link[1];
+        if (person.image) entry.image = `${origin}/static/${person.image}`;
+        graph.push(entry);
+      }
+    }
+  }
+  const doc = { '@context': 'https://schema.org', '@graph': graph };
+  // A literal "</script" inside the JSON would end the element early.
+  return JSON.stringify(doc).replace(/</g, '\\u003c');
+}
+
 module.exports = {
   escapeHtml,
   readTokens,
@@ -206,5 +276,7 @@ module.exports = {
   siteNav,
   railIndex,
   pageIndex,
+  indexFromMarkup,
+  jsonld,
   DESTINATIONS,
 };

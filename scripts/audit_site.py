@@ -123,11 +123,11 @@ def match_person(name, everyone):
 
 def caption_names(home):
     """Names listed in the home page's group-photo caption."""
-    m = re.search(r'From left to right:(.*?)</figcaption>', home, re.S)
+    m = re.search(r'[Ll]eft to right:(.*?)</figcaption>', home, re.S)
     if not m:
         return []
     blob = re.sub(r'<[^>]+>', ' ', m.group(1))
-    blob = re.sub(r'\(with (.*?) featured in the background\)', r', \1', blob)
+    blob = re.sub(r'\(?with (.*?)(?: featured)? in the background\)?', r', \1', blob)
     blob = blob.replace(' and ', ', ')
     out = []
     for chunk in blob.split(','):

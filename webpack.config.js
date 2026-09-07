@@ -58,12 +58,14 @@ function lastUpdated() {
     stamp = new Date().toISOString().slice(0, 10);
   }
   const [y, m, d] = stamp.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', {
+  const text = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
   });
+  return { text, iso: stamp };
 }
 
-const LAST_UPDATED = lastUpdated();
+const UPDATED = lastUpdated();
+const LAST_UPDATED = UPDATED.text;
 const TOKENS = shell.readTokens();
 
 // Every page: what it is called, what it says it is, and where its body comes
@@ -75,9 +77,9 @@ const pages = [
     nav: 'home',
     hero: true,
     url: '/',
-    description: 'The Astrostatistics Research Team at the University of Toronto - an '
-      + 'interdisciplinary group using statistics and AI to study stars, galaxies and '
-      + 'the Universe.',
+    description: 'The Astrostatistics Research Team at the University of Toronto: '
+      + 'statistics and machine learning for astronomical data, from single stars to '
+      + 'cosmology.',
     partial: './ejs/pages/home/body.html',
   },
   {
@@ -85,8 +87,8 @@ const pages = [
     title: 'Astrostat@UofT | People',
     nav: 'people',
     url: '/people.html',
-    description: 'The people of the Astrostatistics Research Team at the University of '
-      + 'Toronto: faculty, postdocs, students, associates, collaborators and recent alumni.',
+    description: 'Faculty, postdocs, students, associates, collaborators and recent '
+      + 'alumni of the Astrostatistics Research Team at the University of Toronto.',
     render: renderPeople,
   },
   {
@@ -96,8 +98,8 @@ const pages = [
     url: '/research.html',
     themeIcons: true,
     description: 'What the Astrostatistics Research Team studies: inference, stellar '
-      + 'evolution, dark matter, AI for scientists, the Milky Way, galaxies, transients '
-      + 'and star formation.',
+      + 'evolution, dark matter, AI, the Milky Way, galaxies, transients and star '
+      + 'formation.',
     render: renderResearch,
   },
   {
@@ -109,8 +111,8 @@ const pages = [
     nav: null,
     url: '/404.html',
     noindex: true,
-    description: 'This page does not exist. Find the Astrostatistics Research Team\'s '
-      + 'home, people and research pages here.',
+    description: 'There is nothing at this address. Find the home, people and research '
+      + 'pages of the Astrostatistics Research Team at the University of Toronto.',
     body: '<h1>Page not found</h1>\n'
       + '<div class="intro"><p class="lede">There is nothing at this address. It may have '
       + 'moved, or the link that brought you here may be out of date. Try the '
@@ -124,7 +126,9 @@ const htmlPlugins = pages.map((page) => {
   let body = page.body || '';
   if (rendered) body = rendered.body;
   if (page.partial) body = fs.readFileSync(page.partial, 'utf8');
-  const index = rendered ? rendered.index : [];
+  // A hand-written partial indexes its own headings: any h1/h2 carrying an id
+  // and data-spy is a section the rail can point at.
+  const index = rendered ? rendered.index : shell.indexFromMarkup(body);
 
   // The narrow-width disclosure belongs directly under the page's own h1 - the
   // first thing every body renders - rather than above it.
@@ -138,8 +142,11 @@ const htmlPlugins = pages.map((page) => {
     publicPath: '/',
     chunks: ['index'],
     templateParameters: {
-      title: page.title,
-      description: page.description,
+      // Escaped here, not in the template: html-webpack-plugin's lodash loader
+      // interpolates raw, so an '&' or a quote in a title would otherwise break
+      // the <meta> attributes or fail the minifier.
+      title: shell.escapeHtml(page.title),
+      description: shell.escapeHtml(page.description),
       canonical: ORIGIN + page.url,
       origin: ORIGIN,
       noindex: !!page.noindex,
@@ -150,6 +157,7 @@ const htmlPlugins = pages.map((page) => {
       mark: shell.markSvg(),
       siteNav: shell.siteNav(page.nav),
       railIndex: shell.railIndex(index),
+      jsonld: shell.jsonld(page, ORIGIN),
       body,
     },
   });
@@ -169,7 +177,9 @@ class RootFiles {
         stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
       }, () => {
         const listed = pages.filter((p) => !p.noindex);
-        const today = new Date().toISOString().slice(0, 10);
+        // The content date, not the build date, so a rebuild does not tell
+        // crawlers that every page changed.
+        const today = UPDATED.iso;
 
         compilation.emitAsset('robots.txt', new RawSource(
           `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`));
@@ -186,7 +196,6 @@ class RootFiles {
           short_name: 'Astrostat@UofT',
           icons: [
             { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-            { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
           ],
           theme_color: TOKENS.light.page,
           background_color: TOKENS.light.page,

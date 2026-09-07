@@ -199,7 +199,9 @@ silently is a regression worth flagging to the user rather than deciding alone.
 ### Occasional: reviewing the theme taxonomy itself
 
 **Not part of every update.** The eight themes and their titles are stable; walking rosters and prose
-is the routine job. Reopen the taxonomy only on a real trigger:
+is the routine job. (The Research intro in `data/research.json` states the count - "The eight themes
+below" - so a change in the number of themes means editing that sentence too.) Reopen the taxonomy
+only on a real trigger:
 
 - a theme's roster has fallen to two or three people, or grown past about twenty
 - several new arrivals share a research area that no theme names
