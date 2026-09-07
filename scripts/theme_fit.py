@@ -29,7 +29,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, os.pardir)
 PEOPLE = os.path.join(ROOT, 'data', 'people.json')
-RESEARCH = os.path.join(ROOT, 'ejs', 'pages', 'research', 'body.html')
+RESEARCH = os.path.join(ROOT, 'data', 'research.json')
 
 # Sections whose people are candidates for a theme at all.
 CANDIDATE = {'Faculty', 'Postdoctoral Researchers', 'Graduate Students',
@@ -68,34 +68,23 @@ THEME_WORDS = {
                   r'kilonova\w*|explosi\w*',
 }
 
-ROSTER_LABELS = ('ART members involved', 'ART associates involved', 'Collaborators include')
-
 # Below this length a bio simply has no room to mention a theme, so silence on it
 # says nothing. Roughly the length of the shorter collaborator entries.
 THIN_MIN_WORDS = 55
 
 
 def load_helpers():
-    """Reuse audit_site.py's name matching rather than reimplementing it."""
+    """Reuse audit_site.py's roster helpers rather than reimplementing them."""
     src = open(os.path.join(HERE, 'audit_site.py'), encoding='utf-8').read().split('def main(')[0]
     ns = {}
     exec(src, ns)
-    return ns['mentioned']
+    return ns['theme_ids']
 
 
-def themes(html):
-    """[(title, roster_text)] in page order."""
-    out = []
-    parts = re.split(r'<h2>(.*?)</h2>', html, flags=re.S)
-    for i in range(1, len(parts), 2):
-        title = re.sub(r'&amp;', '&', parts[i]).strip()
-        names = []
-        for label in ROSTER_LABELS:
-            m = re.search(label + r':</strong>(.*?)(?:<br>|</p>)', parts[i + 1], re.S)
-            if m:
-                names.append(re.sub(r'<[^>]+>', ' ', m.group(1)))
-        out.append((title, ' , '.join(names)))
-    return out
+def themes(research, theme_ids):
+    """[(title, {id, ...})] in page order."""
+    return [(t['title'], {i for _, ids in theme_ids(t) for i in ids})
+            for t in research['themes']]
 
 
 def words_for(title):
@@ -122,15 +111,16 @@ def main():
     ap.add_argument('--quiet', action='store_true', help='findings only')
     args = ap.parse_args()
 
-    mentioned = load_helpers()
+    theme_ids = load_helpers()
     data = json.load(open(PEOPLE, encoding='utf-8'))
-    html = open(RESEARCH, encoding='utf-8').read()
+    research = json.load(open(RESEARCH, encoding='utf-8'))
 
-    people = [(p['name'], s['heading'], re.sub(r'<[^>]+>', ' ', ' '.join(p['paragraphs'])))
+    people = [(p['id'], p['name'], s['heading'],
+               re.sub(r'<[^>]+>', ' ', ' '.join(p['paragraphs'])))
               for s in data['sections'] if s['heading'] in CANDIDATE for p in s['people']]
 
     findings = 0
-    for title, roster in themes(html):
+    for title, roster in themes(research, theme_ids):
         if args.theme and args.theme.lower() not in title.lower():
             continue
         pattern = words_for(title)
@@ -139,8 +129,9 @@ def main():
             continue
 
         missing, thin, confirmed = [], [], []
-        for name, section, bio in people:
-            on = mentioned(name, roster)
+        for pid, name, section, bio in people:
+            # Membership is an id in data/research.json, so this is exact.
+            on = pid in roster
             hit = pattern.search(bio)
             if on and hit:
                 confirmed.append(name)

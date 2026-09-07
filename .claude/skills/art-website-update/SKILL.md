@@ -1,12 +1,13 @@
 ---
 name: art-website-update
-description: Use when the user asks to update the ART website / astrostatuoft.com — walks the section checklist (home blurb, Statstro, the six People categories, research themes, deferred group-photo caption, footer date), asking what changed in each. People edits go in data/people.json; run scripts/audit_site.py first and last.
+description: Use when the user asks to update the ART website / astrostatuoft.com — walks the section checklist (home blurb, Statstro, the six People categories, research themes, deferred group-photo caption), asking what changed in each. People edits go in data/people.json and Research edits in data/research.json; run scripts/audit_site.py first and last.
 ---
 
 # ART Website Update Checklist
 
 Walk the sections below **in order**, asking the user what (if anything) has changed in each. People
-edits go in `data/people.json`; Home and Research are hand-written HTML.
+edits go in `data/people.json` and Research edits in `data/research.json`; only Home is hand-written
+HTML.
 
 Run the audit **before** you start walking — it tells you what's already known to be wrong, so you
 can lead each affected section with a concrete question instead of an open one:
@@ -16,9 +17,9 @@ python3 scripts/audit_site.py
 ```
 
 It reports stale year-of-study labels, roster/Research drift in both directions, advisers of current
-members who are missing from Collaborators, Research names left unlinked or written two different
-ways, roster blocks out of order, missing photos, and how far behind the footer date is. Run it
-again at the end; everything except known-and-accepted items should be clear.
+members who are missing from Collaborators, roster ids that name nobody, duplicate ids, themes out of
+roster-size order, and missing photos. Run it again at the end; everything except
+known-and-accepted items should be clear.
 
 **Use `--as-of` when the update targets the coming academic year.** Year-of-study labels roll over
 in September. Doing an August update means writing labels for the year that has not started, and the
@@ -42,13 +43,14 @@ git lfs install --local && git lfs pull
 To see when each area genuinely last changed — use this instead of trusting any hand-kept log:
 
 ```bash
-for f in ejs/pages/home/body.html ejs/pages/research/body.html data/people.json; do
+for f in ejs/pages/home/body.html data/research.json data/people.json; do
   printf '%-32s %s\n' "$f" "$(git log -1 --format='%ad  %s' --date=short -- "$f")"
 done
 ```
 
-Note `data/people.json` only dates from the migration commit; for older People history use
-`git log --follow -- ejs/pages/people/body.html`.
+Note each data file only dates from its migration commit; for older history use
+`git log --follow -- ejs/pages/people/body.html` and
+`git log --follow -- ejs/pages/research/body.html`.
 
 ## The checklist
 
@@ -67,9 +69,9 @@ roster being settled first — see the notes.
 | 8 | **People — ART Associates** | `data/people.json` | Affiliated researchers joining or leaving |
 | 9 | **People — Collaborators** | `data/people.json` | Collaborators joining or leaving (the largest section, and the slowest-changing) |
 | 10 | **People — Recent Alumni** | `data/people.json` | Ph.D. and postdoc departures since the last update. See "Moving someone to Recent Alumni" |
-| 11 | **Research — themes & member lists** | `ejs/pages/research/body.html` | Theme prose first, then the three "involved" lists. **Propose, don't ask** — see below |
+| 11 | **Research — themes & member lists** | `data/research.json` | Theme prose first, then the three roster lists (`members` / `associates` / `collaborators`, ids into `data/people.json`). **Propose, don't ask** — see below |
 | 12 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Only rewrite it if the photo changed — a caption describes the photo, not the current roster, so it may legitimately name people who have since left |
-| 13 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav. Then the footer date |
+| 13 | **Wrap-up** | `ejs/main.ejs` | Any new pages or changed external links in the sidebar nav. The footer date now builds itself from the last commit — nothing to type |
 
 ### How to walk a People row: list first, then ask
 
@@ -101,11 +103,19 @@ roster.
 
 ### Row 11: the Research page
 
-Each theme carries three lists — "ART members involved", "ART associates involved", "Collaborators
-include" — repeating each person's name and link. There is **no shared data** with
-`data/people.json`; that side is hand-written HTML, so every roster change in #4-10 has to be
-mirrored here by hand. Two scripts do the mechanical part; the rest is judgment and belongs to the
-user.
+Each theme carries three roster lists — `members`, `associates`, `collaborators` — and they hold
+**ids into `data/people.json`**, not names:
+
+```jsonc
+"members": ["gwendolyn-eadie", "joshua-speagle", "kevin-mckinnon"],
+"collaborators": ["jo-bovy", { "id": "ryan-cloutier", "note": "McMaster" }]
+```
+
+So a roster change is adding or removing an id, and the name, its short form and its personal-site
+link are never re-typed — they live on the People card the id points at. An id that names nobody
+**fails the build**, naming the theme and the row, so a typo cannot reach the page. `scripts/roster.py`
+prints each person's id next to their name. What still has to be done by hand, and is the real work
+of this row, is deciding *who belongs on which theme* and keeping the prose true to the roster.
 
 **Walk one theme at a time, and show the roster and the draft text together.** Josh asked for this
 explicitly: seeing the people and the prose side by side is what makes it possible to say "that
@@ -177,7 +187,8 @@ Dropping someone is never one deletion. Work the list:
 
 1. Their entry in `data/people.json`.
 2. **Other people's bios** — the trailing "also works closely with ..." lines name them.
-3. **Every Research theme** they appear on (the audit lists these).
+3. **Every Research theme** they appear on — remove their id from `data/research.json` (the audit
+   lists them, and the build fails while an id has no entry, so this one cannot be forgotten).
 4. Their photo in `static/`.
 
 Removing Pratika Dayal touched all four across five places. And check what the removal *orphans*:
@@ -204,7 +215,7 @@ After any roster change, re-order the page by size:
 
 ```bash
 python3 scripts/sort_themes.py            # report
-python3 scripts/sort_themes.py --apply    # rewrite
+python3 scripts/sort_themes.py --apply    # rewrite data/research.json
 ```
 
 Sorted by **total** roster size (members + associates + collaborators), largest first, so a theme
@@ -215,6 +226,8 @@ their order, so it is idempotent.
 
 ```jsonc
 {
+  "id": "kevin-mckinnon",             // stable slug of the name; the card's anchor, and how
+                                      // data/research.json's theme rosters name him
   "name": "Kevin McKinnon",
   "image": "KevinMcK_headshot.jpg",   // filename in static/, or null if there's no photo
   "alt": "A picture of Kevin McKinnon.",
@@ -234,6 +247,17 @@ Conventions used throughout the file:
 - `paragraphs` are emitted **verbatim** inside `<p>` — inline HTML is intentional and unescaped.
   Keep `href`s quoted.
 - Append to the right `sections[].people` array; array order is render order.
+- **`id` is required and must be unique.** Kebab-case the name with any parenthetical or credential
+  suffix dropped: `Mairead Heiger (Ph.D. '26)` -> `mairead-heiger`, `Isabelle (Liyuan) Huang` ->
+  `isabelle-huang`. It is a public address (`/people.html#<id>`) and the key Research rosters use,
+  so **never change an existing one** — not even when someone's name changes; add `short` instead.
+- **`short` is optional**, only for someone the Research rosters should write differently ("Gwen
+  Eadie" for "Gwendolyn Eadie"). Without it a roster writes the name minus any parenthetical, which
+  is what makes an alumnus read as "Mairead Heiger" in a roster and "Mairead Heiger (Ph.D. '26)" on
+  her card. When the parenthetical is part of the name rather than a credential, that rule is wrong
+  — set `short` to the **full** name to keep it, as "Isabelle (Liyuan) Huang" does. Check this
+  whenever you add someone whose name has brackets in it: how a person's name is written is theirs
+  to decide, not the renderer's.
 - **`cohort` is metadata only** — it never renders. It exists so the audit can compute the correct
   year-of-study each September. Set it on every new grad student.
 - **Alumni names carry a credential suffix**: `"Samantha Berek (Ph.D. '25)"`,
@@ -446,18 +470,15 @@ Adding a headshot:
 2. Set `image` and `alt` in the person's entry (`alt` reads "A picture of \<Full Name\>.").
 3. `git add static/<file>`, then confirm `git lfs ls-files | grep <file>` lists it.
 
-## Editing hand-written HTML safely
+## Editing the content files safely
 
-Both `body.html` files are hand-wrapped at ~120 columns, so a phrase you are certain of will often
-not match the file: the line break lands somewhere you did not predict. Read the exact bytes first
-rather than reconstructing them from memory:
+`data/people.json` and `data/research.json` hold one long string per paragraph, so prose edits are
+string edits inside JSON. Prefer loading the file, changing the value, and writing it back with
+`json.dump(..., ensure_ascii=False, indent=2)` plus a trailing newline — that is the formatting both
+files are stored in, and it keeps the diff to the lines you meant to change.
 
-```bash
-sed -n '158,180p' ejs/pages/research/body.html        # and `| cat -A` if whitespace is in doubt
-```
-
-Then make every replacement assert it matched exactly once, and write only after all of them
-succeed, so a bad guess changes nothing instead of applying half an edit:
+Make every replacement assert it matched exactly once, and write only after all of them succeed, so
+a bad guess changes nothing instead of applying half an edit:
 
 ```python
 for old, new in edits:
@@ -466,15 +487,24 @@ for old, new in edits:
 open(path, 'w').write(s)      # after the loop, never inside it
 ```
 
-Two traps worth naming. Splitting a roster line on commas cuts **inside** multi-line `<a>` tags and
-makes linked names look bare — collapse the anchors first. And when replacing text inside a
-paragraph, check for embedded links in the span you are rewriting; several theme paragraphs carry
-`<a>` on ordinary words, and a careless rewrite drops them silently.
+One trap that is not about bytes: **adding or removing a paragraph in `data/research.json`'s
+`intro` array flips every theme image to the other side of the page.** The stylesheet still decides
+that by counting the section's children, so the parity of the intro paragraph count decides where
+theme 1's picture sits. Rewording an intro paragraph is safe; changing how many there are is not.
+Run `python3 scripts/audit_site.py` (check 13) and look at the page before and after. This goes away
+once `scss/index.scss` keys the flip off the `media-flip` class the renderer already emits.
+
+One trap worth naming: when replacing text inside a paragraph, check for embedded links in the span
+you are rewriting; several theme paragraphs carry `<a>` on ordinary words, and a careless rewrite
+drops them silently. `ejs/pages/home/body.html` is still hand-written HTML wrapped at ~120 columns,
+so a phrase you are certain of will often not match — read the exact bytes (`sed -n '40,50p' … | cat -A`)
+rather than reconstructing them from memory.
 
 ## Theme images
 
-One per theme in `static/`, referenced from `ejs/pages/research/body.html`, square and ~500px, LFS
-like every other image. Match the existing 48-88 KB range.
+One per theme in `static/`, named by a theme's `image` key in `data/research.json`, square and
+~500px, LFS like every other image. Match the existing 48-88 KB range. The `credit` key beside it
+carries the attribution, which renders as a caption under the picture.
 
 **An image can outlive the work it depicts.** `research_udg.jpg` showed an ultra-diffuse galaxy long
 after the student whose work it illustrated had left. When a theme is rescoped or a line of work
@@ -512,6 +542,6 @@ rather than remembered — `ADVISER_NOT_COLLABORATOR` in `audit_site.py` is the 
 exemption with a one-line reason and a date, so the finding stops recurring and the decision stays
 visible.
 
-Bump the footer date (#12), then commit and push. CI (`build-check.yaml`) builds every PR and
+Then commit and push — the footer date comes from the commit itself. CI (`build-check.yaml`) builds every PR and
 non-`main` branch; merging to `main` triggers `build-site.yaml`, which publishes `dist/` to
 `gh-pages` and updates astrostatuoft.com. **Never commit `dist/`.**
