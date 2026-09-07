@@ -34,7 +34,7 @@ function loadPeople(peopleFile) {
 /**
  * How a person is written in a roster: their `short` form if the data file
  * gives one, otherwise their name with any parenthetical dropped - a card
- * headed "Mairead Heiger (Ph.D. '26)" is just "Mairead Heiger" in a list.
+ * headed "Mairead Heiger (Ph.D. 2026)" is just "Mairead Heiger" in a list.
  */
 function rosterName(person) {
   return person.short || person.name.replace(/\s*\([^)]*\)/g, '').trim();

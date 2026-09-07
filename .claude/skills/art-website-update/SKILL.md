@@ -248,20 +248,20 @@ Conventions used throughout the file:
   Keep `href`s quoted.
 - Append to the right `sections[].people` array; array order is render order.
 - **`id` is required and must be unique.** Kebab-case the name with any parenthetical or credential
-  suffix dropped: `Mairead Heiger (Ph.D. '26)` -> `mairead-heiger`, `Isabelle (Liyuan) Huang` ->
+  suffix dropped: `Mairead Heiger (Ph.D. 2026)` -> `mairead-heiger`, `Isabelle (Liyuan) Huang` ->
   `isabelle-huang`. It is a public address (`/people.html#<id>`) and the key Research rosters use,
   so **never change an existing one** — not even when someone's name changes; add `short` instead.
 - **`short` is optional**, only for someone the Research rosters should write differently ("Gwen
   Eadie" for "Gwendolyn Eadie"). Without it a roster writes the name minus any parenthetical, which
-  is what makes an alumnus read as "Mairead Heiger" in a roster and "Mairead Heiger (Ph.D. '26)" on
+  is what makes an alumnus read as "Mairead Heiger" in a roster and "Mairead Heiger (Ph.D. 2026)" on
   her card. When the parenthetical is part of the name rather than a credential, that rule is wrong
   — set `short` to the **full** name to keep it, as "Isabelle (Liyuan) Huang" does. Check this
   whenever you add someone whose name has brackets in it: how a person's name is written is theirs
   to decide, not the renderer's.
 - **`cohort` is metadata only** — it never renders. It exists so the audit can compute the correct
   year-of-study each September. Set it on every new grad student.
-- **Alumni names carry a credential suffix**: `"Samantha Berek (Ph.D. '25)"`,
-  `"Michael Walmsley (PDF '23-25)"`. Add it when moving someone to Recent Alumni and rewrite the bio
+- **Alumni names carry a credential suffix**: `"Samantha Berek (Ph.D. 2025)"`,
+  `"Michael Walmsley (Postdoc 2023-25)"`. Add it when moving someone to Recent Alumni and rewrite the bio
   to lead with their destination ("Sam is now an NSF Fellow at ...").
 
 ### Moving someone to Recent Alumni

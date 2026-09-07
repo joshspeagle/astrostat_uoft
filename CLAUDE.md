@@ -2,6 +2,9 @@
 
 ## Project Overview
 
+`docs/README.md` indexes the reference material: the design canon (`docs/DESIGN.md`), the palette
+checker, the September 2026 audit and mockup round, the icon generator, and the parked follow-ups.
+
 Website for the **Astrostatistics Research Team (ART)** at the University of Toronto — live at
 **astrostatuoft.com**. Three pages (Home, People, Research) plus a 404, built from data files and
 one HTML shell by **webpack** into `dist/`, styled with hand-written SCSS on a seven-token palette.
@@ -123,7 +126,7 @@ The People page is generated from **`data/people.json`** by `build/render-people
   Everything else (`title`, `heading`, `name`, `alt`) is plain text and **is** HTML-escaped.
 - `id` is required and must be unique: it is the card's `id` attribute, so `/people.html#<id>` links
   to the person, and it is how `data/research.json` names them. Kebab-case the name with any
-  parenthetical or credential suffix dropped (`Mairead Heiger (Ph.D. '26)` -> `mairead-heiger`).
+  parenthetical or credential suffix dropped (`Mairead Heiger (Ph.D. 2026)` -> `mairead-heiger`).
   Ids are addresses — keep them stable; renaming one breaks any link anyone has saved.
 - `short` is optional and only for people the Research rosters write differently ("Gwen Eadie" for
   "Gwendolyn Eadie"). Without it a roster uses the name minus any parenthetical — which is right for
