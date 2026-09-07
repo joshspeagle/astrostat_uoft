@@ -57,7 +57,9 @@ THEME_WORDS = {
           r'statistical learning|'
           r'artificial intelligence|interpretab\w*|explainab\w*|emulator\w*|'
           r'generative model\w*|normalizing flow\w*|transformer\w*|embedding\w*|'
-          r'representation learning|computational imaging|data[- ]driven',
+          r'representation learning|computational imaging',
+    # 'data-driven' is not AI vocabulary: The Swan (local linear regression) tripped it.
+
     # "our galaxy" / "the Galaxy" means the Milky Way, so require the plural or an
     # explicit galaxy-formation phrase rather than the bare stem.
     'Galaxies': r'galaxies|galaxy (?:formation|evolution|survey\w*|cluster\w*)|quench\w*|'
