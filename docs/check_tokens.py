@@ -144,7 +144,11 @@ def check_assets():
                    % (", ".join(sorted(found)) or "nothing", ", ".join(sorted(want))))
 
     scss = os.path.join(ROOT, "scss")
-    for name in sorted(os.listdir(scss)):
+    # Every stylesheet under scss/, subdirectories included, so a partial that
+    # comes back in a folder cannot smuggle a colour past the check.
+    files = sorted(os.path.relpath(os.path.join(d, f), scss)
+                   for d, _, fs in os.walk(scss) for f in fs)
+    for name in files:
         if not name.endswith(".scss") or name == "_tokens.scss":
             continue
         with open(os.path.join(scss, name), encoding="utf-8") as fh:

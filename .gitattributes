@@ -8,4 +8,4 @@
 # svg/ holds source, not assets: art-mark.svg and themes-sprite.svg are inlined
 # into every page at build time, so a pointer there breaks the build rather than
 # just a picture. Keep them readable and diffable.
-svg/*.svg -filter -diff -merge text
+svg/*.svg !filter !diff !merge text

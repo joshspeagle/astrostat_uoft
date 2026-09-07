@@ -34,10 +34,22 @@ function initTheme() {
   const dark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
   const isDark = () => root.getAttribute('data-theme') === 'dark';
   const switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
+  // The two <meta name="theme-color"> tags are scoped by media query, which
+  // browsers only re-evaluate against the OS. An explicit choice repaints both
+  // with that theme's colour so the browser chrome follows the page.
+  const metas = Array.prototype.slice.call(document.querySelectorAll('meta[name="theme-color"]'));
+  const chrome = {};
+  metas.forEach((m) => {
+    chrome[/dark/.test(m.getAttribute('media') || '') ? 'dark' : 'light'] = m.getAttribute('content');
+  });
+  // True once the reader has used the switch on this page - the choice that
+  // outranks the OS even when storage is unavailable to remember it.
+  let explicit = false;
 
   function paint(theme) {
     root.setAttribute('data-theme', theme);
     switches.forEach((el) => el.setAttribute('aria-checked', String(theme === 'dark')));
+    if (chrome[theme]) metas.forEach((m) => m.setAttribute('content', chrome[theme]));
   }
 
   // The inline head script has already set data-theme; this only catches the
@@ -47,6 +59,7 @@ function initTheme() {
   switches.forEach((el) => {
     el.addEventListener('click', () => {
       const next = isDark() ? 'light' : 'dark';
+      explicit = true;
       paint(next);
       stored(next);
     });
@@ -56,7 +69,7 @@ function initTheme() {
   // their own - an explicit choice outranks the system one.
   if (dark && dark.addEventListener) {
     dark.addEventListener('change', (e) => {
-      if (stored() === null) paint(e.matches ? 'dark' : 'light');
+      if (!explicit && stored() === null) paint(e.matches ? 'dark' : 'light');
     });
   }
 }
@@ -99,7 +112,8 @@ function initScrollspy() {
     }
     // At the very bottom of the page the last section may never reach the
     // probe; if the page is scrolled to its end, it is what the reader sees.
-    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+    if (document.body.scrollHeight > window.innerHeight
+        && window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
       found = sections[sections.length - 1];
     }
     if (found.id === current) return;
@@ -109,11 +123,6 @@ function initScrollspy() {
       const on = link.getAttribute('data-spy-for') === current;
       if (on) {
         link.setAttribute('aria-current', 'true');
-        // Keep the current row in view inside the narrow-width disclosure.
-        const list = link.closest('.otp');
-        if (list && list.open && link.scrollIntoView) {
-          link.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }
       } else {
         link.removeAttribute('aria-current');
       }

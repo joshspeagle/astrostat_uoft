@@ -45,6 +45,9 @@ jobs:
       - name: Audit helper tests
         run: python3 scripts/test_audit.py
 
+      - name: Check the palette against the canon
+        run: python3 docs/check_tokens.py
+
       # Build site with webpack
       - name: Build static site
         run: |

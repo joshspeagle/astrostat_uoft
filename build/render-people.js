@@ -32,7 +32,8 @@ const LINK_PARTS = /^<a\b([^>]*)>([^<]*)<\/a>$/;
 
 // A status note - "On leave November 2025-2026." - is a paragraph that is
 // nothing but bold text. It is emphasis, and emphasis on this site is bold.
-const NOTE_ONLY = /^<(b|strong)\b[^>]*>[\s\S]*<\/\1>$/;
+// One bold run and nothing else - not "a bold start ... and <b>more</b>".
+const NOTE_ONLY = /^<(b|strong)\b[^>]*>(?:(?!<\/\1>)[\s\S])*<\/\1>$/;
 
 const LAYOUTS = { faculty: 'card', cards: 'card', compact: 'compact' };
 
@@ -134,7 +135,12 @@ function renderPeople(dataFile) {
         `data/people.json: section "${section.heading}" has unknown layout `
         + `"${layout}" (expected one of ${Object.keys(LAYOUTS).join(', ')})`);
     }
+    if (!section.people || !section.people.length) continue;
     const id = slug(section.heading);
+    if (seen.has(id)) {
+      throw new Error(`data/people.json: section "${section.heading}" slugs to "${id}", which is already used`);
+    }
+    seen.add(id);
     index.push({ id, title: section.heading, count: section.people.length });
 
     // A compact row carries a thumbnail only when every entry in the section
