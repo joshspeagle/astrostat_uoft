@@ -1,22 +1,33 @@
 @font-face {
     font-family: 'Inclusive Sans';
-    src: url('../ttf/Inclusive_Sans/InclusiveSans-Regular.ttf');
-    font-weight: 400;
+    src: url('../fonts/InclusiveSans/InclusiveSans-Variable.woff2') format('woff2');
+    font-weight: 300 700;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'Inclusive Sans';
-    src: url('../ttf/Inclusive_Sans/InclusiveSans-Italic.ttf');
-    font-weight: 400;
+    src: url('../fonts/InclusiveSans/InclusiveSans-Italic-Variable.woff2') format('woff2');
+    font-weight: 300 700;
     font-style: italic;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'Urbanist';
-    src: url('../ttf/Urbanist/Urbanist-Bold.ttf');
-    font-weight: 700;
+    src: url('../fonts/Urbanist/Urbanist-Variable.woff2') format('woff2');
+    font-weight: 100 900;
     font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Urbanist';
+    src: url('../fonts/Urbanist/Urbanist-Italic-Variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
 }
 
 @mixin font-display {
