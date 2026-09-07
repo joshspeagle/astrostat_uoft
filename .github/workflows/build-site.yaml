@@ -8,13 +8,17 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  group: build-site-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         env:
           GIT_CLONE_PROTECTION_ACTIVE: false
         with:
@@ -22,17 +26,42 @@ jobs:
 
       # Sets up a recent version of Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
+          cache: 'npm'
+
+      # Validate data/*.json
+      - name: Validate data/*.json
+        run: |
+          for f in data/*.json; do
+            echo "Checking $f"
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))"
+          done
+
+      # Same regression tests build-check.yaml runs, so a broken build never
+      # force-publishes to gh-pages
+      - name: Audit helper tests
+        run: python3 scripts/test_audit.py
 
       # Build site with webpack
       - name: Build static site
         run: |
-          npm install
+          npm ci
           npm run build
           touch $GITHUB_WORKSPACE/dist/.nojekyll
           echo "astrostatuoft.com" > dist/CNAME
+
+      # Check expected pages were produced, before we publish them
+      - name: Check expected pages were produced
+        run: |
+          for page in index people research; do
+            if [ ! -s "dist/$page.html" ]; then
+              echo "::error::dist/$page.html is missing or empty"
+              exit 1
+            fi
+          done
+          echo "All pages built. ✓"
 
       # Push all the new assets to the pages branch
       - name: Push to Github Pages branch
