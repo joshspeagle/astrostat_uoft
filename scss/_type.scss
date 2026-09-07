@@ -1,0 +1,98 @@
+// Two families, one job each. Urbanist Bold is display - the hero wordmark and
+// h1-h3, nothing else. Inclusive Sans is everything else, labels included.
+// Every size on the site is one of the seven steps in _tokens.scss.
+
+$display-face: (Urbanist, system-ui, sans-serif);
+$text-face: ('Inclusive Sans', system-ui, sans-serif);
+
+body {
+  font-family: $text-face;
+  font-size: var(--body);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+.wordmark {
+  font-family: $display-face;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: var(--h1);
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: var(--h2);
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: var(--h3);
+  line-height: 1.15;
+}
+
+// A link is 1px dotted at rest and 1px solid on hover, active and focus, in the
+// link token at full strength in both states. Never mixed toward its surface.
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover,
+a:active,
+a:focus {
+  text-decoration-style: solid;
+}
+
+// In a dense run of links - a roster row, a compact row - the rest underline is
+// structure rather than a signal, so it is drawn in quiet and only becomes the
+// link token on hover (canon amendment, graft 9).
+.quiet-links a {
+  text-decoration-color: var(--quiet);
+}
+
+.quiet-links a:hover,
+.quiet-links a:active,
+.quiet-links a:focus {
+  text-decoration-color: currentcolor;
+}
+
+// The label idiom: bold, all-small-caps, tracked, at most three words. It
+// carries every recurring signpost - NAVIGATE, DARK MODE, ON THIS PAGE,
+// WEBSITE, MEMBERS / ASSOCIATES / COLLABORATORS.
+.label {
+  font-family: $text-face;
+  font-weight: 700;
+  font-size: var(--label);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// Captions, the site note and the masthead subtitle are quiet and small.
+.quiet {
+  color: var(--quiet);
+  font-size: var(--small);
+  line-height: 1.5;
+}
+
+// Every run of prose is capped at the measure. The content column is wider on
+// purpose: the extra width is for grids, photographs and rosters.
+.measure {
+  max-width: var(--measure);
+}
+
+// Italic is for the title of a work and nothing else; emphasis is bold.
+em,
+i {
+  font-style: italic;
+}
+
+// Keeps a parenthetical part of a name on one line (see displayName in build/render-people.js).
+.nowrap { white-space: nowrap; }

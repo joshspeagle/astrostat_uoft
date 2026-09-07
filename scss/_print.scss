@@ -1,0 +1,65 @@
+// Print keeps the content and drops the furniture. No colour is named here:
+// _tokens.scss is the only place a hex may live. Browsers drop backgrounds on
+// paper but keep foregrounds, so a reader printing from the dark theme would
+// get near-white ink on white paper; the light palette is forced instead.
+
+@use 'tokens';
+
+@media print {
+  :root,
+  :root[data-theme='dark'] {
+    @include tokens.tokens('light');
+  }
+
+  .skip-link,
+  .rail,
+  .otp,
+  .hero-mark {
+    display: none !important;
+  }
+
+  .shell {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .hero,
+  main,
+  .site-footer {
+    padding-inline: 0;
+  }
+
+  .hero-inner {
+    min-height: 0;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0;
+  }
+
+  .theme,
+  .theme-figure {
+    position: static;
+    display: block;
+  }
+
+  // Off the page's own grid, a theme image would print at full width.
+  .theme-figure {
+    max-width: 260px;
+    margin-top: var(--s5);
+  }
+
+  .card,
+  .compact-list,
+  .roster,
+  .theme,
+  figure {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

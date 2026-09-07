@@ -13,6 +13,10 @@ on:
     branches-ignore: [main]
   workflow_dispatch:
 
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,25 +31,42 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Validate data/people.json
-        run: node -e "JSON.parse(require('fs').readFileSync('data/people.json','utf8'))"
+      - name: Validate data/*.json
+        run: |
+          for f in data/*.json; do
+            echo "Checking $f"
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))"
+          done
 
       - name: Audit helper tests
         run: python3 scripts/test_audit.py
 
+      # The palette is measured, not judged. check_tokens.py reads the hexes out
+      # of scss/_tokens.scss, checks every pair the site draws against its floor,
+      # and fails if a colour has been written anywhere else in scss/.
+      - name: Check the colour canon
+        run: python3 docs/check_tokens.py
+
       - name: Build static site
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: Check expected pages were produced
         run: |
-          for page in index people research; do
+          for page in index people research 404; do
             if [ ! -s "dist/$page.html" ]; then
               echo "::error::dist/$page.html is missing or empty"
               exit 1
             fi
           done
-          echo "All pages built. ✓"
+          for f in robots.txt sitemap.xml site.webmanifest favicon.ico favicon.svg; do
+            if [ ! -s "dist/$f" ]; then
+              echo "::error::dist/$f is missing or empty"
+              exit 1
+            fi
+          done
+          echo "All pages and root files built. ✓"

@@ -5,8 +5,10 @@
     python3 scripts/roster.py "Postdoctoral Researchers"  # one section
     python3 scripts/roster.py postdoc                     # case-insensitive substring
 
-Prints each person with a one-line summary of their stated role, so a section
-can be reviewed and corrected as a list rather than from memory.
+Prints each person with their id and a one-line summary of their stated role,
+so a section can be reviewed and corrected as a list rather than from memory.
+The id is what data/research.json's theme rosters refer to, and what a People
+page anchor uses (/people.html#<id>).
 """
 
 import json
@@ -50,7 +52,9 @@ def main():
         for i, person in enumerate(section['people'], 1):
             extra = f"  [cohort {person['cohort']}]" if person.get('cohort') else ''
             photo = '' if person.get('image') else '  [NO PHOTO]'
-            print(f"{i:3}. {person['name']}{extra}{photo}")
+            short = f"  (\"{person['short']}\" on Research)" if person.get('short') else ''
+            pid = person.get('id') or '?? no id ??'
+            print(f"{i:3}. {person['name']}  #{pid}{extra}{short}{photo}")
             summary = summarize(person)
             if summary:
                 print(f"     {summary}")

@@ -1,4 +1,11 @@
 *.ttf filter=lfs diff=lfs merge=lfs -text
+*.woff2 filter=lfs diff=lfs merge=lfs -text
 *.svg filter=lfs diff=lfs merge=lfs -text
 *.jpg filter=lfs diff=lfs merge=lfs -text
 *.ico filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+
+# svg/ holds source, not assets: art-mark.svg and themes-sprite.svg are inlined
+# into every page at build time, so a pointer there breaks the build rather than
+# just a picture. Keep them readable and diffable.
+svg/*.svg !filter !diff !merge text

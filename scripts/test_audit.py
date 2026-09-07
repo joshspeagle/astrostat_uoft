@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
-"""Regression tests for the name matching in audit_site.py.
+"""Regression tests for audit_site.py: name matching, and the id checks.
 
     python3 scripts/test_audit.py
 
-Name matching here is deliberately not "first token is the given name, last
-token is the surname". Dual surnames and dual given names each break that
-assumption in opposite directions, and getting it wrong produces silent false
-positives (flagging someone who left as still present) or false negatives
-(missing a real one). These cases pin the behaviour down.
+Name matching is deliberately not "first token is the given name, last token is
+the surname". Dual surnames and dual given names each break that assumption in
+opposite directions, and getting it wrong produces silent false positives
+(flagging someone who left as still present) or false negatives (missing a real
+one). These cases pin the behaviour down. It is now used only where names are
+still free text - the home page's group-photo caption - because Research
+rosters name people by id.
+
+The id checks are the other half: with data/research.json pointing at
+data/people.json by id, the failure mode is no longer a misspelled name but a
+dangling or duplicated id, which these cases pin down instead.
 """
 
 import os
@@ -21,10 +27,15 @@ _src = open(os.path.join(HERE, 'audit_site.py'), encoding='utf-8').read().split(
 _ns = {}
 exec(_src, _ns)
 mentioned = _ns['mentioned']
+match_person = _ns['match_person']
 caption_names = _ns['caption_names']
 academic_year = _ns['academic_year']
-theme_rosters = _ns['theme_rosters']
-ROSTER_LABELS = _ns['ROSTER_LABELS']
+theme_ids = _ns['theme_ids']
+research_ids = _ns['research_ids']
+unknown_ids = _ns['unknown_ids']
+duplicate_ids = _ns['duplicate_ids']
+out_of_size_order = _ns['out_of_size_order']
+flip_not_wired = _ns['flip_not_wired']
 
 import datetime
 
@@ -53,24 +64,45 @@ NAME_CASES = [
     ("Muzzin Fujimoto",         False, "stripping '(York)' must not join across the comma"),
 ]
 
-# A theme block with three defects the Research checks exist to catch:
-#   - the roster reads associates BEFORE members (every other theme is members first)
-#   - "Leo Watson" is bare text although he has a personal site
-#   - the same person is written two ways across the two themes
-THEME_HTML = """
-  <h2>Alpha</h2>
-  <p>
-    <strong>ART associates involved:</strong> <a href="https://x.test">Tri Nguyen</a><br>
-    <strong>ART members involved:</strong> Leo Watson, <a
-      href="https://y.test">Christian Kragh Jespersen</a><br>
-    <strong>Collaborators include:</strong> <a href="https://z.test">Jo Bovy</a>
-  </p>
-  <h2>Beta</h2>
-  <p>
-    <strong>ART members involved:</strong> <a href="https://y.test">Christian Jespersen</a><br>
-  </p>
-</section>
-"""
+# A research.json with the defects the id checks exist to catch:
+#   - "leo-watson" is on a theme but is not an id in the people fixture
+#   - "tri-nguyen" is listed twice in the same row
+#   - both themes claim the id "alpha"
+#   - the larger theme sits below the smaller one
+RESEARCH = {
+    'themes': [
+        {
+            'id': 'alpha',
+            'title': 'Alpha',
+            'image': 'alpha.jpg',
+            'members': ['christian-kragh-jespersen'],
+            'associates': [{'id': 'tri-nguyen', 'note': 'Northeastern'}, 'tri-nguyen'],
+            'collaborators': [],
+        },
+        {
+            'id': 'alpha',
+            'title': 'Beta',
+            'image': 'beta.jpg',
+            'members': ['christian-kragh-jespersen', 'leo-watson'],
+            'associates': ['tri-nguyen'],
+            'collaborators': ['jo-bovy'],
+        },
+    ],
+}
+
+PEOPLE = {
+    'sections': [
+        {'heading': 'Postdoctoral Researchers', 'layout': 'cards', 'people': [
+            {'id': 'christian-kragh-jespersen', 'name': 'Christian Kragh Jespersen'},
+            {'id': 'tri-nguyen', 'name': 'Tri Nguyen'},
+        ]},
+        {'heading': 'Collaborators', 'layout': 'compact', 'people': [
+            {'id': 'jo-bovy', 'name': 'Jo Bovy'},
+            {'id': 'jo-bovy', 'name': 'Jo Bovy (duplicate entry)'},
+            {'name': 'Nobody Atall'},
+        ]},
+    ],
+}
 
 CAPTION = ('<figcaption>ART Group photo (Summer 2025). From left to right: Kevin McKinnon, '
            'Gwen Eadie, and Josh Speagle (with Alejandro Ortega Cruz Prieto featured in the '
@@ -90,27 +122,82 @@ def main():
         if expect not in names:
             failures.append(f"caption_names missed {expect!r}; got {names}")
 
-    # --- Research roster parsing (checks 11-13) ---
-    rosters = theme_rosters(THEME_HTML)
-    if [t for t, _ in rosters] != ['Alpha', 'Beta']:
-        failures.append(f"theme_rosters found {[t for t, _ in rosters]}, expected Alpha and Beta")
+    # the caption is the one place names are still free text, so the audit
+    # resolves them against the roster with mentioned()
+    roster = {'Gwendolyn Eadie': 'Faculty', 'Samantha Berek (Ph.D. \'25)': 'Recent Alumni'}
+    if match_person('Gwen Eadie', roster) != 'Gwendolyn Eadie':
+        failures.append('match_person did not resolve a short given name in the caption')
+    if match_person('Sam Berek', roster) != "Samantha Berek (Ph.D. '25)":
+        failures.append('match_person did not resolve a caption name to an alumni entry')
+    if match_person('Alejandro Ortega Cruz Prieto', roster) is not None:
+        failures.append('match_person matched somebody who is not on the People page')
 
-    # order must be reported as written, or check 13 passes vacuously
-    alpha = dict(enumerate(l for l, _ in rosters[0][1]))
-    if alpha.get(0) != 'ART associates involved':
-        failures.append(f"theme_rosters normalised block order to {list(alpha.values())}; "
-                        "it must preserve document order or the order check never fires")
+    # --- Research ids (checks 3, 4, 5, 11, 12) ---
+    known = {p['id'] for sec in PEOPLE['sections'] for p in sec['people'] if p.get('id')}
 
-    # an <a> split across a newline must still count as linked
-    names = {n: linked for _, entries in rosters[0][1] for n, linked in entries}
-    if names.get('Christian Kragh Jespersen') is not True:
-        failures.append("a name inside a newline-wrapped <a> was not detected as linked")
-    if names.get('Leo Watson') is not False:
-        failures.append("a bare-text name was not detected as unlinked")
+    # a roster entry may be a bare id or {'id': ..., 'note': ...}; both count
+    rows = dict(theme_ids(RESEARCH['themes'][0]))
+    if rows['associates'] != ['tri-nguyen', 'tri-nguyen']:
+        failures.append(f"theme_ids did not unwrap a noted entry: {rows['associates']}")
+    if rows['collaborators'] != []:
+        failures.append('theme_ids should report an empty row as empty')
 
-    # the two spellings must resolve to one person
-    if not mentioned('Christian Kragh Jespersen', 'Christian Jespersen'):
-        failures.append("short and full name forms did not unify; check 12 would miss real drift")
+    # who is on a theme, and on which
+    where = research_ids(RESEARCH)
+    if where.get('jo-bovy') != {'Beta'}:
+        failures.append(f"research_ids put jo-bovy on {where.get('jo-bovy')}, expected Beta")
+    if where.get('christian-kragh-jespersen') != {'Alpha', 'Beta'}:
+        failures.append('research_ids should report every theme a person is on')
+    if 'nobody-atall' in where:
+        failures.append('research_ids invented an id that is not in the file')
+
+    # an id naming nobody must be caught (the build fails on it too)
+    bad = unknown_ids(RESEARCH, known)
+    if [(t, i) for t, _, i in bad] != [('Beta', 'leo-watson')]:
+        failures.append(f'unknown_ids reported {bad}, expected only leo-watson on Beta')
+    if bad and bad[0][1] != 'ART members involved':
+        failures.append(f'unknown_ids mislabelled the row: {bad[0][1]}')
+    if unknown_ids(RESEARCH, known | {'leo-watson'}):
+        failures.append('unknown_ids flagged an id that is on the People page')
+
+    # duplicates: two people with one id, two themes with one id, one person
+    # listed twice in a row, and a person with no id at all
+    dupes = duplicate_ids(RESEARCH, PEOPLE)
+    for expect in ('jo-bovy (People) is used by more than one person',
+                   'Nobody Atall (People) has no id',
+                   'alpha (Research) is used by more than one theme',
+                   'tri-nguyen listed twice under ART associates involved on Alpha'):
+        if expect not in dupes:
+            failures.append(f'duplicate_ids missed {expect!r}; got {dupes}')
+
+    # theme order: Beta (4) sits below Alpha (3)
+    order = out_of_size_order(RESEARCH)
+    if len(order) != 1 or not order[0].startswith('Alpha'):
+        failures.append(f'out_of_size_order reported {order}, expected Alpha above Beta')
+    if out_of_size_order({'themes': list(reversed(RESEARCH['themes']))}):
+        failures.append('out_of_size_order flagged a correctly ordered file')
+
+    # the theme-flip check: it fires only while the renderer states the flip and
+    # the stylesheet still decides it by sibling position
+    EMITS = "    const flip = i % 2 === 1 ? ' media-flip' : '';"
+    NO_FLIP = "    const flip = '';"
+    NTH = '.media-object {\n  &:nth-child(odd) {\n    order: 2;\n  }\n}'
+    KEYED = '.media-object {\n  &.media-flip {\n    order: 2;\n  }\n}'
+    for renderer, style, want, why in (
+        (EMITS,   NTH,   True,  'renderer flips, stylesheet does not know the class'),
+        (EMITS,   KEYED, False, 'stylesheet keys off media-flip'),
+        (NO_FLIP, NTH,   False, 'renderer no longer states the flip'),
+        (None,    NTH,   False, 'renderer missing - check is skipped'),
+        (EMITS,   None,  False, 'stylesheet missing - check is skipped'),
+    ):
+        got = bool(flip_not_wired(renderer, style))
+        if got != want:
+            failures.append(f'flip_not_wired == {got}, expected {want} ({why})')
+
+    # it should cite the offending line, so the one-line fix is findable
+    cited = flip_not_wired(EMITS, NTH)
+    if not cited or ':2' not in cited[0]:
+        failures.append(f'flip_not_wired did not cite the nth-child line: {cited}')
 
     # academic year rolls over in September, not January
     for date, expected in ((datetime.date(2026, 8, 31), 2025),
@@ -120,7 +207,7 @@ def main():
         if got != expected:
             failures.append(f"academic_year({date}) == {got}, expected {expected}")
 
-    total = len(NAME_CASES) + 4 + 3 + 5
+    total = len(NAME_CASES) + 4 + 3 + 14 + 6
     if failures:
         print(f"{len(failures)} of {total} checks FAILED:\n")
         for f in failures:

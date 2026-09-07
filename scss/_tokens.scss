@@ -1,0 +1,98 @@
+// The palette, once. Every hex on this site is in the map below and nowhere
+// else - docs/DESIGN.md is the prose, docs/check_tokens.py is the arithmetic,
+// and check_tokens.py parses THIS FILE, so the three cannot drift.
+//
+// Seven tokens per theme, one role each (docs/DESIGN.md, "Palette"). A token
+// maps between themes by lightness within one hue; the role never moves.
+
+@use 'sass:map';
+
+$themes: (
+  light: (
+    page:  #fefefe,   // the page surface
+    card:  #eeeeee,   // the card and roster-block surface
+    wash:  #91acde,   // the hero logo fill; decoration, carries nothing
+    ink:   #0a0a0a,   // body text, headings, roster names, role marks
+    link:  #2f559d,   // interactive text, the focus ring, the switch on-state
+    mark:  #001f4e,   // the ART mark and the sparkle favicon
+    quiet: #6b6b6b,   // captions, the site note, dividers, the switch off-track
+  ),
+  dark: (
+    page:  #0a0a0a,
+    card:  #333333,
+    wash:  #2f559d,
+    ink:   #fefefe,
+    link:  #91acde,
+    mark:  #70a9ff,
+    quiet: #9b9b9b,
+  ),
+);
+
+@mixin tokens($name) {
+  @each $token, $value in map.get($themes, $name) {
+    --#{$token}: #{$value};
+  }
+  color-scheme: #{$name};
+}
+
+// Light is the bare default, so a first paint with no JS and no stored
+// preference is already correct (F015). The dark block is guarded by
+// :not([data-theme="light"]) so an explicit light choice beats the OS, and the
+// [data-theme="dark"] block comes last so an explicit dark choice beats
+// everything at equal specificity.
+:root {
+  @include tokens(light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include tokens(dark);
+  }
+}
+
+:root[data-theme='dark'] {
+  @include tokens(dark);
+}
+
+// --------------------------------------------------------------------------
+// Everything below is theme-independent: the type scale, the spacing scale and
+// the handful of layout lengths. No length in this stylesheet may be anything
+// but one of these, the hairline, or the measure (docs/DESIGN.md, "Spacing").
+// --------------------------------------------------------------------------
+
+:root {
+  // spacing: nine steps on a 4px base
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4.5rem;
+  --s9: 7rem;
+
+  // type: seven steps, fluid, so no breakpoint restates a size
+  --display: clamp(2.5rem, 1.5rem + 5vw, 5rem);
+  --h1: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  --h2: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
+  --h3: clamp(1.2rem, 1.08rem + 0.55vw, 1.45rem);
+  --body: clamp(1rem, 0.94rem + 0.28vw, 1.125rem);
+  --small: clamp(0.875rem, 0.85rem + 0.12vw, 0.94rem);
+  --label: 0.85rem;
+
+  // The canon's intent is 68 characters. `68ch` measured ~90 in Inclusive Sans
+  // (its zero is 0.66em), so the measure is stated as a length instead.
+  --measure: 38rem;
+
+  // The four named layout lengths, plus the hairline. Everything else is on the
+  // spacing scale above.
+  --shell: 1200px;
+  --rail: 15rem;
+  --roster-label: 11.5rem;
+  --hair: 1px;
+
+  // How much a sticky bar covers. Zero while the rail is a column; the height
+  // of the two-row bar once it collapses. Anchors are offset by it.
+  --sticky: 0px;
+}

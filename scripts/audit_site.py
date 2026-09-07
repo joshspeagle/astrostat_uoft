@@ -20,15 +20,28 @@ import re
 import sys
 
 PEOPLE = 'data/people.json'
-RESEARCH = 'ejs/pages/research/body.html'
+RESEARCH = 'data/research.json'
 HOME = 'ejs/pages/home/body.html'
 SHELL = 'ejs/main.ejs'
+RENDER_RESEARCH = 'build/render-research.js'
+STYLE = 'scss/index.scss'
 
 # Sections whose members are expected to appear on at least one Research theme.
 CURRENT = {'Faculty', 'Postdoctoral Researchers', 'Graduate Students', 'ART Associates'}
 
 YEAR_LABEL = re.compile(r'\b(\d)(?:st|nd|rd|th)-year\b')
 ORDINALS = {1: '1st', 2: '2nd', 3: '3rd'}
+
+
+def read_optional(path):
+    """File contents, or None if it is not there. Used by checks that reach
+    outside the content files, so a missing file skips the check rather than
+    crashing the audit."""
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return fh.read()
+    except OSError:
+        return None
 
 
 def ordinal(n):
@@ -60,6 +73,10 @@ def _compatible(a, b):
 
 def mentioned(name, text):
     """Is this specific person named in `text`?
+
+    Since the Research page became data/research.json, membership is an id
+    lookup and this is only needed where names still appear as free text: the
+    home page's group-photo caption (below) and scripts/theme_fit.py.
 
     Deliberately does not assume one given name and one surname. Dual
     surnames (common in Spanish- and Portuguese-speaking naming, among
@@ -96,13 +113,21 @@ def mentioned(name, text):
     return False
 
 
+def match_person(name, everyone):
+    """Which roster entry a free-text name refers to, if any."""
+    for known in everyone:
+        if mentioned(known, name) or mentioned(name, known):
+            return known
+    return None
+
+
 def caption_names(home):
     """Names listed in the home page's group-photo caption."""
-    m = re.search(r'From left to right:(.*?)</figcaption>', home, re.S)
+    m = re.search(r'[Ll]eft to right:(.*?)</figcaption>', home, re.S)
     if not m:
         return []
     blob = re.sub(r'<[^>]+>', ' ', m.group(1))
-    blob = re.sub(r'\(with (.*?) featured in the background\)', r', \1', blob)
+    blob = re.sub(r'\(?with (.*?)(?: featured)? in the background\)?', r', \1', blob)
     blob = blob.replace(' and ', ', ')
     out = []
     for chunk in blob.split(','):
@@ -112,16 +137,127 @@ def caption_names(home):
     return out
 
 
-def research_linked_names(research):
-    """Names used as link text inside the per-theme 'involved' lists."""
-    names = set()
-    for m in re.finditer(r'<strong>(?:ART members involved|ART associates involved|'
-                         r'Collaborators include):</strong>(.*?)</p>', research, re.S):
-        for a in re.finditer(r'<a [^>]*>(.*?)</a>', m.group(1), re.S):
-            n = re.sub(r'\s+', ' ', a.group(1)).strip()
-            if n and n[0].isupper() and ' ' in n:
-                names.add(n)
-    return names
+ROSTER_KEYS = (('members', 'ART members involved'),
+               ('associates', 'ART associates involved'),
+               ('collaborators', 'Collaborators include'))
+
+
+def entry_id(entry):
+    """A roster entry is an id, or {'id': ..., 'note': 'McMaster'}."""
+    return entry['id'] if isinstance(entry, dict) else entry
+
+
+def theme_ids(theme):
+    """[(key, [id, ...])] for one theme, in members/associates/collaborators order."""
+    return [(key, [entry_id(e) for e in theme.get(key) or []]) for key, _ in ROSTER_KEYS]
+
+
+def research_ids(research):
+    """id -> {theme title, ...} for everyone named anywhere on Research."""
+    out = {}
+    for theme in research['themes']:
+        for _, ids in theme_ids(theme):
+            for i in ids:
+                out.setdefault(i, set()).add(theme['title'])
+    return out
+
+
+def unknown_ids(research, known):
+    """[(theme, label, id)] for roster entries that name nobody on the People page.
+
+    The build fails on these too (see build/render-research.js); the check is
+    here so a mid-edit data file can be looked at without running webpack.
+    """
+    labels = dict(ROSTER_KEYS)
+    out = []
+    for theme in research['themes']:
+        for key, ids in theme_ids(theme):
+            for i in ids:
+                if i not in known:
+                    out.append((theme['title'], labels[key], i))
+    return out
+
+
+def duplicate_ids(research, people):
+    """Ids that appear where exactly one was meant.
+
+    Three ways this goes wrong: two People entries claiming one id (which would
+    make an anchor ambiguous), two themes claiming one theme id, and one person
+    listed twice in the same roster row.
+    """
+    out = []
+    seen = set()
+    for section in people['sections']:
+        for person in section['people']:
+            pid = person.get('id')
+            if not pid:
+                out.append(f"{person['name']} (People) has no id")
+            elif pid in seen:
+                out.append(f'{pid} (People) is used by more than one person')
+            else:
+                seen.add(pid)
+
+    seen = set()
+    labels = dict(ROSTER_KEYS)
+    for theme in research['themes']:
+        tid = theme.get('id')
+        if not tid:
+            out.append(f"{theme['title']} (Research) has no id")
+        elif tid in seen:
+            out.append(f'{tid} (Research) is used by more than one theme')
+        else:
+            seen.add(tid)
+        for key, ids in theme_ids(theme):
+            for i in sorted({i for i in ids if ids.count(i) > 1}):
+                out.append(f"{i} listed twice under {labels[key]} on {theme['title']}")
+    return out
+
+
+def theme_totals(research):
+    """[(title, total roster size)] in page order - the key sort_themes.py uses."""
+    return [(t['title'], sum(len(ids) for _, ids in theme_ids(t)))
+            for t in research['themes']]
+
+
+def out_of_size_order(research):
+    """Themes that sit above a larger one. Ties are fine; sort_themes.py keeps them."""
+    totals = theme_totals(research)
+    out = []
+    for i, (title, total) in enumerate(totals):
+        bigger = [t for t, n in totals[i + 1:] if n > total]
+        if bigger:
+            out.append(f'{title} ({total}) sits above {bigger[0]}')
+    return out
+
+
+def flip_not_wired(renderer, style):
+    """Is the alternating side of the theme images still decided by position?
+
+    build/render-research.js marks every second theme `media-flip`, saying which
+    side its image belongs on. If scss/index.scss does not key off that class,
+    the flip still comes from a `:nth-child(odd)` rule that counts *all* of the
+    section's children - the intro paragraphs included. It happens to alternate
+    correctly today; adding or removing a single intro paragraph in
+    data/research.json swaps every theme to the other side, and nothing about
+    editing prose suggests it could do that.
+
+    Both arguments are file contents. The check is skipped if either file is
+    missing, and goes quiet as soon as the stylesheet mentions `media-flip`.
+    """
+    if renderer is None or style is None:
+        return []
+    if 'media-flip' not in renderer:
+        return []                      # the renderer no longer states the flip
+    if 'media-flip' in style:
+        return []                      # wired up
+    where = ''
+    for i, line in enumerate(style.splitlines(), 1):
+        if 'nth-child' in line:
+            where = f' ({STYLE}:{i})'
+            break
+    return [f'{RENDER_RESEARCH} emits `media-flip` but {STYLE} never uses it'
+            f'{where}; the image side still depends on how many intro '
+            f'paragraphs data/research.json has']
 
 
 # Cues that introduce someone who advises or collaborates with an ART member.
@@ -171,45 +307,6 @@ def advisors_named(data):
     return found
 
 
-ROSTER_LABELS = ('ART members involved', 'ART associates involved',
-                 'Collaborators include')
-
-
-def theme_rosters(research):
-    """[(title, [(label, [entry, ...])])] for each Research theme, in page order.
-
-    An `entry` is one comma-separated name as written, with a marker showing
-    whether it was wrapped in an <a>. Anchors routinely straddle a line break,
-    so the tags are collapsed first - splitting the raw HTML on commas cuts
-    inside them and reports linked names as bare text.
-    """
-    out = []
-    parts = re.split(r'<h2>(.*?)</h2>', research, flags=re.S)
-    for i in range(1, len(parts), 2):
-        title = re.sub(r'&amp;', '&', parts[i]).strip()
-        rows = []
-        # Sort by where each label actually appears, not by ROSTER_LABELS order -
-        # otherwise the block always looks canonical and the order check is vacuous.
-        found = []
-        for label in ROSTER_LABELS:
-            m = re.search(label + r':</strong>(.*?)(?:<br>|</p>)', parts[i + 1], re.S)
-            if m:
-                found.append((m.start(), label, m))
-        for _, label, m in sorted(found):
-            seg = re.sub(r'<a\b[^>]*>(.*?)</a>', lambda x: '\x01' + x.group(1) + '\x02',
-                         m.group(1), flags=re.S)
-            seg = re.sub(r'<[^>]+>', '', seg)
-            entries = []
-            for chunk in seg.split(','):
-                linked = '\x01' in chunk
-                name = ' '.join(chunk.replace('\x01', '').replace('\x02', '').split())
-                if name:
-                    entries.append((name, linked))
-            rows.append((label, entries))
-        out.append((title, rows))
-    return out
-
-
 def classify_orphan(fname, used_stems, current_tokens):
     """Why a file in static/ might be unreferenced. Several reasons are benign."""
     stem = os.path.splitext(fname)[0].lower()
@@ -235,11 +332,13 @@ def main():
     args = ap.parse_args()
 
     data = json.load(open(PEOPLE, encoding='utf-8'))
-    research_raw = open(RESEARCH, encoding='utf-8').read()
-    research_text = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', research_raw))
+    research = json.load(open(RESEARCH, encoding='utf-8'))
+    on_theme = research_ids(research)
     home_raw = open(HOME, encoding='utf-8').read()
     home = re.sub(r'\s+', ' ', home_raw)
     shell = open(SHELL, encoding='utf-8').read()
+    renderer_src = read_optional(RENDER_RESEARCH)
+    style_src = read_optional(STYLE)
 
     today = (datetime.date.fromisoformat(args.as_of) if args.as_of
              else datetime.date.today())
@@ -265,16 +364,16 @@ def main():
                     if expected != stated:
                         stale.append((name, ordinal(stated), ordinal(expected)))
 
-            seen = mentioned(name, research_text)
-            if section['heading'] in CURRENT and not seen:
+            # Membership is now an id in data/research.json, not a name spelled
+            # out in prose, so this is an exact lookup rather than a text search.
+            themes = on_theme.get(person.get('id'), set())
+            if section['heading'] in CURRENT and not themes:
                 missing.append(f"{name} ({section['heading']})")
-            if section['heading'] == 'Recent Alumni' and seen:
-                lingering.append(name)
+            if section['heading'] == 'Recent Alumni' and themes:
+                lingering.append(f"{name}  <- {', '.join(sorted(themes))}")
 
             if not person.get('image'):
                 no_photo.append(f"{name} ({section['heading']})")
-
-    known_surnames = {surname(n) for n in everyone}
 
     print(f"ART site audit - {today.isoformat()} "
           f"(academic year {ay}-{str(ay + 1)[2:]})\n")
@@ -323,15 +422,22 @@ def main():
     report('5d. Entries using &amp; instead of a bare &', amps,
            'paragraphs are emitted verbatim, and the rest of the file writes & directly')
 
-    unknown = sorted(n for n in research_linked_names(research_raw)
-                     if surname(n) not in known_surnames)
-    report('5. Names linked on Research matching nobody on People', unknown,
-           'typo, or someone dropped from People but left on Research')
+    people_ids = {p['id'] for s_ in data['sections'] for p in s_['people'] if p.get('id')}
+    report('5. Research roster ids matching nobody on People',
+           [f'{i}  <- {label} on {title}'
+            for title, label, i in unknown_ids(research, people_ids)],
+           'typo, or someone dropped from People but left on Research; '
+           'this also fails the build')
 
     # images
     refs = {}
-    for path, text in {HOME: home_raw, RESEARCH: research_raw, SHELL: shell}.items():
-        for m in re.finditer(r'src="/static/([^"]+)"', text):
+    for theme in research['themes']:
+        if theme.get('image'):
+            refs.setdefault(theme['image'], set()).add(RESEARCH)
+    for path, text in {HOME: home_raw, SHELL: shell}.items():
+        # `src`, and every candidate in a `srcset` - the panoramas ship at
+        # several widths and only the fallback appears in `src`.
+        for m in re.finditer(r'/static/([^"\s,]+)', text):
             refs.setdefault(m.group(1), set()).add(path)
     for section in data['sections']:
         for person in section['people']:
@@ -340,18 +446,19 @@ def main():
     broken = [f"{k}  <- {', '.join(sorted(v))}" for k, v in sorted(refs.items())
               if not os.path.exists(os.path.join('static', k))]
     report('6. Referenced images missing from static/', broken)
-    report('7. Entries with no photo', no_photo)
+    report('7. Entries with no photo',
+           no_photo + [f"{t['title']} (Research theme)" for t in research['themes']
+                       if not t.get('image')])
 
     # group-photo caption vs roster
     cap = caption_names(home)
     cap_unknown, cap_alumni = [], []
     for n in cap:
-        if surname(n) not in known_surnames:
+        match = match_person(n, everyone)
+        if not match:
             cap_unknown.append(n)
-        else:
-            match = next((k for k in everyone if surname(k) == surname(n)), None)
-            if match and everyone[match] == 'Recent Alumni':
-                cap_alumni.append(f"{n} (now in Recent Alumni)")
+        elif everyone[match] == 'Recent Alumni':
+            cap_alumni.append(f"{n} (now in Recent Alumni)")
     print(f"[ii. Group-photo caption] ({len(cap)} names parsed) - informational")
     if not cap:
         print("      could not parse the caption -- has the wording changed?")
@@ -370,7 +477,7 @@ def main():
 
     # photo recency
     print("[9. Home-page photo recency]")
-    figures = set(re.findall(r'<figure>.*?src="/static/([^"]+)".*?</figure>', home, re.S))
+    figures = set(re.findall(r'<figure[^>]*>.*?src="/static/([^"]+)".*?</figure>', home, re.S))
     dated = [(fn, int(re.search(r'(20\d\d)', fn).group(1)))
              for fn in figures if re.search(r'(20\d\d)', fn)]
     stalest = [f for f in dated if ay - f[1] >= 1]
@@ -381,73 +488,36 @@ def main():
     findings += len(stalest)
     print()
 
-    # footer date
-    print("[10. Home page 'last updated' line]")
-    m = re.search(r'It was last updated ([A-Z][a-z]+ \d{1,2}, \d{4})', home)
-    if not m:
-        print("      could not find the line -- has the wording changed?")
-        findings += 1
+    # footer date - built from the last commit date (see webpack.config.js),
+    # so the only thing left to check is that the placeholder is still there.
+    # It lives in the shared footer in main.ejs, which every page renders.
+    print("[10. Site note 'last updated' line]")
+    if '{{LAST_UPDATED}}' in shell:
+        print("      generated at build time from the last commit touching "
+              "data/ or ejs/")
+        print("      (on CI's shallow checkout that degrades to the build's own "
+              "commit -- see webpack.config.js)")
     else:
-        try:
-            stamped = datetime.datetime.strptime(m.group(1), '%B %d, %Y').date()
-            age = (today - stamped).days
-            print(f"      says {m.group(1)} ({age} days ago)")
-            if age > 120:
-                print("      -> bump it as part of this update")
-                findings += 1
-        except ValueError:
-            print(f"      unparseable date: {m.group(1)}")
-            findings += 1
+        print("      the {{LAST_UPDATED}} placeholder is gone from "
+              f"{SHELL} -- has someone typed a literal date back in?")
+        findings += 1
     print()
 
-    # --- Research page consistency (added Aug 2026) ---
-    rosters = theme_rosters(research_raw)
+    # --- Research data-file consistency ---
+    # Three checks that used to live here - names left unlinked, one person
+    # written two ways, roster blocks out of order - are gone: with ids and a
+    # renderer none of those states can be expressed any more.
 
-    # 11. someone written as bare text on a theme who has a personal site on file
-    sites = {}
-    for s_ in data['sections']:
-        for p_ in s_['people']:
-            m = re.search(r'href="([^"]+)">Personal Website', p_['paragraphs'][0])
-            if m:
-                sites[p_['name']] = m.group(1)
-    unlinked = []
-    for title, rows in rosters:
-        for _, entries in rows:
-            for name, linked in entries:
-                if linked:
-                    continue
-                hit = [n for n in sites if mentioned(n, name) or mentioned(name, n)]
-                if hit:
-                    unlinked.append(f"{name} on {title}  -> {sites[hit[0]]}")
-    report('11. Research names not linked, but with a site on file', sorted(set(unlinked)),
-           'the convention is to link a personal site wherever one exists')
+    report('11. Duplicate or missing ids', duplicate_ids(research, data),
+           'an id is a page anchor (/people.html#<id>), so it has to be unique')
 
-    # 12. the same person written two different ways across themes.
-    # Key against the whole roster, not just people with a personal site: keying
-    # off `sites` silently skips anyone without one, which hid a real drift.
-    forms = {}
-    for title, rows in rosters:
-        for _, entries in rows:
-            for name, _ in entries:
-                hit = [n for n in everyone if mentioned(n, name) or mentioned(name, n)]
-                key = hit[0] if hit else name
-                forms.setdefault(key, set()).add(name)
-    drift = sorted(f"{k}: written as " + ' / '.join(f'"{v}"' for v in sorted(vs))
-                   for k, vs in forms.items() if len(vs) > 1)
-    report('12. One person written more than one way on Research', drift,
-           'pick one form; a mismatched form also breaks the roster checks above')
+    report('12. Research themes out of size order', out_of_size_order(research),
+           'run `python3 scripts/sort_themes.py --apply` to reorder them')
 
-    # 13. roster blocks that do not read members -> associates -> collaborators
-    order = []
-    for title, rows in rosters:
-        got = [lbl for lbl, _ in rows]
-        want = [lbl for lbl in ROSTER_LABELS if lbl in got]
-        if got != want:
-            order.append(f"{title}: " + ' then '.join(
-               'collaborators' if l.startswith('Collaborators') else l.split()[1]
-               for l in got))
-    report('13. Roster blocks out of members/associates/collaborators order', order,
-           'every theme should read in the same order')
+    report('13. Theme image sides decided by sibling position',
+           flip_not_wired(renderer_src, style_src),
+           'replace the `&:nth-child(odd)` rule under `.media-object` with '
+           '`&.media-flip`')
 
     # orphans (informational)
     used_stems = {os.path.splitext(r)[0].lower() for r in refs}

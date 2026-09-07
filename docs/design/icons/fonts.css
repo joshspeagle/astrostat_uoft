@@ -1,0 +1,4 @@
+/* The site's own fonts, referenced from the repo so the generator needs no copy of them. */
+@font-face { font-family: 'Urbanist'; font-weight: 100 900; src: url('../../../fonts/Urbanist/Urbanist-Variable.woff2') format('woff2'); }
+@font-face { font-family: 'Inclusive Sans'; font-weight: 300 700; font-style: normal; src: url('../../../fonts/InclusiveSans/InclusiveSans-Variable.woff2') format('woff2'); }
+@font-face { font-family: 'Inclusive Sans'; font-weight: 300 700; font-style: italic; src: url('../../../fonts/InclusiveSans/InclusiveSans-Italic-Variable.woff2') format('woff2'); }
