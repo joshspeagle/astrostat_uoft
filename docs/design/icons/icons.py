@@ -60,7 +60,7 @@ ICONS = [
   <path d="M 11 10.5 H 13.5 V 13"/>
   <circle cx="17.5" cy="6.5" r="3.5"/>"""),
 
-    ("dark-matter-cosmology", "Dark Matter &amp; Cosmology", f"""
+    ("dark-matter-and-cosmology", "Dark Matter &amp; Cosmology", f"""
   <circle cx="12" cy="12" r="{_R_HALO:g}" {_HALO}/>
   <ellipse cx="12" cy="12" rx="2.5" ry="3.5"/>"""),
 
@@ -78,7 +78,7 @@ ICONS = [
     # an edge-on disc, one outline: tapered to nothing at both ends, with a boxy
     # central bulge. No inner circle -- a lens with a round form inside it is an
     # eye, and a lens that comes to a point top and bottom is the brand sparkle.
-    ("milky-way", "The Milky Way", """
+    ("the-milky-way", "The Milky Way", """
   <path d="M 3.5 12 C 7 11.6 7.5 5.5 12 5.5 C 16.5 5.5 17 11.6 20.5 12 C 17 12.4 16.5 18.5 12 18.5 C 7.5 18.5 7 12.4 3.5 12 Z"/>"""),
 
     ("galaxies", "Galaxies", """
@@ -97,8 +97,8 @@ ICONS = [
 # closed counter in the set. measure.py probes each one at 15px and 24px.
 COUNTERS = {
     "stellar-evolution": [(5.5, 18.5), (17.5, 6.5)],
-    "dark-matter-cosmology": [(12, 12)],
-    "milky-way": [(12, 12)],
+    "dark-matter-and-cosmology": [(12, 12)],
+    "the-milky-way": [(12, 12)],
     "ai-for-scientists": [(12, 12), (5.5, 5.5), (18.5, 5.5), (5.5, 18.5)],
     "galaxies": [(9.5, 15), (18, 8)],
     "star-formation": [(_CLOUD_CX, _CLOUD_CY)],

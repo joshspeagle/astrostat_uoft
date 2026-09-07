@@ -28,5 +28,5 @@ the photographs and headshots in `static/`, the ART logo, or any other
 third-party images used on the site, which remain the property of their
 respective owners and are used with permission or under fair use for the
 purpose of representing the Astrostatistics Research Team. Fonts bundled in
-`ttf/` are distributed under the SIL Open Font License (OFL) and are governed
+`fonts/` are distributed under the SIL Open Font License (OFL) and are governed
 by the license terms in their own directories, not by the MIT terms above.

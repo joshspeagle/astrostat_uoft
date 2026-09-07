@@ -6,6 +6,12 @@ the two shipping sizes. Run by build.py; `python3 measure.py` on its own too.
 """
 import asyncio, os, sys
 from PIL import Image
+
+def _launch(p):
+    """Playwright's own browser resolution, unless PW_CHROMIUM names an executable."""
+    exe = os.environ.get("PW_CHROMIUM")
+    return p.chromium.launch(executable_path=exe) if exe else p.chromium.launch()
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import icons                                            # noqa: E402
 
@@ -39,8 +45,7 @@ def _html():
 async def _shoot(path, w, h):
     from playwright.async_api import async_playwright
     async with async_playwright() as p:
-        b = await p.chromium.launch(
-            executable_path="/opt/pw-browsers/chromium-1194/chrome-linux/chrome")
+        b = await _launch(p)
         pg = await b.new_page(viewport={"width": w, "height": h},
                               device_scale_factor=1)
         await pg.goto("file://" + path)

@@ -51,7 +51,7 @@ function renderRoster(entries, label, role, people, theme) {
     }
     // Every roster name points at the person's own card. The personal-site
     // link lives there, written once, rather than being re-typed per theme.
-    const link = `<a href="/people.html#${id}">${escapeHtml(rosterName(person))}</a>`;
+    const link = `<a href="/people.html#${escapeHtml(id)}">${escapeHtml(rosterName(person))}</a>`;
     const note = typeof entry === 'string' ? null : entry.note;
     return note ? `${link} <span class="roster-note">(${escapeHtml(note)})</span>` : link;
   });

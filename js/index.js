@@ -90,8 +90,8 @@ function initScrollspy() {
   // rail is a column beside the content and covers nothing; once it collapses
   // into a bar it covers its own height, measured rather than assumed.
   const rail = document.querySelector('.rail');
-  const isBar = window.matchMedia('(max-width: 47.99em)');
-  const sticky = () => (isBar.matches && rail ? rail.getBoundingClientRect().height : 0);
+  const isBar = window.matchMedia ? window.matchMedia('(max-width: 47.99em)') : null;
+  const sticky = () => (isBar && isBar.matches && rail ? rail.getBoundingClientRect().height : 0);
 
   /*
    * A 1px probe line sits just below the sticky bar. The current section is
