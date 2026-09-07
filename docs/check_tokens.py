@@ -217,15 +217,16 @@ def main(argv):
         print("           no other stylesheet file names a colour.")
 
     print(f"\n{'=' * 74}")
-    if failures or assets:
+    # Two independent ways to fail, each reported in its own words.
+    if failures:
         print(f"{len(failures)} pair(s) under floor:")
         for theme, ink, surf, kind, ratio, floor in failures:
             print(f"  {theme}: {ink} on {surf} = {ratio:.2f}, floor {floor:.1f} ({kind})")
-        return 1
     if assets:
         print(f"{len(assets)} colour(s) written outside scss/_tokens.scss:")
         for line in assets:
             print(f"  {line}")
+    if failures or assets:
         return 1
     print("All declared pairs clear their floor in both themes.")
     return 0
