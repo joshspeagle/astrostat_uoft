@@ -40,7 +40,11 @@ python3 -m http.server 8000 --directory dist # local preview
   now lives in the repository's Pages settings** — under the Actions source, GitHub does not read a
   `CNAME` file to set it (the file is still shipped, harmlessly, so the artifact mirrors `dist/`).
   After deploying, the workflow fetches the three pages from the live domain and fails the run if
-  any of them is not served. Rollback: redeploy an earlier run from **Environments → github-pages**.
+  any is missing, empty, truncated or not ours — a 200 alone is not proof a page was served.
+  Rollback: redeploy an earlier run from **Environments → github-pages**.
+- **Manual runs**: `build-site` can be dispatched from the Actions tab on any ref, but the deploy
+  job is guarded by `if: github.ref == 'refs/heads/main'`. A dispatch from a branch builds and
+  validates without publishing, so a manual run cannot put a feature branch on the live site.
 - **CI gate**: `.github/workflows/build-check.yaml` builds on every PR and non-`main` branch. The
   deploy job only runs on `main`, so this is what catches a broken edit *before* it merges. Both
   workflows check the built output with the same script, `scripts/check_build_output.sh`, so the

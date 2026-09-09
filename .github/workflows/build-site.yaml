@@ -82,6 +82,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
+    # workflow_dispatch lets an operator pick any ref, so without this a manual
+    # run from a feature branch would publish that branch to the live site. The
+    # build above still runs on any ref, which is what makes a manual dry run
+    # on a branch useful; only publishing is pinned to main.
+    if: github.ref == 'refs/heads/main'
+
     # Only the deploy job gets the Pages scopes, and it needs no repo access.
     permissions:
       pages: write
@@ -113,6 +119,13 @@ jobs:
           echo "Deployed to $base"
 
           attempts=10
+
+          # A status code alone is not proof a page was served: an empty 200
+          # would satisfy `! grep 'Site not found'` precisely because grep finds
+          # nothing in an empty file. So the body must also be non-empty, carry
+          # a site-specific marker, and be a complete document.
+          marker='astrostatuoft'
+
           check() {
             url="$1"
             for i in $(seq 1 "$attempts"); do
@@ -121,13 +134,28 @@ jobs:
               code="$(curl -sS -o "$body" -w '%{http_code}' \
                         -H 'Cache-Control: no-cache' --max-time 20 \
                         "$url?ci=${GITHUB_RUN_ID}-$i" 2>/dev/null || echo 000)"
-              if [ "$code" = "200" ] && ! grep -qF 'Site not found' "$body"; then
+
+              reason=""
+              if [ "$code" != "200" ]; then
+                reason="HTTP $code"
+              elif [ ! -s "$body" ]; then
+                reason="200 with an empty body"
+              elif grep -qF 'Site not found' "$body"; then
+                reason="200 serving GitHub's 'Site not found' page"
+              elif ! grep -qF "$marker" "$body"; then
+                reason="200 but no '$marker' marker - is this our site?"
+              elif ! grep -qF '</html>' "$body"; then
+                reason="200 but truncated (no closing </html>)"
+              fi
+
+              if [ -z "$reason" ]; then
                 echo "  $url -> 200 ✓"
                 rm -f "$body"
                 return 0
               fi
+
               rm -f "$body"
-              echo "  $url -> $code (attempt $i/$attempts)"
+              echo "  $url -> $reason (attempt $i/$attempts)"
               if [ "$i" -lt "$attempts" ]; then sleep 15; fi
             done
             return 1
