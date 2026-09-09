@@ -32,9 +32,13 @@ python3 -m http.server 8000 --directory dist # local preview
   See the two sections below.
 - Home content is a hand-written HTML partial, `ejs/pages/home/body.html`.
 - Never commit `dist/` or `node_modules/` (both gitignored).
+- **Pages source (one-time prerequisite)**: *Settings → Pages → Build and deployment → Source* must
+  be **GitHub Actions**. The workflow does not change repository settings, so if the source is still
+  a branch the build passes and the deploy step fails. If a deploy fails with a Pages configuration
+  error, check this first — it is a settings problem, not a workflow bug.
 - **Deployment**: push to `main` → `.github/workflows/build-site.yaml` builds, validates, uploads
-  `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`. The Pages source is
-  **GitHub Actions**, not a branch — `gh-pages` is no longer in the loop and is not updated. The
+  `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`. `gh-pages` is no longer in
+  the loop and is not updated. The
   workflow holds `contents: read` only; the deploy job alone gets `pages: write` + `id-token: write`.
   `CNAME` and `.nojekyll` are written by the workflow, not tracked in the repo. **The custom domain
   now lives in the repository's Pages settings** — under the Actions source, GitHub does not read a

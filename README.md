@@ -42,11 +42,16 @@ Requires Node 22+ (see `.nvmrc` / `engines` in `package.json`).
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/build-site.yaml`, which builds the site, validates
-the output, uploads `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`. The
-Pages source is **GitHub Actions**, not a branch: there is no `gh-pages` branch in the loop any
-more, the workflow needs no write access to the repository, and a deployment that does not land
-fails the run instead of reporting success. A smoke test then fetches the three pages from the live
+**Prerequisite, one time:** the repository's Pages source must be set to **GitHub Actions** under
+*Settings → Pages → Build and deployment → Source*. The workflow deliberately does not change
+repository settings, so until that switch is made the build succeeds and the deploy step fails.
+The custom domain is a Pages setting too — under the Actions source GitHub does not read a `CNAME`
+file to set it.
+
+Pushing to `main` then triggers `.github/workflows/build-site.yaml`, which builds the site,
+validates the output, uploads `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`.
+There is no `gh-pages` branch in the loop any more, the workflow needs no write access to the
+repository, and a deployment that does not land fails the run instead of reporting success. A smoke test then fetches the three pages from the live
 domain, so a build that is green but not actually being served cannot pass unnoticed.
 
 Every pull request and non-`main` branch push also runs `.github/workflows/build-check.yaml`, the
