@@ -20,6 +20,12 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# The site's own domain, in one place: the CNAME the build ships and the www
+# redirect the smoke test checks both read it, so there is no second copy to
+# fall out of step if the domain ever changes.
+env:
+  SITE_DOMAIN: astrostatuoft.com
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -62,7 +68,7 @@ jobs:
           npm ci
           npm run build
           touch dist/.nojekyll
-          echo "astrostatuoft.com" > dist/CNAME
+          echo "$SITE_DOMAIN" > dist/CNAME
 
       # Check expected pages were produced, before we publish them. The same
       # script build-check.yaml runs, so this can never check less than it does.
@@ -133,7 +139,7 @@ jobs:
               # Cache-buster and no-cache so a stale edge copy cannot pass for us.
               code="$(curl -sS -o "$body" -w '%{http_code}' \
                         -H 'Cache-Control: no-cache' --max-time 20 \
-                        "$url?ci=${GITHUB_RUN_ID}-$i" 2>/dev/null || echo 000)"
+                        "$url?ci=${GITHUB_RUN_ID}-$i" 2>/dev/null)" || code=000
 
               reason=""
               if [ "$code" != "200" ]; then
@@ -161,6 +167,36 @@ jobs:
             return 1
           }
 
+          # www is a redirect GitHub issues, not a page this repo builds, so it is
+          # checked as a journey rather than by body: it has to resolve, present a
+          # valid certificate (curl verifies by default, so an expired or mis-issued
+          # one fails here), and land on the apex. A failure here is a domain
+          # problem, not a bad deployment - the message says so, because the site
+          # itself can be perfectly healthy while this is broken.
+          check_www() {
+            url="https://www.${SITE_DOMAIN}/"
+            for i in $(seq 1 "$attempts"); do
+              out="$(curl -sSL -o /dev/null -w '%{http_code} %{url_effective}' \
+                       -H 'Cache-Control: no-cache' --max-time 20 \
+                       "${url}?ci=${GITHUB_RUN_ID}-$i" 2>/dev/null)" || out="000 (no response)"
+              wcode="${out%% *}"
+              wfinal="${out#* }"
+              case "$wfinal" in
+                "https://${SITE_DOMAIN}/"*) landed=1 ;;
+                *)                          landed=0 ;;
+              esac
+
+              if [ "$wcode" = "200" ] && [ "$landed" = "1" ]; then
+                echo "  $url -> redirected to $wfinal ✓"
+                return 0
+              fi
+
+              echo "  $url -> HTTP $wcode, landed on $wfinal (attempt $i/$attempts)"
+              if [ "$i" -lt "$attempts" ]; then sleep 15; fi
+            done
+            return 1
+          }
+
           rc=0
           for path in "/" "/people.html" "/research.html"; do
             check "$base$path" || {
@@ -168,4 +204,10 @@ jobs:
               rc=1
             }
           done
+
+          check_www || {
+            echo "::error::https://www.${SITE_DOMAIN}/ does not redirect to the apex - a DNS or certificate problem with the domain, not with this deployment"
+            rc=1
+          }
+
           exit "$rc"

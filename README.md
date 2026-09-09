@@ -51,8 +51,10 @@ file to set it.
 Pushing to `main` then triggers `.github/workflows/build-site.yaml`, which builds the site,
 validates the output, uploads `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`.
 There is no `gh-pages` branch in the loop any more, the workflow needs no write access to the
-repository, and a deployment that does not land fails the run instead of reporting success. A smoke test then fetches the three pages from the live
-domain, so a build that is green but not actually being served cannot pass unnoticed.
+repository, and a deployment that does not land fails the run instead of reporting success. After
+deploying it fetches the three pages from the live domain, and checks that the `www` subdomain still
+redirects to the apex over a valid certificate, so a build that is green but not actually being
+served cannot pass unnoticed.
 
 Every pull request and non-`main` branch push also runs `.github/workflows/build-check.yaml`, the
 same build plus validation without the deploy, so a broken edit is caught before it merges rather
