@@ -5,8 +5,8 @@ University of Toronto — live at **[astrostatuoft.com](https://astrostatuoft.co
 
 Three pages (Home, People, Research) plus a 404, built from data files and one HTML shell by
 webpack into `dist/`, styled with hand-written SCSS on a seven-token palette — no CSS framework and
-no JavaScript dependencies. GitHub Actions builds the site on every push to `main` and publishes
-`dist/` to the `gh-pages` branch, which serves the live domain.
+no JavaScript dependencies. GitHub Actions builds the site on every push to `main` and deploys
+`dist/` straight to GitHub Pages, which serves the live domain.
 
 ## Quick start
 
@@ -42,11 +42,25 @@ Requires Node 22+ (see `.nvmrc` / `engines` in `package.json`).
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/build-site.yaml`, which builds the site, validates
-the output, and force-publishes `dist/` to `gh-pages` (the branch GitHub Pages serves as
-astrostatuoft.com). Every pull request and non-`main` branch push also runs
-`.github/workflows/build-check.yaml`, the same build plus validation without the publish step, so a
-broken edit is caught before it merges rather than after it goes live.
+**Prerequisite, one time:** the repository's Pages source must be set to **GitHub Actions** under
+*Settings → Pages → Build and deployment → Source*. The workflow deliberately does not change
+repository settings, so until that switch is made the build succeeds and the deploy step fails.
+The custom domain is a Pages setting too — under the Actions source GitHub does not read a `CNAME`
+file to set it.
+
+Pushing to `main` then triggers `.github/workflows/build-site.yaml`, which builds the site,
+validates the output, uploads `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`.
+There is no `gh-pages` branch in the loop any more, the workflow needs no write access to the
+repository, and a deployment that does not land fails the run instead of reporting success. A smoke test then fetches the three pages from the live
+domain, so a build that is green but not actually being served cannot pass unnoticed.
+
+Every pull request and non-`main` branch push also runs `.github/workflows/build-check.yaml`, the
+same build plus validation without the deploy, so a broken edit is caught before it merges rather
+than after it goes live. Both workflows validate the built output with the same script,
+`scripts/check_build_output.sh`.
+
+Rollback is a redeploy of an earlier successful run from the repository's **Environments →
+github-pages** tab.
 
 ## Learn more
 

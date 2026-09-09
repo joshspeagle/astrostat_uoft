@@ -10,7 +10,7 @@ Website for the **Astrostatistics Research Team (ART)** at the University of Tor
 one HTML shell by **webpack** into `dist/`, styled with hand-written SCSS on a seven-token palette.
 **No CSS framework and no JavaScript dependencies** — Foundation and jQuery were removed; the whole
 bundle is ~2 KB of JS and ~12 KB of CSS. GitHub Actions builds on every push to `main` and
-publishes `dist/` to the `gh-pages` branch.
+deploys `dist/` to GitHub Pages.
 
 The rules the design answers to are in **`docs/DESIGN.md`** (the canon) and measured by
 **`docs/check_tokens.py`**. Read the canon before changing anything visual.
@@ -32,11 +32,27 @@ python3 -m http.server 8000 --directory dist # local preview
   See the two sections below.
 - Home content is a hand-written HTML partial, `ejs/pages/home/body.html`.
 - Never commit `dist/` or `node_modules/` (both gitignored).
-- **Deployment**: push to `main` → `.github/workflows/build-site.yaml` builds and force-publishes
-  `dist/` to `gh-pages`, which serves astrostatuoft.com (the `CNAME` is written by the workflow, not
-  tracked in the repo).
+- **Pages source (one-time prerequisite)**: *Settings → Pages → Build and deployment → Source* must
+  be **GitHub Actions**. The workflow does not change repository settings, so if the source is still
+  a branch the build passes and the deploy step fails. If a deploy fails with a Pages configuration
+  error, check this first — it is a settings problem, not a workflow bug.
+- **Deployment**: push to `main` → `.github/workflows/build-site.yaml` builds, validates, uploads
+  `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`. `gh-pages` is no longer in
+  the loop and is not updated. The
+  workflow holds `contents: read` only; the deploy job alone gets `pages: write` + `id-token: write`.
+  `CNAME` and `.nojekyll` are written by the workflow, not tracked in the repo. **The custom domain
+  now lives in the repository's Pages settings** — under the Actions source, GitHub does not read a
+  `CNAME` file to set it (the file is still shipped, harmlessly, so the artifact mirrors `dist/`).
+  After deploying, the workflow fetches the three pages from the live domain and fails the run if
+  any is missing, empty, truncated or not ours — a 200 alone is not proof a page was served.
+  Rollback: redeploy an earlier run from **Environments → github-pages**.
+- **Manual runs**: `build-site` can be dispatched from the Actions tab on any ref, but the deploy
+  job is guarded by `if: github.ref == 'refs/heads/main'`. A dispatch from a branch builds and
+  validates without publishing, so a manual run cannot put a feature branch on the live site.
 - **CI gate**: `.github/workflows/build-check.yaml` builds on every PR and non-`main` branch. The
-  publish job only runs on `main`, so this is what catches a broken edit *before* it merges.
+  deploy job only runs on `main`, so this is what catches a broken edit *before* it merges. Both
+  workflows check the built output with the same script, `scripts/check_build_output.sh`, so the
+  publishing one can never validate less than the gating one.
 
 ## Architecture
 
