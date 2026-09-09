@@ -542,5 +542,5 @@ exemption with a one-line reason and a date, so the finding stops recurring and 
 visible.
 
 Then commit and push — the footer date comes from the commit itself. CI (`build-check.yaml`) builds every PR and
-non-`main` branch; merging to `main` triggers `build-site.yaml`, which publishes `dist/` to
-`gh-pages` and updates astrostatuoft.com. **Never commit `dist/`.**
+non-`main` branch; merging to `main` triggers `build-site.yaml`, which deploys `dist/` to GitHub
+Pages and updates astrostatuoft.com. **Never commit `dist/`.**

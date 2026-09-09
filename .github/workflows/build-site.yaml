@@ -8,9 +8,17 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Least privilege. The build only reads the repository; the deploy needs no
+# repository access at all. Nothing here can write to the repo, which is what
+# publishing via a force-push to gh-pages used to require.
+permissions:
+  contents: read
+
+# One Pages deployment at a time. Unlike a build, a deployment already in
+# flight should not be cancelled part-way, so a queued run waits instead.
 concurrency:
-  group: build-site-${{ github.ref }}
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -41,7 +49,7 @@ jobs:
           done
 
       # Same regression tests build-check.yaml runs, so a broken build never
-      # force-publishes to gh-pages
+      # reaches the Pages deployment
       - name: Audit helper tests
         run: python3 scripts/test_audit.py
 
@@ -53,27 +61,83 @@ jobs:
         run: |
           npm ci
           npm run build
-          touch $GITHUB_WORKSPACE/dist/.nojekyll
+          touch dist/.nojekyll
           echo "astrostatuoft.com" > dist/CNAME
 
-      # Check expected pages were produced, before we publish them
+      # Check expected pages were produced, before we publish them. The same
+      # script build-check.yaml runs, so this can never check less than it does.
       - name: Check expected pages were produced
-        run: |
-          for page in index people research; do
-            if [ ! -s "dist/$page.html" ]; then
-              echo "::error::dist/$page.html is missing or empty"
-              exit 1
-            fi
-          done
-          echo "All pages built. ✓"
+        run: ./scripts/check_build_output.sh --publish dist
 
-      # Push all the new assets to the pages branch
-      - name: Push to Github Pages branch
-        uses: s0/git-publish-subdir-action@develop
+      # dist/ is handed to Pages as an artifact rather than force-pushed to a
+      # branch. include-hidden-files is required: it defaults to false, and
+      # .nojekyll is a dotfile.
+      - name: Upload dist/ as a Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+          include-hidden-files: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Only the deploy job gets the Pages scopes, and it needs no repo access.
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # Unlike a branch push, this fails loudly if Pages is disabled or
+      # misconfigured, rather than reporting success while the site is dark.
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      # And this closes the loop: a green build that isn't actually being
+      # served is the failure this whole workflow exists to catch.
+      - name: Smoke-test the live site
         env:
-          REPO: self
-          BRANCH: gh-pages
-          FOLDER: dist
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build ({sha}): {msg}"
-          GIT_CLONE_PROTECTION_ACTIVE: false
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -uo pipefail
+          if [ -z "${PAGE_URL:-}" ]; then
+            echo "::error::deploy-pages reported no page_url; nothing to verify"
+            exit 1
+          fi
+          base="${PAGE_URL%/}"
+          echo "Deployed to $base"
+
+          attempts=10
+          check() {
+            url="$1"
+            for i in $(seq 1 "$attempts"); do
+              body="$(mktemp)"
+              # Cache-buster and no-cache so a stale edge copy cannot pass for us.
+              code="$(curl -sS -o "$body" -w '%{http_code}' \
+                        -H 'Cache-Control: no-cache' --max-time 20 \
+                        "$url?ci=${GITHUB_RUN_ID}-$i" 2>/dev/null || echo 000)"
+              if [ "$code" = "200" ] && ! grep -qF 'Site not found' "$body"; then
+                echo "  $url -> 200 ✓"
+                rm -f "$body"
+                return 0
+              fi
+              rm -f "$body"
+              echo "  $url -> $code (attempt $i/$attempts)"
+              if [ "$i" -lt "$attempts" ]; then sleep 15; fi
+            done
+            return 1
+          }
+
+          rc=0
+          for path in "/" "/people.html" "/research.html"; do
+            check "$base$path" || {
+              echo "::error::$base$path is not being served after a successful deploy"
+              rc=1
+            }
+          done
+          exit "$rc"
