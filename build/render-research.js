@@ -53,7 +53,11 @@ function renderRoster(entries, label, role, people, theme) {
     // link lives there, written once, rather than being re-typed per theme.
     const link = `<a href="/people.html#${escapeHtml(id)}">${escapeHtml(rosterName(person))}</a>`;
     const note = typeof entry === 'string' ? null : entry.note;
-    return note ? `${link} <span class="roster-note">(${escapeHtml(note)})</span>` : link;
+    // A non-breaking space, so an affiliation never wraps onto a line of its
+    // own, orphaned from the name it qualifies.
+    return note
+      ? `${link}&nbsp;<span class="roster-note">(${escapeHtml(note)})</span>`
+      : link;
   });
 
   // The second channel is fill, not hue: filled is inside the group, open is

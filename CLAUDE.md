@@ -77,9 +77,10 @@ by hand any more.
 unless asked otherwise, and a lone commit is a root commit — git diffs it against the empty tree, so
 every path matches and the date degrades to *the date of the build's own commit*, a CSS- or CI-only
 push included. The build prints a `[last-updated] depth-1 checkout` warning when that happens, so
-the degradation is visible in the Actions log rather than silent. **Adding `fetch-depth: 0` to the
-checkout step in both `.github/workflows/*.yaml` is the fix.** A deeper truncated clone (this dev
-container is one) answers the pathspec correctly and gets no warning.
+the degradation is visible in the Actions log rather than silent. **Both
+`.github/workflows/*.yaml` now pass `fetch-depth: 0` to their checkout step, which is the fix —
+don't drop it.** A deeper truncated clone (this dev container is one) answers the pathspec correctly
+and gets no warning.
 
 **Gotcha:** `main.ejs` is compiled by html-webpack-plugin's default **lodash** template loader, not
 by EJS, despite the file extension. In lodash templates `<%= %>` is *unescaped* interpolation (the

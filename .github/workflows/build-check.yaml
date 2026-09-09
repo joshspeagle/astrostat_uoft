@@ -27,6 +27,7 @@ jobs:
           GIT_CLONE_PROTECTION_ACTIVE: false
         with:
           lfs: true
+          fetch-depth: 0   # the build derives the 'last updated' date from git history
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
