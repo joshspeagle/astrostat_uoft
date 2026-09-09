@@ -320,7 +320,10 @@ html:not(.js) .rail-theme {
   width: 44px;
   height: 24px;
   padding: 10px 0;
-  background: var(--quiet);
+  // background-COLOR, never the shorthand: `background` resets background-clip
+  // to border-box, which fills the 10px tap padding and reads as the track
+  // growing into a square.
+  background-color: var(--quiet);
   background-clip: content-box;
   position: relative;
 }
@@ -337,7 +340,7 @@ html:not(.js) .rail-theme {
 }
 
 .switch[aria-checked='true'] {
-  background: var(--link);
+  background-color: var(--link);
 }
 
 .switch[aria-checked='true']::after {
@@ -768,6 +771,14 @@ figcaption {
 .roster-names {
   font-size: var(--small);
   line-height: 1.7;
+}
+
+// An affiliation is an aside on the name, not part of it: quiet, and held to
+// the name it belongs to. The renderer joins the two with a non-breaking
+// space, so "(McMaster)" can never be left hanging on a line of its own.
+.roster-note {
+  color: var(--quiet);
+  white-space: nowrap;
 }
 
 @media (max-width: $bar-up - 0.01) {

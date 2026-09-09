@@ -137,7 +137,10 @@ main {
     align-self: start;
     position: sticky;
     top: var(--s5);
-    z-index: auto;
+    // Home's hero spans the whole shell, so it covers this column's first row.
+    // It comes after the rail in the DOM, so at z-index auto it would paint
+    // over the rail and eat every click on the navigation.
+    z-index: 1;
     max-height: calc(100vh - var(--s6));
     overflow-y: auto;
     background: none;
