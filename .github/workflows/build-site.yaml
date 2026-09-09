@@ -18,7 +18,7 @@ jobs:
 
     steps:
       # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         env:
           GIT_CLONE_PROTECTION_ACTIVE: false
         with:
@@ -27,7 +27,7 @@ jobs:
 
       # Sets up a recent version of Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: 'npm'
