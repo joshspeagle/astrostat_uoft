@@ -44,8 +44,16 @@ python3 -m http.server 8000 --directory dist # local preview
   now lives in the repository's Pages settings** — under the Actions source, GitHub does not read a
   `CNAME` file to set it (the file is still shipped, harmlessly, so the artifact mirrors `dist/`).
   After deploying, the workflow fetches the three pages from the live domain and fails the run if
-  any is missing, empty, truncated or not ours — a 200 alone is not proof a page was served.
+  any is missing, empty, truncated or not ours — a 200 alone is not proof a page was served. It then
+  checks that `https://www.<domain>/` still redirects to the apex, which also exercises the
+  certificate (curl verifies it), so a DNS or cert regression on `www` shows up as a red build. That
+  check names itself a domain problem rather than a bad deploy, since the site can be healthy
+  while it fails. The domain is written once, as the workflow-level `SITE_DOMAIN`, and feeds both the
+  `CNAME` the build ships and this check.
   Rollback: redeploy an earlier run from **Environments → github-pages**.
+- **`www`**: `www.astrostatuoft.com` is a `CNAME` to `joshspeagle.github.io.`, set at the registrar
+  (Squarespace, on nameservers inherited from Google Domains). GitHub issues the certificate and the
+  301 to the apex once its DNS check passes; neither lives in this repo.
 - **Manual runs**: `build-site` can be dispatched from the Actions tab on any ref, but the deploy
   job is guarded by `if: github.ref == 'refs/heads/main'`. A dispatch from a branch builds and
   validates without publishing, so a manual run cannot put a feature branch on the live site.
