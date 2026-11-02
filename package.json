@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Website for UofT astrostatistics group",
   "scripts": {
-    "build": "npx webpack --color"
+    "build": "npx webpack --color",
+    "check": "python3 docs/check_tokens.py --quiet && python3 scripts/test_audit.py && python3 scripts/audit_site.py --strict && ./scripts/check_build_output.sh dist",
+    "propose": "python3 scripts/propose_updates.py"
   },
   "repository": {
     "type": "git",
