@@ -1,546 +1,92 @@
 ---
 name: art-website-update
-description: Use when the user asks to update the ART website / astrostatuoft.com — walks the section checklist (home blurb, Statstro, the six People categories, research themes, deferred group-photo caption), asking what changed in each. People edits go in data/people.json and Research edits in data/research.json; run scripts/audit_site.py first and last.
+description: Routine content, roster, and seasonal maintenance workflow for the Astrostatistics Research Team (ART) website (astrostatuoft.com). Use when adding or removing group members, moving graduates or postdocs to Recent Alumni, updating bios or fellowships, rolling over academic years, or running a periodic site check.
 ---
 
-# ART Website Update Checklist
+# Updating the ART Website (`astrostatuoft.com`)
 
-Walk the sections below **in order**, asking the user what (if anything) has changed in each. People
-edits go in `data/people.json` and Research edits in `data/research.json`; only Home is hand-written
-HTML.
+## Step 0 — Preflight Discovery (`propose_updates.py`)
 
-Run the audit **before** you start walking — it tells you what's already known to be wrong, so you
-can lead each affected section with a concrete question instead of an open one:
+Before editing any files, run the preflight discovery script from the repository root:
 
 ```bash
-python3 scripts/audit_site.py
+python3 scripts/propose_updates.py --online
 ```
 
-It reports stale year-of-study labels, roster/Research drift in both directions, advisers of current
-members who are missing from Collaborators, roster ids that name nobody, duplicate ids, themes out of
-roster-size order, and missing photos. Run it again at the end; everything except
-known-and-accepted items should be clear.
+This script generates a structured Markdown **Update Proposal Digest** covering:
+1. **Cross-repository sync (`../joshspeagle.github.io/assets/data/content.json`):** Identifies active UofT postdocs, doctoral students, or undergrads in Josh Speagle's personal website repository who are missing from `data/people.json`, as well as completed mentees who should move to `Recent Alumni`.
+2. **Seasonal and date rollovers:** Flags graduate student `N`-th year labels that need incrementing (`--apply-years` applies them automatically), expiring `<b>On leave...</b>` notes, seasonal phrasing (`"This summer"`, `"incoming"`), and dated Home page photos.
+3. **Internal audit & theme-fit summary:** Runs `scripts/audit_site.py` and `scripts/theme_fit.py --quiet`.
+4. **Live web checks (`--online`):** Checks Gwen Eadie's group page (`https://www.astro.utoronto.ca/~eadie/students.html`) for newly listed mentees and verifies all external HTTP/HTTPS links across `data/home.json`, `data/people.json`, and `data/research.json`.
 
-**Use `--as-of` when the update targets the coming academic year.** Year-of-study labels roll over
-in September. Doing an August update means writing labels for the year that has not started, and the
-plain audit will then report all of them as wrong. Pin it to the year you are writing for:
+If the user has not already specified the exact edits to make, present the findings from the digest and confirm which items to apply before editing.
+
+---
+
+## Step 1 — Applying Roster & Content Updates
+
+All three pages are generated from JSON files in `data/`:
+
+| Page | Source file | Renderer |
+|---|---|---|
+| **Home** (`/`) | `data/home.json` | `build/render-home.js` |
+| **People** (`/people.html`) | `data/people.json` | `build/render-people.js` |
+| **Research** (`/research.html`) | `data/research.json` | `build/render-research.js` |
+
+### 1. Adding a Person (`data/people.json` + `data/research.json`)
+
+1. **Section placement (`data/people.json`):**
+   - `Faculty`, `Postdoctoral Researchers`, `Graduate Students`, `Undergraduate Students`, `ART Associates`: card sections (`layout: "faculty"` or `"cards"`).
+   - `Collaborators` (alphabetical by surname): co-advisers of current members and ongoing external collaborators (`layout: "compact"`).
+   - `Recent Alumni` (reverse chronological by departure year): former postdocs and graduate students (`layout: "compact"`). Undergraduate alumni are not listed in `Recent Alumni`.
+2. **Entry schema:**
+   ```json
+   {
+     "id": "firstname-lastname",
+     "name": "First Last",
+     "image": "first_last.jpg",
+     "alt": "First Last",
+     "cohort": 2026,
+     "paragraphs": [
+       "<a href=\"https://example.com\">Website</a>",
+       "First is a 1st-year Ph.D. student in the Department of Statistical Sciences co-supervised by <a href=\"https://joshspeagle.com\">Josh Speagle</a> and <a href=\"https://example.edu\">Co-Advisor</a>. Their research focuses on ..."
+     ]
+   }
+   ```
+   - `cohort` is required whenever a bio includes an `Nst/nd/rd/th-year` label (`expected_year = academic_year - cohort + 1`, where `academic_year` rolls over on September 1).
+   - If no headshot is available yet, set `"image": null`; `build/render-people.js` automatically renders a 2-letter monogram tile (`.no-photo-initials`).
+   - When a headshot is provided, process it with `python3 scripts/add_headshot.py <source-image> <first_last.jpg>` (`500×500` JPEG in `static/`).
+   - Always list the **David A. Dunlap Department of Astronomy & Astrophysics** before the **Department of Statistical Sciences** when both are named.
+   - Do not add repetitive inline links to UofT department homepages on student/postdoc cards; keep links focused on personal websites, fellowships, external institutions, surveys, and co-supervisors.
+3. **Research themes (`data/research.json`):**
+   - Every current member in `Faculty`, `Postdoctoral Researchers`, `Graduate Students`, and `ART Associates` must appear on at least one Research theme (`members` for Faculty/Postdocs/Grad/Undergrad; `associates` for ART Associates; `collaborators` for Collaborators).
+   - Run `python3 scripts/theme_fit.py` to check which themes match the new bio's keywords, and run `python3 scripts/sort_themes.py --apply` if theme roster counts change the size ordering.
+
+### 2. Moving a Member to `Recent Alumni`
+
+1. Move their entry from their current section in `data/people.json` to the top of `Recent Alumni`.
+2. Append their role and year to `name`: `"First Last (Ph.D. 2026)"`, `"First Last (M.Sc. 2026)"`, or `"First Last (Postdoc 2024-26)"`. Remove `"cohort"` if present.
+3. Rewrite the bio's opening sentence to state their current position (`"First is now a ... at .... They completed their Ph.D. in ..."`).
+4. Remove their `id` from all theme rosters in `data/research.json`, then run `python3 scripts/sort_themes.py --apply`.
+
+### 3. Updating the Home Page (`data/home.json`)
+
+- Group photo (`about.figure`), Statstro section (`workshop`), and career-stage pathways / postdoctoral fellowship pills (`joining.pathways`) live in `data/home.json`.
+- Only update a group photo caption when replacing the photo file itself.
+
+---
+
+## Step 2 — Verification & Build Gate
+
+Run the full verification and build suite before committing:
 
 ```bash
-python3 scripts/audit_site.py --as-of 2026-09-15
+npm run build
+npm run check
 ```
 
-Otherwise you will report a pile of findings that are not findings, and — worse — be tempted to
-"fix" correct labels back to the outgoing year.
-
-## Before you start
-
-Confirm Git LFS is active, or every image you look at is a pointer stub (see "Photos" below):
-
-```bash
-git lfs install --local && git lfs pull
-```
-
-To see when each area genuinely last changed — use this instead of trusting any hand-kept log:
-
-```bash
-for f in ejs/pages/home/body.html data/research.json data/people.json; do
-  printf '%-32s %s\n' "$f" "$(git log -1 --format='%ad  %s' --date=short -- "$f")"
-done
-```
-
-Note each data file only dates from its migration commit; for older history use
-`git log --follow -- ejs/pages/people/body.html` and
-`git log --follow -- ejs/pages/research/body.html`.
-
-## The checklist
-
-Walk these in order. Two rows are deliberately **out of page order** because they depend on the
-roster being settled first — see the notes.
-
-| # | Section | Where | What to ask about |
-|---|---------|-------|-------------------|
-| 1 | **Home — welcome blurb** | `ejs/pages/home/body.html` | Any change to how the group describes itself; links to Research/People |
-| 2 | **Home — group photo** | `ejs/pages/home/body.html` + `static/` | *Is there a newer group photo?* Swap the image now. **Defer the caption to #12** |
-| 3 | **Home — Statstro** | `ejs/pages/home/body.html` | Was there a new Statstro? Update the blurb and swap in the latest workshop photo + caption |
-| 4 | **People — Faculty** | `data/people.json` | Title changes, leave notes, new affiliations |
-| 5 | **People — Postdocs** | `data/people.json` | Arrivals; departures (→ #10); fellowship or host changes |
-| 6 | **People — Graduate Students** | `data/people.json` | **Ph.D. *and* Masters students.** New students (set `cohort`); graduations (→ #10). The audit supplies the year-of-study bumps — confirm them rather than asking |
-| 7 | **People — Undergraduates** | `data/people.json` | Current undergraduate students. **Listed while current only** — when they finish they are removed, *not* moved to Recent Alumni |
-| 8 | **People — ART Associates** | `data/people.json` | Affiliated researchers joining or leaving |
-| 9 | **People — Collaborators** | `data/people.json` | Collaborators joining or leaving (the largest section, and the slowest-changing) |
-| 10 | **People — Recent Alumni** | `data/people.json` | Ph.D. and postdoc departures since the last update. See "Moving someone to Recent Alumni" |
-| 11 | **Research — themes & member lists** | `data/research.json` | Theme prose first, then the three roster lists (`members` / `associates` / `collaborators`, ids into `data/people.json`). **Propose, don't ask** — see below |
-| 12 | **Home — group photo caption** | `ejs/pages/home/body.html` | *Deferred from #2.* Only rewrite it if the photo changed — a caption describes the photo, not the current roster, so it may legitimately name people who have since left |
-| 13 | **Wrap-up** | `webpack.config.js` | Any new page (the `pages` array carries the title, description, canonical URL and nav key; the nav, sitemap and 404 all follow from it) or changed external link. The site note lives in `ejs/main.ejs`'s footer and its date builds itself from the last commit — nothing to type |
-
-### How to walk a People row: list first, then ask
-
-Do **not** open a People section with "has anything changed?" — that asks the user to recall a
-roster from memory. Print the current section first, then ask for additions and removals against
-that list:
-
-```bash
-python3 scripts/roster.py "Postdoctoral Researchers"   # or: roster.py postdoc
-python3 scripts/roster.py                              # every section
-```
-
-Each entry shows the person's name, a one-line summary of their stated role, their `cohort` if set,
-and a `[NO PHOTO]` marker. Reading the list back is what surfaces the people who quietly need
-moving, and it makes "add these two, drop that one" a much easier answer than an open question.
-
-Work one section at a time and settle it before moving to the next. Sections done earlier feed the
-later ones — Research theme lists (#11) and the group-photo caption (#12) both depend on the final
-roster.
-
-### Section scope (set June 2025, revised August 2026)
-
-- **Recent Alumni is Ph.D. and postdoc level only.** Undergraduate and Masters-level people are
-  never given alumni entries — when they finish, their entry is simply removed. The audit flags any
-  `(B.Sc. ...)` / `(BA ...)` entry that appears in Recent Alumni.
-- **Undergraduates are listed while current.** The section was dropped in June 2025 and restored in
-  August 2026.
-- **Graduate Students covers Ph.D. and Masters students** in one section.
-
-### Row 11: the Research page
-
-Each theme carries three roster lists — `members`, `associates`, `collaborators` — and they hold
-**ids into `data/people.json`**, not names:
-
-```jsonc
-"members": ["gwendolyn-eadie", "joshua-speagle", "kevin-mckinnon"],
-"collaborators": ["jo-bovy", { "id": "ryan-cloutier", "note": "McMaster" }]
-```
-
-So a roster change is adding or removing an id, and the name, its short form and its personal-site
-link are never re-typed — they live on the People card the id points at. An id that names nobody
-**fails the build**, naming the theme and the row, so a typo cannot reach the page. `scripts/roster.py`
-prints each person's id next to their name. What still has to be done by hand, and is the real work
-of this row, is deciding *who belongs on which theme* and keeping the prose true to the roster.
-
-**Walk one theme at a time, and show the roster and the draft text together.** Josh asked for this
-explicitly: seeing the people and the prose side by side is what makes it possible to say "that
-sentence is too specific to what Duo and Ronan do" or "Maria doesn't belong here". Do not present
-eight themes at once, and do not present rosters and prose in separate passes.
-
-**Propose, don't ask.** Never ask which themes a person belongs to. Run the fit scan, read the bio,
-and propose with the evidence quoted:
-
-```bash
-python3 scripts/theme_fit.py                 # every theme, both directions
-python3 scripts/theme_fit.py Galaxies        # just one
-```
-
-It reports `MISSING` (bio uses the theme's vocabulary, person is not listed) and `THIN` (listed, but
-the bio says nothing on the theme). Both directions matter — `MISSING` found Aviad Levis absent from
-the AI theme despite being the most AI-central person on the page, and `THIN` is what exposed Maria
-Drout sitting on Galaxies with a bio entirely about supernovae. **It is a prompt, not a verdict**:
-keyword presence is not membership. Read the quoted phrase, decide, then take it to the user with
-the evidence attached so they can correct rather than recall.
-
-When a theme is renamed or rescoped, update its entry in `THEME_WORDS` in that script — otherwise it
-quietly stops finding anything.
-
-### Theme prose: the house style
-
-This is where the most rework happened in one session, in both directions. Two failure modes, and
-they pull opposite ways:
-
-**Do not fragment the taxonomy.** The themes are deliberately broad and a little non-standard so the
-site reads to astronomers *and* statisticians rather than to one field's specialists. Splitting a
-theme into subfield labels ("Cosmology and Large-Scale Structure", "Dust and the ISM") makes it
-narrower and more astronomy-coded, which is exactly wrong. If anything the pressure should run
-toward **consolidation**. Josh on this: *"the whole point of the category is that this site is
-interdisciplinary... what you seem to have done is just kind of fragmented and sliced them a bit,
-which I think is actually the wrong move."*
-
-**Do not write dense methodology prose.** Theme text is a general overview in plain language, not a
-technical abstract. A paragraph of abstract capability-speak that "doesn't really say very much" is
-an overcorrection, not a fix. Prefer concrete nouns and short sentences. Avoid in-field jargon
-("quenching") unless the sentence explains it.
-
-Titles are **terse** — `Inference`, `Galaxies`, `Transients` — with `AI for Scientists` the one
-deliberate exception, because it states why the theme exists.
-
-**Structural defect to look for: two closers bolted together.** When a theme has been broadened or
-merged, the new material tends to get *appended* with its own "members of the ART do X" sentence,
-leaving the paragraph with two endings and a visible seam ("The same question scales up."). This
-happened on The Milky Way, Dark Matter & Cosmology and Transients. The fix is to **reweave into one
-closer**, not to append. Symptom to grep for: two sentences beginning "Members of the ART" or "We
-use and develop" in one paragraph.
-
-**The text must cover its own roster.** After settling a theme's people, re-read the prose and ask
-whether each person's kind of work is visible in it. Transients failed this badly — the heading said
-Transients, the roster held SETI and supernovae people, and every sentence was about fast radio
-bursts. Two of five people were invisible in their own theme.
-
-**Technical detail outlives the person who did it.** Naming a specific method ties the page to
-whoever ran it. `log-Gaussian Cox Processes and inhomogeneous Poisson Processes` sat in *two* themes
-for a year after the student who used them had left. When someone departs, grep the Research page
-for their **methods and objects**, not just their name.
-
-Broad method families ("hierarchical Bayesian models") age better than specific ones and still
-signal to statisticians, which is the audience half that named methods are there to reach.
-
-### Removing a person is a multi-place edit
-
-Dropping someone is never one deletion. Work the list:
-
-1. Their entry in `data/people.json`.
-2. **Other people's bios** — the trailing "also works closely with ..." lines name them.
-3. **Every Research theme** they appear on — remove their id from `data/research.json` (the audit
-   lists them, and the build fails while an id has no entry, so this one cannot be forgotten).
-4. Their photo in `static/`.
-
-Removing Pratika Dayal touched all four across five places. And check what the removal *orphans*:
-taking her out left Haowen Zhang with no stated connection to the group at all, since her line was
-his only one. A tie-line is optional — several associates have none — but losing the last one
-silently is a regression worth flagging to the user rather than deciding alone.
-
-### Occasional: reviewing the theme taxonomy itself
-
-**Not part of every update.** The eight themes and their titles are stable; walking rosters and prose
-is the routine job. (The Research intro in `data/research.json` states the count - "The eight themes
-below" - so a change in the number of themes means editing that sentence too.) Reopen the taxonomy
-only on a real trigger:
-
-- a theme's roster has fallen to two or three people, or grown past about twenty
-- several new arrivals share a research area that no theme names
-- a whole line of work has left with a departing member
-- the user asks
-
-If it is triggered, research first — what has the group actually published recently? — and bring
-evidence, not instinct. A roster-overlap number ("these two themes share seven people, Jaccard 0.50")
-argues a merge far better than an opinion does. Then propose **consolidation or a rename**, not new
-subdivisions, and re-read "Theme prose" above before drafting.
-
-After any roster change, re-order the page by size:
-
-```bash
-python3 scripts/sort_themes.py            # report
-python3 scripts/sort_themes.py --apply    # rewrite data/research.json
-```
-
-Sorted by **total** roster size (members + associates + collaborators), largest first, so a theme
-with many outside collaborators is not buried for having fewer people inside the group. Ties keep
-their order, so it is idempotent.
-
-## Person entries (`data/people.json`)
-
-```jsonc
-{
-  "id": "kevin-mckinnon",             // stable slug of the name; the card's anchor, and how
-                                      // data/research.json's theme rosters name him
-  "name": "Kevin McKinnon",
-  "image": "KevinMcK_headshot.jpg",   // filename in static/, or null if there's no photo
-  "alt": "A picture of Kevin McKinnon.",
-  "cohort": 2022,                     // grad students only; calendar year they started
-  "paragraphs": [
-    "<a href=\"https://www.kevinmckinnon.com\">Personal Website</a>",
-    "Kevin is an <a href=\"...\">Eric and Wendy Schmidt AI in Science Postdoctoral Fellow</a> ...",
-    "Kevin also works closely with <a href=\"...\">Aviad Levis</a>."
-  ]
-}
-```
-
-Conventions used throughout the file:
-
-- **Paragraph order**: personal-website link → status note → bio → optional "also works closely
-  with ..." / "also collaborates closely with ...".
-- `paragraphs` are emitted **verbatim** inside `<p>` — inline HTML is intentional and unescaped.
-  Keep `href`s quoted.
-- Append to the right `sections[].people` array; array order is render order.
-- **`id` is required and must be unique.** Kebab-case the name with any parenthetical or credential
-  suffix dropped: `Mairead Heiger (Ph.D. 2026)` -> `mairead-heiger`, `Isabelle (Liyuan) Huang` ->
-  `isabelle-huang`. It is a public address (`/people.html#<id>`) and the key Research rosters use,
-  so **never change an existing one** — not even when someone's name changes; add `short` instead.
-- **`short` is optional**, only for someone the Research rosters should write differently ("Gwen
-  Eadie" for "Gwendolyn Eadie"). Without it a roster writes the name minus any parenthetical, which
-  is what makes an alumnus read as "Mairead Heiger" in a roster and "Mairead Heiger (Ph.D. 2026)" on
-  her card. When the parenthetical is part of the name rather than a credential, that rule is wrong
-  — set `short` to the **full** name to keep it, as "Isabelle (Liyuan) Huang" does. Check this
-  whenever you add someone whose name has brackets in it: how a person's name is written is theirs
-  to decide, not the renderer's.
-- **`cohort` is metadata only** — it never renders. It exists so the audit can compute the correct
-  year-of-study each September. Set it on every new grad student.
-- **Alumni names carry a credential suffix**: `"Samantha Berek (Ph.D. 2025)"`,
-  `"Michael Walmsley (Postdoc 2023-25)"`. Add it when moving someone to Recent Alumni and rewrite the bio
-  to lead with their destination ("Sam is now an NSF Fellow at ...").
-
-### Moving someone to Recent Alumni
-
-Applies to **Ph.D. students and postdocs only**. Masters and undergraduate students are removed
-outright when they finish — they do not get alumni entries.
-
-1. Cut the entry from its current section and append it to the `Recent Alumni` section.
-2. Add the credential suffix to `name`; drop `cohort`.
-3. Rewrite the first bio paragraph as "X is now ..." — where they went, not what they studied here.
-4. Remove them from every Research theme list (#10). The audit flags this if you forget.
-
-## Cross-check against the faculty members' own sites first
-
-`joshspeagle.github.io` carries `sections.mentorship.menteesByStage` in `assets/data/content.json`,
-listing every current mentee with supervision type, co-supervisors, project and awards. It is the
-single best source for who *should* be on the ART page, and it is usually more current than the ART
-site. Read it before asking who joined:
-
-```bash
-python3 - <<'PY'
-import json, re
-c = json.load(open('../joshspeagle.github.io/assets/data/content.json'))
-m = c['sections']['mentorship']['menteesByStage']
-for stage, v in m.items():
-    if stage == 'completed' or not isinstance(v, list):
-        continue
-    for e in v:
-        print(f"{stage:16} {re.sub(r'<[^>]+>', '', e.get('name','')):32} {e.get('timelinePeriod','')}")
-PY
-```
-
-Compare that against `scripts/roster.py` output. Differences run both ways and both are meaningful:
-someone on the personal site but not on ART is usually a missing arrival; someone on ART but not on
-the personal site is usually fine (Josh is not their supervisor). The same file supplies co-supervisor
-names, project descriptions and fellowship names for drafting an entry, and its `news` section often
-explains a departure — an alumni destination is frequently already written there.
-
-Note the reverse direction too: people added to ART may still be missing from the personal site.
-Collect those as you go and hand Josh the list at the end.
-
-**Check Gwen Eadie's site as well.** The ART has two faculty members, and a large share of the group
-is co-supervised by Gwen rather than Josh — several members' entries name her and not him. Josh's
-mentorship data only covers his own mentees, so anyone supervised solely by Gwen will not appear
-there at all and is invisible to the check above. Her site is
-<https://www.astro.utoronto.ca/~eadie/>, which carries a students/group listing; it is hand-written
-rather than structured data, so read it rather than parsing it.
-
-Between the two sites you should be able to account for every current member. Anyone on the ART page
-who appears on neither is worth querying — they may be an associate or collaborator rather than a
-supervised member, or they may be stale.
-
-## Verify existing bios against their own websites
-
-Ask before spending the tokens, but this reliably finds drift, especially for postdocs and
-affiliated researchers whose fellowships turn over. Dispatch a subagent per section rather than
-checking by hand:
-
-> Fact-check these N biographies against the person's own website, department profile and recent
-> papers. Report only discrepancies, with a source URL for each. Do not rewrite. Flag: position and
-> institution no longer current, a named fellowship that has ended, research description that no
-> longer matches, and any personal website not currently linked. Be careful not to confuse people
-> who share a name.
-
-Tell it explicitly not to flag the year-of-study labels, which you have just deliberately bumped.
-
-**Verify anything it reports before acting on it.** Two of its findings in one session were real
-(a member had moved country; another's listed interest was actually past undergraduate work), but
-it also reported an unlinked personal website that turned out to be an empty JavaScript shell, and
-supplied Ph.D. details that were not on the person's own site.
-
-## Sources go stale, including people's own sites
-
-A personal site is authoritative for what someone claims, not for whether it is current. Seen in a
-single session: a CV listing a finished postdoc as "present"; a student's own site a year behind on
-year-of-study; a departmental profile still listing someone who had moved institutions. When Josh
-contradicts a website about his own group, he is right.
-
-Some sites refuse automated requests. A browser user-agent fixes most:
-
-```bash
-curl -sS -L -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 \
-  (KHTML, like Gecko) Chrome/120 Safari/537.36" "$URL"
-```
-
-That recovers sites returning 403 to a plain fetch. LinkedIn (HTTP 999) and some department pages
-stay blocked regardless.
-
-## Adding a new person: do the legwork before asking
-
-When the user names an arrival, they will usually give you a name, a rough title and a supervisor.
-That is the starting point, not the entry. Research the rest yourself and bring back a finished
-draft — a title the user half-remembers is not good enough to publish, because fellowship names are
-official and appear on the live page.
-
-**1. Confirm the official fellowship or position title.** Search for the actual programme. The user
-may hedge ("I believe Research Excellence Fellow?") — verify it. The University of Toronto
-[Research Excellence Postdoctoral Fellows Program](https://www.sgs.utoronto.ca/awards/research-excellence-postdoctoral-fellows-program/),
-[Arts & Science Postdoctoral Fellowship](https://www.artsci.utoronto.ca), Dunlap, CITA (including
-CITA National), and Eric and Wendy Schmidt AI in Science are all distinct, and each has a canonical
-name and URL worth linking.
-
-**2. Find their personal website.** Nearly everyone has one; it is the first paragraph of the entry
-by convention. Search their name plus institution.
-
-**3. Draft the blurb from primary sources.** Their own site, department profile, or Google Scholar.
-Cover: current title and where, who they are co-supervised by, research focus in one or two
-sentences, and prior degrees. Match the length of neighbouring entries — three to five sentences.
-Do not pad.
-
-**4. Get a headshot.** Take it from their personal or department website where one exists, and
-process it to match the existing thumbnails (square, ~500px, well under 244 KB):
-
-```bash
-python3 scripts/add_headshot.py <url-or-path> static/first_last.jpg --anchor 0.1
-```
-
-`--anchor` sets where the square sits vertically in a taller-than-wide image: `0.0` flush to the
-top, `0.5` centred, `1.0` bottom. Portraits usually want a low value since faces sit high in frame.
-There is no face detection — **always open the result and look at it** before committing.
-
-Finding the image URL is often the fiddly part. Grepping the landing page for `<img>` can miss it,
-because academic site templates keep the portrait somewhere else:
-
-| Template | Where the portrait lives |
-|---|---|
-| Hugo (Wowchemy/Academic) | `/authors/admin/avatar_hu_<hash>.jpg` — note **`authors`**, plural, not `/author/` |
-| Jekyll / plain | usually `/images/…` or `/assets/…`, linked from the landing page |
-| Department profile | often blocks automated requests (Princeton returns 403) |
-| LinkedIn | **not retrievable** — returns HTTP 999 to any unauthenticated client, so the photo cannot be fetched here even though it loads in a logged-in browser |
-
-When a photo exists only somewhere unreachable, the fastest route is to ask the user to download it
-and hand you the local path, then run `add_headshot.py` on that file — the processing is identical.
-
-A screenshot of a **circular** profile photo can be recovered rather than rejected. Find the circle
-by thresholding away the black surround and the phone's status bar, then crop the largest square
-that fits *inside* the circle (side = radius x sqrt2), inset a few percent so antialiased edge
-pixels do not leave dark wedges in the corners. Check the four corner means before accepting it —
-a corner mean near zero means the square has escaped the circle and needs shrinking or shifting.
-For someone just joining, asking them for a headshot they are happy with is usually better than
-lifting a personal profile picture.
-
-If a portrait is already square and smaller than 500px, pass `--size <its edge>` rather than
-upscaling — enlarging past the source resolution just softens it.
-
-Not everyone has a usable photo online. If you genuinely cannot find one, set `"image": null` and
-tell the user it needs supplying rather than substituting something unsuitable like a GitHub avatar.
-The audit lists entries with no photo, so it will not be forgotten.
-
-Confirm LFS picked the file up, or it commits as a pointer and renders broken:
-
-```bash
-git add static/first_last.jpg && git lfs ls-files | grep first_last
-```
-
-**5. Anything still unconfirmed goes back to the user explicitly** — the exact fellowship title, a
-graduation year, a date range. Do not quietly guess a credential that will sit on a real person's
-public entry; say which parts are inferred and from what.
-
-Existing members get the same treatment when their situation changes: a photo can be refreshed from
-their site the same way, and a fellowship ending should be researched rather than assumed.
-
-## Section conventions worth knowing before you edit
-
-**Collaborators is alphabetical by surname, and the surname is not always the last word.**
-Vianey Leos Barajas files under **Leos Barajas**, not Barajas. Sorting the list by its last token
-silently moves her. Insert new entries at the right position rather than re-sorting the section.
-
-**Only current members carry a trailing "also works closely with ..." paragraph.** Alumni entries
-are a single bio paragraph (plus the website link). When moving someone to alumni, fold any
-collaboration worth keeping into the bio in the past tense — dropping it can leave a collaborator
-with no reference anywhere on the People page.
-
-**A departure orphans a photo.** Remove the file from `static/` too; the audit lists unreferenced
-files, and stale headshots accumulated there for years before this was noticed.
-
-**Paragraphs are emitted verbatim, and the file writes `&` directly, not `&amp;`.** Easy to get
-wrong when drafting; the audit now checks for it.
-
-**Where a visiting or informally-supervised researcher goes.** ART Associates, not Graduate
-Students, even when they are a doctoral student: the precedent is a Ph.D. candidate under informal
-supervision listed there, and the section already carries people registered at other institutions.
-Graduate Students is for students registered at Toronto and supervised within the group. Lead such
-an entry with the home institution so the arrangement is unambiguous.
-
-See **Section scope** above for which career stages belong in which section.
-
-## Photos (Git LFS)
-
-`static/` is Git LFS-tracked (`*.jpg`/`*.svg`/`*.ico`/`*.ttf`). **LFS must be active before you
-touch an image** — otherwise a new file commits as a ~130-byte text pointer and renders broken for
-everyone, while the build still reports success. Fresh containers often lack git-lfs:
-
-```bash
-apt-get install -y git-lfs && git lfs install --local && git lfs pull
-find static ico ttf -type f -exec sh -c 'head -c 40 "$1" | grep -q git-lfs.github.com && echo "POINTER: $1"' _ {} \;
-```
-
-The check should print nothing. If it lists files, LFS did not fetch and any preview is wrong
-(broken favicon, fallback fonts, missing headshots).
-
-Adding a headshot:
-
-1. Put the file in `static/` — a reasonably sized JPG, ideally square, matching the ~144px
-   thumbnails already there.
-2. Set `image` and `alt` in the person's entry (`alt` reads "A picture of \<Full Name\>.").
-3. `git add static/<file>`, then confirm `git lfs ls-files | grep <file>` lists it.
-
-## Editing the content files safely
-
-`data/people.json` and `data/research.json` hold one long string per paragraph, so prose edits are
-string edits inside JSON. Prefer loading the file, changing the value, and writing it back with
-`json.dump(..., ensure_ascii=False, indent=2)` plus a trailing newline — that is the formatting both
-files are stored in, and it keeps the diff to the lines you meant to change.
-
-Make every replacement assert it matched exactly once, and write only after all of them succeed, so
-a bad guess changes nothing instead of applying half an edit:
-
-```python
-for old, new in edits:
-    assert s.count(old) == 1, ('MISS', s.count(old), old[:70])
-    s = s.replace(old, new)
-open(path, 'w').write(s)      # after the loop, never inside it
-```
-
-One trap worth naming: when replacing text inside a paragraph, check for embedded links in the span
-you are rewriting; several theme paragraphs carry `<a>` on ordinary words, and a careless rewrite
-drops them silently. `ejs/pages/home/body.html` is still hand-written HTML, so a phrase you are certain of will often
-not match — read the exact bytes (`sed -n '40,50p' … | cat -A`) rather than reconstructing them
-from memory. The two group photos there are `srcset` sets with several widths: swap **every**
-candidate and the `width`/`height` when a photo changes, and regenerate the variants rather than
-pointing all of them at one file.
-
-## Theme images
-
-One per theme in `static/`, named by a theme's `image` key in `data/research.json`, square and
-~500px, LFS like every other image. Match the existing 48-88 KB range. The `credit` key beside it
-carries the attribution, which renders as the quiet caption under the picture. Every theme image
-sits in the right-hand column, on the same side on every theme — nothing alternates any more.
-
-**An image can outlive the work it depicts.** `research_udg.jpg` showed an ultra-diffuse galaxy long
-after the student whose work it illustrated had left. When a theme is rescoped or a line of work
-ends, check the picture too, not just the prose.
-
-Sourcing: NASA and Chandra imagery is public domain and the safest default; ESA/Hubble is CC BY 4.0;
-ESA mission imagery is often CC BY-SA 3.0 IGO, which carries share-alike strings. Take the highest
-resolution available, crop square around the subject, then downsample:
-
-```python
-im = Image.open(src)                       # crop a centred square, then
-im.crop(box).resize((500, 500), Image.LANCZOS).save(dest, quality=88, optimize=True)
-```
-
-Keep the full credit line even when it is long — page credits elsewhere are short, but attribution
-is the one place to be verbose rather than tidy. Confirm the file staged as an LFS pointer:
-
-```bash
-git add static/<file> && git cat-file -p :static/<file> | head -1   # must say git-lfs spec
-```
-
-## Finishing up
-
-```bash
-python3 scripts/audit_site.py --as-of <target>  # clear, bar known exceptions
-python3 scripts/test_audit.py                   # the audit's own regression tests
-python3 scripts/theme_fit.py --quiet            # nothing left unexplained
-python3 scripts/sort_themes.py                  # themes still in size order?
-python3 docs/check_tokens.py                    # only if you touched colour
-npm run build                                   # must succeed
-python3 -m http.server 8000 --directory dist    # eyeball the changed pages, in both themes
-```
-
-Anything the audit still reports and you have deliberately decided to leave should be recorded
-rather than remembered — `ADVISER_NOT_COLLABORATOR` in `audit_site.py` is the pattern: an explicit
-exemption with a one-line reason and a date, so the finding stops recurring and the decision stays
-visible.
-
-Then commit and push — the footer date comes from the commit itself. CI (`build-check.yaml`) builds every PR and
-non-`main` branch; merging to `main` triggers `build-site.yaml`, which deploys `dist/` to GitHub
-Pages and updates astrostatuoft.com. **Never commit `dist/`.**
+`npm run check` runs:
+1. `python3 docs/check_tokens.py --quiet` — verifies WCAG contrast floors and ensures no hex color values appear outside `scss/_tokens.scss`.
+2. `python3 scripts/test_audit.py` — runs the 35 unit tests for `audit_site.py`.
+3. `python3 scripts/audit_site.py --strict` — verifies 0 content/roster/asset findings.
+4. `./scripts/check_build_output.sh dist` — verifies all built files in `dist/`.
