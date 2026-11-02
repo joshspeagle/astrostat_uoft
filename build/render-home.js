@@ -85,7 +85,7 @@ ${paras}${fellowships}
 function renderHome(dataPath = DEFAULT_PATH) {
   const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
   const sections = [data.about, data.workshop, data.joining];
-  const index = sections.map((s) => ({ id: s.id, label: s.heading }));
+  const index = sections.map((s) => ({ id: s.id, title: s.heading }));
   const body = [
     renderAbout(data.about),
     renderWorkshop(data.workshop),
