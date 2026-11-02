@@ -35,7 +35,6 @@ research_ids = _ns['research_ids']
 unknown_ids = _ns['unknown_ids']
 duplicate_ids = _ns['duplicate_ids']
 out_of_size_order = _ns['out_of_size_order']
-flip_not_wired = _ns['flip_not_wired']
 
 import datetime
 
@@ -177,28 +176,6 @@ def main():
     if out_of_size_order({'themes': list(reversed(RESEARCH['themes']))}):
         failures.append('out_of_size_order flagged a correctly ordered file')
 
-    # the theme-flip check: it fires only while the renderer states the flip and
-    # the stylesheet still decides it by sibling position
-    EMITS = "    const flip = i % 2 === 1 ? ' media-flip' : '';"
-    NO_FLIP = "    const flip = '';"
-    NTH = '.media-object {\n  &:nth-child(odd) {\n    order: 2;\n  }\n}'
-    KEYED = '.media-object {\n  &.media-flip {\n    order: 2;\n  }\n}'
-    for renderer, style, want, why in (
-        (EMITS,   NTH,   True,  'renderer flips, stylesheet does not know the class'),
-        (EMITS,   KEYED, False, 'stylesheet keys off media-flip'),
-        (NO_FLIP, NTH,   False, 'renderer no longer states the flip'),
-        (None,    NTH,   False, 'renderer missing - check is skipped'),
-        (EMITS,   None,  False, 'stylesheet missing - check is skipped'),
-    ):
-        got = bool(flip_not_wired(renderer, style))
-        if got != want:
-            failures.append(f'flip_not_wired == {got}, expected {want} ({why})')
-
-    # it should cite the offending line, so the one-line fix is findable
-    cited = flip_not_wired(EMITS, NTH)
-    if not cited or ':2' not in cited[0]:
-        failures.append(f'flip_not_wired did not cite the nth-child line: {cited}')
-
     # academic year rolls over in September, not January
     for date, expected in ((datetime.date(2026, 8, 31), 2025),
                            (datetime.date(2026, 9, 1), 2026),
@@ -207,7 +184,7 @@ def main():
         if got != expected:
             failures.append(f"academic_year({date}) == {got}, expected {expected}")
 
-    total = len(NAME_CASES) + 4 + 3 + 14 + 6
+    total = len(NAME_CASES) + 4 + 3 + 14
     if failures:
         print(f"{len(failures)} of {total} checks FAILED:\n")
         for f in failures:

@@ -9,7 +9,7 @@ import os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-import icons, brand, measure, mkog, mktest, mksheet   # noqa: E402
+import icons, brand, measure, mkog   # noqa: E402
 
 
 def sh(*a):
@@ -24,8 +24,6 @@ def main():
     brand.build(HERE)
     measure.run()
     sh('mkog.py')
-    sh('mktest.py')
-    sh('mksheet.py')
     # rasters, at 2x then box-down for clean text
     from PIL import Image
     sh('shoot.py', os.path.join(HERE, 'og-image.html'), '_og2x.png', '1200', '630', 'view')
@@ -34,12 +32,7 @@ def main():
     Image.open(os.path.join(HERE, '_og2x.png')).resize((1200, 630), Image.BOX)\
          .convert('RGB').save(os.path.join(HERE, 'og-image.png'))
     os.remove(os.path.join(HERE, '_og2x.png'))
-    sh('shoot.py', os.path.join(HERE, 'sheet.html'), '_sheet2x.png', '1360', '900', 'full')
-    im = Image.open(os.path.join(HERE, '_sheet2x.png'))
-    im.resize((im.width // 2, im.height // 2), Image.LANCZOS).convert('RGB')\
-      .save(os.path.join(HERE, 'sheet.png'))
-    os.remove(os.path.join(HERE, '_sheet2x.png'))
-    print('built', len(icons.ICONS), 'glyphs + sprite + favicons + og + sheet')
+    print('built', len(icons.ICONS), 'glyphs + sprite + favicons + og')
 
 
 if __name__ == '__main__':

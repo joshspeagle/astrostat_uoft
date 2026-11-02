@@ -1,72 +1,44 @@
-# astrostat_uoft
+# Astrostat@UofT (`astrostatuoft.com`)
 
-Source for the [Astrostatistics Research Team (ART)](https://astrostatuoft.com) website at the
-University of Toronto — live at **[astrostatuoft.com](https://astrostatuoft.com)**.
+[![Build and Deploy Static Site](https://github.com/joshspeagle/astrostat_uoft/actions/workflows/build-site.yaml/badge.svg)](https://github.com/joshspeagle/astrostat_uoft/actions/workflows/build-site.yaml)
 
-Three pages (Home, People, Research) plus a 404, built from data files and one HTML shell by
-webpack into `dist/`, styled with hand-written SCSS on a seven-token palette — no CSS framework and
-no JavaScript dependencies. GitHub Actions builds the site on every push to `main` and deploys
-`dist/` straight to GitHub Pages, which serves the live domain.
+Source repository for the **Astrostatistics Research Team (ART)** website at the University of Toronto, live at <https://astrostatuoft.com>.
 
-## Quick start
+## Content & Data Files
+
+All three pages are generated at build time from JSON files in [`data/`](./data):
+
+- **[`data/home.json`](./data/home.json)** — Home page (`/`): group overview (`#the-art`), annual workshop (`#statstro-workshop`), and career-stage pathways & postdoctoral fellowships (`#joining-the-art`). Rendered by [`build/render-home.js`](./build/render-home.js).
+- **[`data/people.json`](./data/people.json)** — People page (`/people.html`): Faculty, Postdoctoral Researchers, Graduate Students, Undergraduate Students, ART Associates, Collaborators, and Recent Alumni. Rendered by [`build/render-people.js`](./build/render-people.js).
+- **[`data/research.json`](./data/research.json)** — Research page (`/research.html`): the 8 research themes and their member/associate/collaborator ID lists. Rendered by [`build/render-research.js`](./build/render-research.js).
+
+## Building & Verifying Locally
+
+Requires **Node 22** (`.nvmrc`), **Git LFS** (for photos in `static/` and fonts in `fonts/`), and **Python 3**.
 
 ```bash
-git clone https://github.com/joshspeagle/astrostat_uoft.git
-cd astrostat_uoft
-
-# Real images, fonts and icons are stored in Git LFS - without this step
-# they check out as small text pointers and the site builds with broken
-# headshots, a broken favicon and fallback fonts.
-git lfs install --local
 git lfs pull
-
-npm ci                                       # install pinned dependencies
-npm run build                                # webpack -> dist/
-python3 -m http.server 8000 --directory dist # preview at http://localhost:8000
+npm ci
+npm run build   # builds the static site into dist/
+npm run check   # runs token checks, unit tests, strict content audit, and build output check
 ```
 
-Requires Node 22+ (see `.nvmrc` / `engines` in `package.json`).
+To preview the built site locally:
 
-## Where content lives
+```bash
+python3 -m http.server --directory dist 8000
+```
 
-- **People and Research pages**: edit `data/people.json` / `data/research.json` — both pages are
-  generated from these files at build time. Do not hand-edit HTML for either page.
-- **Home page**: hand-written HTML partial in `ejs/pages/home/body.html`.
-- **Images, icons, fonts**: `static/`, `ico/`, `svg/`, `fonts/` — the binaries are tracked with
-  Git LFS.
-- **Look and feel**: `scss/` (the palette lives once, in `scss/_tokens.scss`) and `ejs/main.ejs`.
-  The rules those files answer to are in [`docs/DESIGN.md`](./docs/DESIGN.md); run
-  `python3 docs/check_tokens.py` after any change to colour.
+## Maintenance & Routine Updates
 
-`dist/` and `node_modules/` are never committed; CI builds `dist/` fresh on every publish.
+| Command | Description |
+|---|---|
+| `npm run propose` | Run [`scripts/propose_updates.py`](./scripts/propose_updates.py) to compare the roster against `../joshspeagle.github.io`, check seasonal/year-of-study rollovers, and summarize audit and theme-fit status. |
+| `python3 scripts/propose_updates.py --online` | Also check Gwen Eadie's group page and verify all external links across `data/*.json`. |
+| `python3 scripts/propose_updates.py --apply-years` | Automatically increment graduate student `N`-th year labels in `data/people.json` for the new academic year. |
+| `python3 scripts/audit_site.py --strict` | Verify cross-file invariants (IDs, cohorts, theme memberships, co-advisers, and image assets). |
+| `python3 scripts/theme_fit.py --quiet` | Check for unreviewed keyword matches between People bios and Research themes. |
+| `python3 scripts/sort_themes.py --apply` | Reorder `data/research.json` themes by total roster size. |
+| `python3 scripts/add_headshot.py <src> <out.jpg>` | Center-crop, resize (`500×500`), and optimize a new headshot into `static/`. |
 
-## Deployment
-
-**Prerequisite, one time:** the repository's Pages source must be set to **GitHub Actions** under
-*Settings → Pages → Build and deployment → Source*. The workflow deliberately does not change
-repository settings, so until that switch is made the build succeeds and the deploy step fails.
-The custom domain is a Pages setting too — under the Actions source GitHub does not read a `CNAME`
-file to set it.
-
-Pushing to `main` then triggers `.github/workflows/build-site.yaml`, which builds the site,
-validates the output, uploads `dist/` as a Pages artifact and deploys it with `actions/deploy-pages`.
-There is no `gh-pages` branch in the loop any more, the workflow needs no write access to the
-repository, and a deployment that does not land fails the run instead of reporting success. After
-deploying it fetches the three pages from the live domain, and checks that the `www` subdomain still
-redirects to the apex over a valid certificate, so a build that is green but not actually being
-served cannot pass unnoticed.
-
-Every pull request and non-`main` branch push also runs `.github/workflows/build-check.yaml`, the
-same build plus validation without the deploy, so a broken edit is caught before it merges rather
-than after it goes live. Both workflows validate the built output with the same script,
-`scripts/check_build_output.sh`.
-
-Rollback is a redeploy of an earlier successful run from the repository's **Environments →
-github-pages** tab.
-
-## Learn more
-
-For the full architecture (how pages are assembled, the People- and Research-page data pipelines,
-the site audit script, helper scripts for roster/theme maintenance, and the Git LFS setup in
-detail), see [`CLAUDE.md`](./CLAUDE.md). The design canon — what every colour, type size and piece
-of spacing means, and the script that measures it — is [`docs/DESIGN.md`](./docs/DESIGN.md).
+See [`CLAUDE.md`](./CLAUDE.md) for architecture details and [`docs/DESIGN.md`](./docs/DESIGN.md) for the design specification.

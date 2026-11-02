@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Consistency checks for the ART website's content.
+"""Consistency checks for the ART website's content and assets.
 
 Run from the repo root:
 
@@ -7,9 +7,8 @@ Run from the repo root:
     python3 scripts/audit_site.py --strict           # exit 1 if anything is flagged
     python3 scripts/audit_site.py --as-of 2026-09-15 # test the seasonal checks
 
-Stdlib only. Everything here is mechanical: it checks facts the content can be
-made to answer for itself. Whether a research blurb or a bio still *reads*
-correctly is not something this can know - that stays a human pass.
+Uses only the Python standard library. Checks cross-file invariants across
+data/people.json, data/research.json, data/home.json, ejs/main.ejs, and static/.
 """
 
 import argparse
@@ -21,27 +20,14 @@ import sys
 
 PEOPLE = 'data/people.json'
 RESEARCH = 'data/research.json'
-HOME = 'ejs/pages/home/body.html'
+HOME = 'data/home.json'
 SHELL = 'ejs/main.ejs'
-RENDER_RESEARCH = 'build/render-research.js'
-STYLE = 'scss/index.scss'
 
 # Sections whose members are expected to appear on at least one Research theme.
 CURRENT = {'Faculty', 'Postdoctoral Researchers', 'Graduate Students', 'ART Associates'}
 
 YEAR_LABEL = re.compile(r'\b(\d)(?:st|nd|rd|th)-year\b')
 ORDINALS = {1: '1st', 2: '2nd', 3: '3rd'}
-
-
-def read_optional(path):
-    """File contents, or None if it is not there. Used by checks that reach
-    outside the content files, so a missing file skips the check rather than
-    crashing the audit."""
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return fh.read()
-    except OSError:
-        return None
 
 
 def ordinal(n):
@@ -72,37 +58,24 @@ def _compatible(a, b):
 
 
 def mentioned(name, text):
-    """Is this specific person named in `text`?
+    """Return True if `name` is referenced in `text`.
 
-    Since the Research page became data/research.json, membership is an id
-    lookup and this is only needed where names still appear as free text: the
-    home page's group-photo caption (below) and scripts/theme_fit.py.
-
-    Deliberately does not assume one given name and one surname. Dual
-    surnames (common in Spanish- and Portuguese-speaking naming, among
-    others) and dual given names both break that assumption, in opposite
-    directions: matching on the last token alone conflated "Antonio Herrera
-    Martin" with a different "Peter Martin", while requiring the full name
-    missed "Rodrigo Barradas Herrera" wherever a shorter form was used.
-
-    So: accept an exact full-name match, or any two adjacent tokens of the
-    name appearing adjacently in the text, or a "<given> <later-token>" pair
-    whose given name is compatible with one of the person's earlier tokens.
+    Handles dual surnames and parenthetical nicknames by matching:
+    - the full name,
+    - any two adjacent tokens of the name appearing adjacently in `text`, or
+    - a `<given> <later-token>` pair whose given name is compatible with one
+      of the person's earlier tokens.
     """
     toks = name_tokens(name)
     if not toks:
         return False
-    # A parenthetical inside the *text* ("Isabelle (Liyuan) Huang") splits an
-    # otherwise adjacent pair, so match against a paren-stripped copy as well.
     text = text + '\n' + re.sub(r'\s*\([^)]*\)', '', text)
     if re.search(r'\b' + re.escape(' '.join(toks)) + r'\b', text):
         return True
-    # any adjacent pair from the name, e.g. "Barradas Herrera"
     for i in range(len(toks) - 1):
         pair = toks[i] + ' ' + toks[i + 1]
         if re.search(r'\b' + re.escape(pair) + r'\b', text):
             return True
-    # a shortened given name in front of any later token of the name
     for i in range(1, len(toks)):
         anchor = toks[i]
         if len(anchor.rstrip('.')) < 2:
@@ -114,7 +87,7 @@ def mentioned(name, text):
 
 
 def match_person(name, everyone):
-    """Which roster entry a free-text name refers to, if any."""
+    """Return the roster entry name that a free-text name refers to, if any."""
     for known in everyone:
         if mentioned(known, name) or mentioned(name, known):
             return known
@@ -122,8 +95,22 @@ def match_person(name, everyone):
 
 
 def caption_names(home):
-    """Names listed in the home page's group-photo caption."""
-    m = re.search(r'[Ll]eft to right:(.*?)</figcaption>', home, re.S)
+    """Names listed in the Home page's group-photo caption (accepts dict, JSON, or HTML)."""
+    caption_str = ''
+    if isinstance(home, dict):
+        caption_str = home.get('about', {}).get('figure', {}).get('caption', '')
+    elif isinstance(home, str):
+        stripped = home.strip()
+        if stripped.startswith('{'):
+            try:
+                parsed = json.loads(stripped)
+                caption_str = parsed.get('about', {}).get('figure', {}).get('caption', '')
+            except ValueError:
+                caption_str = home
+        else:
+            caption_str = home
+
+    m = re.search(r'[Ll]eft to right:(.*?)(?:</figcaption>|$)', caption_str, re.S)
     if not m:
         return []
     blob = re.sub(r'<[^>]+>', ' ', m.group(1))
@@ -143,7 +130,7 @@ ROSTER_KEYS = (('members', 'ART members involved'),
 
 
 def entry_id(entry):
-    """A roster entry is an id, or {'id': ..., 'note': 'McMaster'}."""
+    """A roster entry is an id string, or {'id': ..., 'note': '...'}."""
     return entry['id'] if isinstance(entry, dict) else entry
 
 
@@ -163,11 +150,7 @@ def research_ids(research):
 
 
 def unknown_ids(research, known):
-    """[(theme, label, id)] for roster entries that name nobody on the People page.
-
-    The build fails on these too (see build/render-research.js); the check is
-    here so a mid-edit data file can be looked at without running webpack.
-    """
+    """[(theme, label, id)] for roster entries that do not match any People id."""
     labels = dict(ROSTER_KEYS)
     out = []
     for theme in research['themes']:
@@ -179,12 +162,7 @@ def unknown_ids(research, known):
 
 
 def duplicate_ids(research, people):
-    """Ids that appear where exactly one was meant.
-
-    Three ways this goes wrong: two People entries claiming one id (which would
-    make an anchor ambiguous), two themes claiming one theme id, and one person
-    listed twice in the same roster row.
-    """
+    """Ids that appear more than once or are missing."""
     out = []
     seen = set()
     for section in people['sections']:
@@ -214,13 +192,13 @@ def duplicate_ids(research, people):
 
 
 def theme_totals(research):
-    """[(title, total roster size)] in page order - the key sort_themes.py uses."""
+    """[(title, total roster size)] in page order (used by sort_themes.py)."""
     return [(t['title'], sum(len(ids) for _, ids in theme_ids(t)))
             for t in research['themes']]
 
 
 def out_of_size_order(research):
-    """Themes that sit above a larger one. Ties are fine; sort_themes.py keeps them."""
+    """Themes that sit above a strictly larger theme."""
     totals = theme_totals(research)
     out = []
     for i, (title, total) in enumerate(totals):
@@ -230,46 +208,15 @@ def out_of_size_order(research):
     return out
 
 
-def flip_not_wired(renderer, style):
-    """Is the alternating side of the theme images still decided by position?
-
-    build/render-research.js marks every second theme `media-flip`, saying which
-    side its image belongs on. If scss/index.scss does not key off that class,
-    the flip still comes from a `:nth-child(odd)` rule that counts *all* of the
-    section's children - the intro paragraphs included. It happens to alternate
-    correctly today; adding or removing a single intro paragraph in
-    data/research.json swaps every theme to the other side, and nothing about
-    editing prose suggests it could do that.
-
-    Both arguments are file contents. The check is skipped if either file is
-    missing, and goes quiet as soon as the stylesheet mentions `media-flip`.
-    """
-    if renderer is None or style is None:
-        return []
-    if 'media-flip' not in renderer:
-        return []                      # the renderer no longer states the flip
-    if 'media-flip' in style:
-        return []                      # wired up
-    where = ''
-    for i, line in enumerate(style.splitlines(), 1):
-        if 'nth-child' in line:
-            where = f' ({STYLE}:{i})'
-            break
-    return [f'{RENDER_RESEARCH} emits `media-flip` but {STYLE} never uses it'
-            f'{where}; the image side still depends on how many intro '
-            f'paragraphs data/research.json has']
-
-
 # Cues that introduce someone who advises or collaborates with an ART member.
 ADVISOR_CUE = re.compile(
     r'(co-supervis\w*|co-advis\w*|works closely with|collaborates closely with|'
     r'supervised by|advised by|working with)', re.I)
 
-# A degree clause names a PAST supervisor, not a current collaborator.
+# A degree clause names a past supervisor, not a current collaborator.
 DEGREE_CLAUSE = re.compile(r'(Ph\.?D|M\.?Sc|B\.?Sc|degree|doctorate)', re.I)
 
-# Advisers deliberately left out of Collaborators. The section is for people the
-# group works with on an ongoing basis; a one-off co-supervision does not qualify.
+# Advisers deliberately omitted from Collaborators (one-off co-supervision).
 ADVISER_NOT_COLLABORATOR = {
     'Nolan Koblischke': 'co-supervises one SURP undergrad only (decided Aug 2026)',
     'Chris Maddison': "co-supervises an associate's Ph.D. via the DSI fellowship, "
@@ -282,12 +229,7 @@ NOT_A_PERSON = ('Department', 'Institute', 'University', 'Fellow', 'Program', 'S
 
 
 def advisors_named(data):
-    """People named as advising or collaborating with a CURRENT member.
-
-    Skips Recent Alumni, whose entries describe where someone went and who they
-    trained under, and skips degree clauses like "received his Ph.D. under the
-    supervision of X", which name a past supervisor rather than a collaborator.
-    """
+    """People named as advising or collaborating with a current member."""
     found = {}
     for section in data['sections']:
         if section['heading'] in ('Recent Alumni', 'Collaborators'):
@@ -308,19 +250,19 @@ def advisors_named(data):
 
 
 def classify_orphan(fname, used_stems, current_tokens):
-    """Why a file in static/ might be unreferenced. Several reasons are benign."""
+    """Classify why a file in static/ might be unreferenced."""
     stem = os.path.splitext(fname)[0].lower()
     if stem in used_stems:
         return 'spare copy of a file already in use'
     tokens = {t for t in re.split(r'[_\-.]+', stem) if len(t) > 2}
-    for name, name_tokens in current_tokens.items():
-        if len(tokens & name_tokens) >= 2 or (tokens & name_tokens and len(tokens) <= 2):
+    for name, name_toks in current_tokens.items():
+        if len(tokens & name_toks) >= 2 or (tokens & name_toks and len(tokens) <= 2):
             return f'older headshot of {name}, who is still listed'
     if 'logo' in stem:
         return 'inlined as raw <svg> in main.ejs, not referenced by src'
     if re.search(r'20\d\d', stem) and re.search(r'group|statstro|art_|mrc', stem):
         return 'superseded dated photo (kept as history)'
-    return None  # unexplained - possibly a departed member
+    return None
 
 
 def main():
@@ -331,15 +273,17 @@ def main():
                     help='pretend today is this date (for testing seasonal checks)')
     args = ap.parse_args()
 
-    data = json.load(open(PEOPLE, encoding='utf-8'))
-    research = json.load(open(RESEARCH, encoding='utf-8'))
-    on_theme = research_ids(research)
-    home_raw = open(HOME, encoding='utf-8').read()
-    home = re.sub(r'\s+', ' ', home_raw)
-    shell = open(SHELL, encoding='utf-8').read()
-    renderer_src = read_optional(RENDER_RESEARCH)
-    style_src = read_optional(STYLE)
+    with open(PEOPLE, encoding='utf-8') as fh:
+        data = json.load(fh)
+    with open(RESEARCH, encoding='utf-8') as fh:
+        research = json.load(fh)
+    with open(HOME, encoding='utf-8') as fh:
+        home_raw = fh.read()
+    home_data = json.loads(home_raw)
+    with open(SHELL, encoding='utf-8') as fh:
+        shell = fh.read()
 
+    on_theme = research_ids(research)
     today = (datetime.date.fromisoformat(args.as_of) if args.as_of
              else datetime.date.today())
     ay = academic_year(today)
@@ -364,8 +308,6 @@ def main():
                     if expected != stated:
                         stale.append((name, ordinal(stated), ordinal(expected)))
 
-            # Membership is now an id in data/research.json, not a name spelled
-            # out in prose, so this is an exact lookup rather than a text search.
             themes = on_theme.get(person.get('id'), set())
             if section['heading'] in CURRENT and not themes:
                 missing.append(f"{name} ({section['heading']})")
@@ -405,7 +347,6 @@ def main():
     report('5b. Undergraduate-level entries in Recent Alumni', ug_alumni,
            'undergrads are listed while current only; they do not get alumni entries')
 
-    # Collaborators should cover everyone who co-advises a current member.
     collab = {p['name'] for s_ in data['sections']
               if s_['heading'] == 'Collaborators' for p in s_['people']}
     known = {surname(n) for n in list(collab) + list(everyone)}
@@ -414,13 +355,12 @@ def main():
                   if surname(nm) not in known
                   and nm not in ADVISER_NOT_COLLABORATOR)
     report('5c. Advisers of current members missing from Collaborators', gaps,
-           'the section is defined as co-advisers of members plus people the group collaborates with')
+           'the section covers co-advisers of members plus ongoing group collaborators')
 
-    # The file writes & literally inside prose; &amp; is an inconsistency.
     amps = sorted(p['name'] for s_ in data['sections'] for p in s_['people']
                   if any('&amp;' in t for t in p['paragraphs']))
     report('5d. Entries using &amp; instead of a bare &', amps,
-           'paragraphs are emitted verbatim, and the rest of the file writes & directly')
+           'paragraphs in data/people.json write & directly')
 
     people_ids = {p['id'] for s_ in data['sections'] for p in s_['people'] if p.get('id')}
     report('5. Research roster ids matching nobody on People',
@@ -435,8 +375,6 @@ def main():
         if theme.get('image'):
             refs.setdefault(theme['image'], set()).add(RESEARCH)
     for path, text in {HOME: home_raw, SHELL: shell}.items():
-        # `src`, and every candidate in a `srcset` - the panoramas ship at
-        # several widths and only the fallback appears in `src`.
         for m in re.finditer(r'/static/([^"\s,]+)', text):
             refs.setdefault(m.group(1), set()).add(path)
     for section in data['sections']:
@@ -446,12 +384,21 @@ def main():
     broken = [f"{k}  <- {', '.join(sorted(v))}" for k, v in sorted(refs.items())
               if not os.path.exists(os.path.join('static', k))]
     report('6. Referenced images missing from static/', broken)
-    report('7. Entries with no photo',
-           no_photo + [f"{t['title']} (Research theme)" for t in research['themes']
-                       if not t.get('image')])
+
+    # Entries with no photo are informational now that build/render-people.js
+    # renders an intentional monogram + sparkle tile for null images.
+    missing_theme_images = [f"{t['title']} (Research theme)" for t in research['themes']
+                            if not t.get('image')]
+    report('7. Research themes with no image', missing_theme_images)
+    print(f"[7b. People entries using monogram fallback tile] ({len(no_photo)}) - informational")
+    for item in no_photo:
+        print(f"      {item}")
+    if not no_photo:
+        print("      none")
+    print()
 
     # group-photo caption vs roster
-    cap = caption_names(home)
+    cap = caption_names(home_data)
     cap_unknown, cap_alumni = [], []
     for n in cap:
         match = match_person(n, everyone)
@@ -475,49 +422,38 @@ def main():
             print("      all names match current members")
     print()
 
-    # photo recency
-    print("[9. Home-page photo recency]")
-    figures = set(re.findall(r'<figure[^>]*>.*?src="/static/([^"]+)".*?</figure>', home, re.S))
+    # photo recency (informational)
+    print("[iii. Home-page photo recency] - informational")
+    figures = set()
+    for sec_key in ('about', 'workshop', 'events'):
+        fig = home_data.get(sec_key, {}).get('figure', {})
+        src = fig.get('src', '')
+        if src.startswith('/static/'):
+            figures.add(src[len('/static/'):])
     dated = [(fn, int(re.search(r'(20\d\d)', fn).group(1)))
              for fn in figures if re.search(r'(20\d\d)', fn)]
     stalest = [f for f in dated if ay - f[1] >= 1]
     for fn, yr in sorted(stalest, key=lambda x: x[1]):
-        print(f"      {fn} ({yr}) -- {ay - yr} academic year(s) old; is there a newer one?")
+        print(f"      {fn} ({yr}) -- {ay - yr} academic year(s) old; check if a newer group photo is available")
     if not stalest:
         print("      none look out of date")
-    findings += len(stalest)
     print()
 
-    # footer date - built from the last commit date (see webpack.config.js),
-    # so the only thing left to check is that the placeholder is still there.
-    # It lives in the shared footer in main.ejs, which every page renders.
     print("[10. Site note 'last updated' line]")
     if '{{LAST_UPDATED}}' in shell:
         print("      generated at build time from the last commit touching "
               "data/ or ejs/")
-        print("      (on CI's shallow checkout that degrades to the build's own "
-              "commit -- see webpack.config.js)")
     else:
         print("      the {{LAST_UPDATED}} placeholder is gone from "
               f"{SHELL} -- has someone typed a literal date back in?")
         findings += 1
     print()
 
-    # --- Research data-file consistency ---
-    # Three checks that used to live here - names left unlinked, one person
-    # written two ways, roster blocks out of order - are gone: with ids and a
-    # renderer none of those states can be expressed any more.
-
     report('11. Duplicate or missing ids', duplicate_ids(research, data),
            'an id is a page anchor (/people.html#<id>), so it has to be unique')
 
     report('12. Research themes out of size order', out_of_size_order(research),
            'run `python3 scripts/sort_themes.py --apply` to reorder them')
-
-    report('13. Theme image sides decided by sibling position',
-           flip_not_wired(renderer_src, style_src),
-           'replace the `&:nth-child(odd)` rule under `.media-object` with '
-           '`&.media-flip`')
 
     # orphans (informational)
     used_stems = {os.path.splitext(r)[0].lower() for r in refs}

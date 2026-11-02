@@ -52,28 +52,27 @@ $row-down: 35em;  // 560px: a People card becomes a media row
 }
 
 // --------------------------------------------------------------------------
-// Hero (Home only): the mark in the wash token as the backdrop, the wordmark
-// as real HTML text over it. Not a heading - the page keeps its own h1.
+// Hero (Home only): wordmark lockup paired beside the ART mark in the wash
+// token, separated cleanly so the mark never collides with text.
 // --------------------------------------------------------------------------
 
 .hero {
   position: relative;
+  margin-bottom: var(--s6);
 }
 
 .hero-inner {
-  position: relative;
-  min-height: 300px;
+  background: var(--card);
+  padding: var(--s5) var(--s6);
   display: flex;
-  flex-direction: column;
+  flex-direction: row-reverse;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--s6) 0;
+  justify-content: space-between;
+  gap: var(--s5);
 }
 
 .hero-mark {
-  position: absolute;
-  inset: 0;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,12 +82,13 @@ $row-down: 35em;  // 560px: a People card becomes a media row
 }
 
 .hero-mark svg {
-  width: min(430px, 80%);
+  width: clamp(130px, 20vw, 210px);
   height: auto;
 }
 
 .hero-words {
   position: relative;
+  min-width: 0;
 }
 
 .hero-name {
@@ -107,24 +107,23 @@ $row-down: 35em;  // 560px: a People card becomes a media row
   font-size: var(--h3);
   line-height: 1.2;
   margin-top: var(--s1);
+  color: var(--quiet);
 }
 
 @media (max-width: $bar-up - 0.01) {
-  .hero-inner {
-    min-height: 0;
-    padding: 0 0 var(--s6);
+  .hero {
+    margin-bottom: var(--s5);
   }
 
-  // On a phone the block is only three short lines, so a mark behind them sits
-  // squarely on the words instead of washing behind them. It goes above the
-  // wordmark instead - same mark, same token, still decoration.
-  .hero-mark {
-    position: static;
-    margin-bottom: var(--s4);
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--s5) var(--s4);
+    gap: var(--s3);
   }
 
   .hero-mark svg {
-    width: 120px;
+    width: 112px;
   }
 
   .hero-name {
@@ -179,22 +178,10 @@ $row-down: 35em;  // 560px: a People card becomes a media row
   text-decoration: none;
 }
 
-// While Home's hero is on screen the rail mark stands down, so the mark and the
-// wash are never drawn together. In the bar it leaves no gap behind it; in the
-// rail its box is kept, so nothing below it moves when it returns.
-.hero-on .rail-mark {
-  display: none;
-}
-
 @media (min-width: $bar-up) {
   .rail-mark {
     width: 56px;
     margin-bottom: var(--s5);
-  }
-
-  .hero-on .rail-mark {
-    display: block;
-    visibility: hidden;
   }
 }
 
@@ -483,6 +470,60 @@ figcaption {
 }
 
 // --------------------------------------------------------------------------
+// Joining pathways (Home)
+// --------------------------------------------------------------------------
+
+.pathway-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  margin-top: var(--s5);
+}
+
+@media (min-width: $bar-up) {
+  .pathway-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.pathway-card {
+  background: var(--card);
+  padding: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.pathway-title {
+  margin: 0;
+  font-size: var(--h3);
+}
+
+.pathway-card p {
+  margin: 0;
+  font-size: var(--small);
+  line-height: 1.6;
+}
+
+.fellowship-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--s2) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.fellowship-pill {
+  display: inline-block;
+  font-size: var(--small);
+  line-height: 1.35;
+  padding: var(--s1) var(--s2);
+  background: var(--page);
+  border: var(--hair) solid var(--quiet);
+}
+
+// --------------------------------------------------------------------------
 // People
 // --------------------------------------------------------------------------
 
@@ -500,8 +541,12 @@ figcaption {
   gap: var(--s5);
 }
 
-// A grid item stretches by default, so cards in a row square off at the bottom
-// with no rule reaching outside this module.
+@media (min-width: $bar-up) {
+  .card-grid-faculty {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .card {
   background: var(--card);
   padding: var(--s3);
@@ -516,10 +561,21 @@ figcaption {
   object-fit: cover;
 }
 
-// An image that has not loaded, or was never taken, shows its surface and
-// nothing else - no fill, no spinner, no icon.
 .no-photo {
-  background: var(--card);
+  background: var(--page);
+  border: var(--hair) solid var(--quiet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-photo-initials {
+  font-family: Urbanist, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: var(--h1);
+  letter-spacing: 0.06em;
+  color: var(--quiet);
+  user-select: none;
 }
 
 .card-text {
@@ -528,6 +584,11 @@ figcaption {
 
 .card-name {
   margin: 0;
+}
+
+.card-name-cjk {
+  font-size: 0.78em;
+  font-weight: 600;
 }
 
 .card-site {
@@ -577,6 +638,10 @@ figcaption {
     height: 88px;
     aspect-ratio: auto;
     margin: 0 var(--s3) var(--s2) 0;
+  }
+
+  .no-photo-initials {
+    font-size: var(--h3);
   }
 
   .card-text {
