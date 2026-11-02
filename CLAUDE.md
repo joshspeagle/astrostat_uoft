@@ -6,7 +6,7 @@ For routine roster, bio, or seasonal updates, use the `/art-website-update` skil
 
 ## Affiliation & Content Conventions
 
-- **Affiliation ordering:** Always list the **David A. Dunlap Department of Astronomy & Astrophysics** first, then the **Department of Statistical Sciences**, followed by affiliated institutes (**Dunlap Institute for Astronomy & Astrophysics**, **Canadian Institute for Theoretical Astrophysics (CITA)**, and **Data Sciences Institute**).
+- **Affiliation ordering:** Always list the **David A. Dunlap Department of Astronomy & Astrophysics** first, then the **Department of Statistical Sciences**, followed by affiliated institutes (**Dunlap Institute for Astronomy & Astrophysics** and **Data Sciences Institute**).
 - **Hyperlink density:** Keep links on the `Research` page (`data/research.json`) focused on official surveys, observatories, and instruments (`Gaia`, `JWST`, `DESI`, `Rubin/LSST`, `CHIME`, `LIGO`), avoiding general-encyclopedia or pop-science explainers. In `data/people.json`, link each person's website, fellowships, external institutions, and co-supervisors/collaborators while avoiding repetitive links on UofT department boilerplate outside the Faculty section.
 
 ## Architecture & Build Pipeline
